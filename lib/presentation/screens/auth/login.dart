@@ -119,7 +119,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ],
                   ),
-                  AppButton(text: 'Sign In', onPressed: () {}),
+                  AppButton(
+                    text: 'Sign In',
+                    onPressed: () {
+                      context.push(RouteName.verify);
+                    },
+                  ),
                   CustomRichText(
                     normalText: "Don't have an account? ",
                     actionText: "Sign Up",

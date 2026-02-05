@@ -7,7 +7,7 @@ import 'package:sumikanova/core/utils/reusablemethod.dart';
 class CustomBack extends StatelessWidget {
   const CustomBack({
     super.key,
-    required this.title,
+    this.title = '',
     this.onBack,
     this.trailingIcon,
     this.onTrailingTap,
@@ -46,13 +46,14 @@ class CustomBack extends StatelessWidget {
               child: Icon(Icons.arrow_back, color: iconClr, size: 20),
             ),
           ),
-        Expanded(
-          child: Text(
-            title.titleCase(),
-            style: style,
-            overflow: TextOverflow.ellipsis,
+        if (title.isNotEmpty)
+          Expanded(
+            child: Text(
+              title.titleCase(),
+              style: style,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
-        ),
         if (trailingIcon != null)
           GestureDetector(
             onTap: onTrailingTap,
