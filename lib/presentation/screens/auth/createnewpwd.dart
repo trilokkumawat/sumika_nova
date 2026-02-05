@@ -8,22 +8,22 @@ import 'package:sumikanova/core/utils/reusablemethod.dart';
 import 'package:sumikanova/core/widget/appbutton.dart';
 import 'package:sumikanova/core/widget/customback.dart';
 
-class ForgetScreen extends StatefulWidget {
-  const ForgetScreen({super.key});
+class CreateNewPwdScreen extends StatefulWidget {
+  const CreateNewPwdScreen({super.key});
 
   @override
-  State<ForgetScreen> createState() => _ForgetScreenState();
+  State<CreateNewPwdScreen> createState() => _CreateNewPwdScreenState();
 }
 
-class _ForgetScreenState extends State<ForgetScreen> {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+class _CreateNewPwdScreenState extends State<CreateNewPwdScreen> {
+  final TextEditingController pwdCtl = TextEditingController();
+  final TextEditingController cfmpwdCtl = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
+    cfmpwdCtl.dispose();
+    pwdCtl.dispose();
     super.dispose();
   }
 
@@ -51,13 +51,13 @@ class _ForgetScreenState extends State<ForgetScreen> {
                       spacing: 8,
                       children: [
                         Text(
-                          'Reset Password',
+                          'Create New Password',
                           style: TypographyFont.uih1bold.copyWith(
                             color: Colors.white,
                           ),
                         ),
                         Text(
-                          'Enter your email, we will send a verification code to your email',
+                          'Your password must be different from previous used password',
                           style: TypographyFont.uih3reg.copyWith(
                             color: Colors.white,
                           ),
@@ -84,13 +84,33 @@ class _ForgetScreenState extends State<ForgetScreen> {
                           spacing: 20,
                           children: [
                             CustomTxtFormField(
-                              controller: emailController,
-                              prefixIcon: Icons.email_outlined,
+                              controller: pwdCtl,
+                              prefixIcon: Icons.lock_outline_rounded,
                               showPrefixIcon: true,
-                              hintText: 'Email',
-                              labelText: 'Email',
+                              hintText: 'Password',
+                              labelText: 'Password',
+                              obscureText: true,
+                              showSuffixIcon: true,
                               validator: (value) {
-                                return validateEmail(value);
+                                return validationEmpty(
+                                  value,
+                                  'Enter your password',
+                                );
+                              },
+                            ),
+                            CustomTxtFormField(
+                              controller: cfmpwdCtl,
+                              prefixIcon: Icons.lock_outline_rounded,
+                              showPrefixIcon: true,
+                              hintText: 'Confirm Password',
+                              labelText: 'Confirm Password',
+                              obscureText: true,
+                              showSuffixIcon: true,
+                              validator: (value) {
+                                return validationEmpty(
+                                  value,
+                                  'Enter your confirm password',
+                                );
                               },
                             ),
                           ],
@@ -98,10 +118,10 @@ class _ForgetScreenState extends State<ForgetScreen> {
                       ],
                     ),
                     AppButton(
-                      text: 'Send Link',
+                      text: 'Reset Password',
                       onPressed: () {
                         if (formKey.currentState!.validate()) {
-                          context.push(RouteName.verify, extra: 'forget_pwd');
+                          context.go(RouteName.login);
                         }
                       },
                     ),

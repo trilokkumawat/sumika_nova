@@ -37,6 +37,7 @@ dependencies:
   go_router: ^17.0.0
   google_fonts: ^6.2.1
   pinput: ^6.0.2
+  rflutter_alert: ^2.0.7
 
 
 dev_dependencies:

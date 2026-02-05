@@ -8,4 +8,5 @@ class RouteName {
   static const String register = '/register';
   static const String forget = '/forget';
   static const String verify = '/verify';
+  static const String createnewpwd = '/createnewpwd';
 }

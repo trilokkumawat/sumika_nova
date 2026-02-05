@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
 import 'package:sumikanova/core/navigation/route_name.dart';
+import 'package:sumikanova/core/utils/custom_modal.dart';
 import 'package:sumikanova/core/utils/customtxtformfield.dart';
 import 'package:sumikanova/core/utils/reusablemethod.dart';
 import 'package:sumikanova/core/widget/appbutton.dart';
@@ -108,7 +109,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       Align(
                         alignment: Alignment.topRight,
                         child: InkWell(
-                          onTap: () {},
+                          onTap: () {
+                            context.push(RouteName.forget);
+                          },
                           child: Text(
                             'Forgot Password?',
                             style: TypographyFont.uih5bold.copyWith(
@@ -123,6 +126,16 @@ class _LoginScreenState extends State<LoginScreen> {
                     text: 'Sign In',
                     onPressed: () {
                       context.push(RouteName.verify);
+                      // showDialog(
+                      //   context: context,
+                      //   barrierColor: Colors.black.withValues(alpha: 0.4),
+
+                      //   builder: (context) => CustomModal(
+                      //     onPressed: () {
+                      //       context.go(RouteName.login);
+                      //     },
+                      //   ),
+                      // );
                     },
                   ),
                   CustomRichText(
