@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sumikanova/core/navigation/route_name.dart';
+import 'package:sumikanova/presentation/screens/auth/forget.dart';
+import 'package:sumikanova/presentation/screens/auth/login.dart';
+import 'package:sumikanova/presentation/screens/auth/register.dart';
 import 'package:sumikanova/presentation/screens/home.dart';
 import 'package:sumikanova/presentation/screens/onboarding.dart';
 import 'package:sumikanova/presentation/screens/splash.dart';
@@ -10,8 +13,7 @@ final GoRouter appRouter = GoRouter(
   routes: <RouteBase>[
     GoRoute(
       path: RouteName.splash,
-      builder: (BuildContext context, GoRouterState state) =>
-          const Splash(),
+      builder: (BuildContext context, GoRouterState state) => const Splash(),
     ),
     GoRoute(
       path: RouteName.onboarding,
@@ -20,8 +22,22 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: RouteName.home,
+      builder: (BuildContext context, GoRouterState state) => const Home(),
+    ),
+    GoRoute(
+      path: RouteName.login,
       builder: (BuildContext context, GoRouterState state) =>
-          const Home(),
+          const LoginScreen(),
+    ),
+    GoRoute(
+      path: RouteName.register,
+      builder: (BuildContext context, GoRouterState state) =>
+          const RegisterScreen(),
+    ),
+    GoRoute(
+      path: RouteName.forget,
+      builder: (BuildContext context, GoRouterState state) =>
+          const ForgetScreen(),
     ),
   ],
 );

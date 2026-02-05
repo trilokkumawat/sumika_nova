@@ -7,3 +7,6 @@
 ## models / serialization
 - freezed
 - json_serializable
+
+## rules
+- unused import line remove

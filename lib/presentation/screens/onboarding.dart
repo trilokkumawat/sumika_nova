@@ -21,7 +21,7 @@ class _OnboardingState extends State<Onboarding> {
   void _redirect() {
     debugPrint('done');
     if (!mounted) return;
-    context.go(RouteName.home);
+    context.go(RouteName.login);
   }
 
   void _nextSlide() {
