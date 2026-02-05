@@ -1,0 +1,9 @@
+## state management
+- riverpod
+
+## route
+- go_route
+
+## models / serialization
+- freezed
+- json_serializable
