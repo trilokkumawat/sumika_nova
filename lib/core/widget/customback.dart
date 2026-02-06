@@ -4,8 +4,10 @@ import 'package:go_router/go_router.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
 import 'package:sumikanova/core/utils/reusablemethod.dart';
+import 'package:sumikanova/core/widget/custom_divider.dart';
+import 'package:sumikanova/core/widget/popup_menu_item.dart';
 
-class CustomBack extends StatelessWidget {
+class CustomBack extends StatefulWidget {
   const CustomBack({
     super.key,
     this.title = '',
@@ -18,6 +20,7 @@ class CustomBack extends StatelessWidget {
     this.isAllowBack = false,
     this.padding,
     this.isPopupmenu = false,
+    this.onPopupMenuItemTap,
   });
 
   final String title;
@@ -30,22 +33,36 @@ class CustomBack extends StatelessWidget {
   final bool isAllowBack;
   final EdgeInsets? padding;
   final bool isPopupmenu;
+  final void Function(int index)? onPopupMenuItemTap;
+
+  @override
+  State<CustomBack> createState() => _CustomBackState();
+}
+
+class _CustomBackState extends State<CustomBack> {
+  void _onPopupItemTap(int index) {
+    if (mounted) {
+      Navigator.of(context).pop();
+    }
+    widget.onPopupMenuItemTap?.call(index);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final bg = backgroundColor ?? AppColor.blue10;
-    final iconClr = iconColor ?? AppColor.white;
-    final style =
-        titleStyle ?? TypographyFont.uih2bold.copyWith(color: AppColor.white);
+    final Color bg = widget.backgroundColor ?? AppColor.blue10;
+    final Color iconClr = widget.iconColor ?? AppColor.white;
+    final TextStyle style =
+        widget.titleStyle ??
+        TypographyFont.uih2bold.copyWith(color: AppColor.white);
 
     return Padding(
-      padding: padding ?? const EdgeInsets.all(0),
+      padding: widget.padding ?? const EdgeInsets.all(0),
       child: Row(
         spacing: 10,
-        children: [
-          if (isAllowBack)
+        children: <Widget>[
+          if (widget.isAllowBack)
             GestureDetector(
-              onTap: onBack ?? () => context.pop(),
+              onTap: widget.onBack ?? () => context.pop(),
               child: Container(
                 width: 40,
                 height: 40,
@@ -53,15 +70,15 @@ class CustomBack extends StatelessWidget {
                 child: Icon(Icons.arrow_back, color: iconClr, size: 24),
               ),
             ),
-          if (title.isNotEmpty)
+          if (widget.title.isNotEmpty)
             Expanded(
               child: Text(
-                title.titleCase(),
+                widget.title.titleCase(),
                 style: style,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-          if (isPopupmenu)
+          if (widget.isPopupmenu)
             CustomPopup(
               position: PopupPosition.bottom,
               showArrow: true,
@@ -84,19 +101,22 @@ class CustomBack extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    _PopupMenuItem(
+                    CustomPopupMenuItem(
                       iconPath: 'assets/icons/plug.png',
                       label: 'Add Device',
+                      onTap: () => _onPopupItemTap(0),
                     ),
-                    CustomDivider(context),
-                    _PopupMenuItem(
+                    CustomDivider(),
+                    CustomPopupMenuItem(
                       iconPath: 'assets/icons/checkbox.png',
                       label: 'Create Scene',
+                      onTap: () => _onPopupItemTap(1),
                     ),
-                    CustomDivider(context),
-                    _PopupMenuItem(
+                    CustomDivider(),
+                    CustomPopupMenuItem(
                       iconPath: 'assets/icons/scan.png',
                       label: 'Scan',
+                      onTap: () => _onPopupItemTap(2),
                     ),
                   ],
                 ),
@@ -106,7 +126,7 @@ class CustomBack extends StatelessWidget {
                 height: 30,
                 decoration: BoxDecoration(shape: BoxShape.circle, color: bg),
                 child: Icon(
-                  trailingIcon ?? Icons.add,
+                  widget.trailingIcon ?? Icons.add,
                   color: iconClr,
                   size: 20,
                 ),
@@ -116,51 +136,4 @@ class CustomBack extends StatelessWidget {
       ),
     );
   }
-}
-
-class _PopupMenuItem extends StatelessWidget {
-  const _PopupMenuItem({required this.iconPath, required this.label});
-
-  final String iconPath;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
-        children: <Widget>[
-          Image.asset(iconPath, width: 20, height: 20, fit: BoxFit.contain),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              label,
-              style: TypographyFont.uih5med.copyWith(color: AppColor.primary),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-CustomDivider(BuildContext context) {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.end,
-    children: [
-      Align(
-        alignment: Alignment.topRight,
-        child: Container(
-          width: MediaQuery.of(context).size.width / 2.9,
-          // height: 10,
-          decoration: BoxDecoration(
-            color: AppColor.primary,
-            border: const Border(
-              bottom: BorderSide(color: AppColor.gray12, width: 1.0),
-            ),
-          ),
-        ),
-      ),
-    ],
-  );
 }

@@ -44,6 +44,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       isPopupmenu: true,
                       title: 'Thomas Home',
                       padding: EdgeInsets.symmetric(horizontal: 16),
+                      onPopupMenuItemTap: (int index) {
+                        print(index);
+                      },
                     ),
                   ),
                 ],
