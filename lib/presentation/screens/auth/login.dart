@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
 import 'package:sumikanova/core/navigation/route_name.dart';
-import 'package:sumikanova/core/utils/custom_modal.dart';
 import 'package:sumikanova/core/utils/customtxtformfield.dart';
 import 'package:sumikanova/core/utils/reusablemethod.dart';
 import 'package:sumikanova/core/widget/appbutton.dart';
@@ -20,6 +19,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
@@ -71,87 +71,83 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
           Expanded(
-            child: Padding(
+            child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 50),
-              child: Column(
-                spacing: 32,
-                children: [
-                  Column(
-                    spacing: 10,
-                    children: [
-                      Column(
-                        spacing: 20,
-                        children: [
-                          CustomTxtFormField(
-                            controller: emailController,
-                            prefixIcon: Icons.email_outlined,
-                            showPrefixIcon: true,
-                            hintText: 'Email',
-                            labelText: 'Email',
-                            validator: (value) {
-                              return validateEmail(value);
+              child: Form(
+                key: formKey,
+                child: Column(
+                  spacing: 32,
+                  children: [
+                    Column(
+                      spacing: 10,
+                      children: [
+                        Column(
+                          spacing: 20,
+                          children: [
+                            CustomTxtFormField(
+                              controller: emailController,
+                              prefixIcon: Icons.email_outlined,
+                              showPrefixIcon: true,
+                              hintText: 'Email',
+                              labelText: 'Email',
+                              keyboardType: TextInputType.emailAddress,
+                              validator: (value) {
+                                return validateEmail(value);
+                              },
+                            ),
+                            CustomTxtFormField(
+                              controller: passwordController,
+                              prefixIcon: Icons.lock_outline_rounded,
+                              showPrefixIcon: true,
+                              hintText: 'Password',
+                              labelText: 'Password',
+                              obscureText: true,
+                              showSuffixIcon: true,
+                              validator: (value) {
+                                return validatePassword(value);
+                              },
+                            ),
+                          ],
+                        ),
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: InkWell(
+                            onTap: () {
+                              context.push(RouteName.forget);
                             },
-                          ),
-                          CustomTxtFormField(
-                            controller: emailController,
-                            prefixIcon: Icons.lock_outline_rounded,
-                            showPrefixIcon: true,
-                            hintText: 'Password',
-                            labelText: 'Password',
-                            obscureText: true,
-                            showSuffixIcon: true,
-                            validator: (value) {
-                              return validateEmail(value);
-                            },
-                          ),
-                        ],
-                      ),
-                      Align(
-                        alignment: Alignment.topRight,
-                        child: InkWell(
-                          onTap: () {
-                            context.push(RouteName.forget);
-                          },
-                          child: Text(
-                            'Forgot Password?',
-                            style: TypographyFont.uih5bold.copyWith(
-                              color: Color(0xFF455AF7),
+                            child: Text(
+                              'Forgot Password?',
+                              style: TypographyFont.uih5bold.copyWith(
+                                color: Color(0xFF455AF7),
+                              ),
                             ),
                           ),
                         ),
+                      ],
+                    ),
+                    AppButton(
+                      text: 'Sign In',
+                      onPressed: () {
+                        if (formKey.currentState!.validate()) {
+                          context.push(RouteName.verify);
+                        }
+                      },
+                    ),
+                    CustomRichText(
+                      normalText: "Don't have an account? ",
+                      actionText: "Sign Up",
+                      normalStyle: TypographyFont.uih5reg.copyWith(
+                        color: AppColor.gray11,
                       ),
-                    ],
-                  ),
-                  AppButton(
-                    text: 'Sign In',
-                    onPressed: () {
-                      context.push(RouteName.verify);
-                      // showDialog(
-                      //   context: context,
-                      //   barrierColor: Colors.black.withValues(alpha: 0.4),
-
-                      //   builder: (context) => CustomModal(
-                      //     onPressed: () {
-                      //       context.go(RouteName.login);
-                      //     },
-                      //   ),
-                      // );
-                    },
-                  ),
-                  CustomRichText(
-                    normalText: "Don't have an account? ",
-                    actionText: "Sign Up",
-                    normalStyle: TypographyFont.uih5reg.copyWith(
-                      color: AppColor.gray11,
+                      actionStyle: TypographyFont.uih5bold.copyWith(
+                        color: AppColor.blue11,
+                      ),
+                      onTap: () {
+                        context.push(RouteName.register);
+                      },
                     ),
-                    actionStyle: TypographyFont.uih5bold.copyWith(
-                      color: AppColor.blue11,
-                    ),
-                    onTap: () {
-                      context.push(RouteName.register);
-                    },
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

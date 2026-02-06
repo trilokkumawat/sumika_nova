@@ -40,10 +40,10 @@ class CustomBack extends StatelessWidget {
           GestureDetector(
             onTap: onBack ?? () => context.pop(),
             child: Container(
-              width: 30,
-              height: 30,
+              width: 40,
+              height: 40,
               decoration: BoxDecoration(shape: BoxShape.circle, color: bg),
-              child: Icon(Icons.arrow_back, color: iconClr, size: 20),
+              child: Icon(Icons.arrow_back, color: iconClr, size: 24),
             ),
           ),
         if (title.isNotEmpty)

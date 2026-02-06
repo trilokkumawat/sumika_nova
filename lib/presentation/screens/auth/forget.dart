@@ -70,7 +70,7 @@ class _ForgetScreenState extends State<ForgetScreen> {
             ),
           ),
           Expanded(
-            child: Padding(
+            child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 50),
               child: Form(
                 key: formKey,
@@ -89,6 +89,7 @@ class _ForgetScreenState extends State<ForgetScreen> {
                               showPrefixIcon: true,
                               hintText: 'Email',
                               labelText: 'Email',
+                              keyboardType: TextInputType.emailAddress,
                               validator: (value) {
                                 return validateEmail(value);
                               },

@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
 import 'package:sumikanova/core/navigation/route_name.dart';
+import 'package:sumikanova/core/utils/custom_modal.dart';
 import 'package:sumikanova/core/utils/customtxtformfield.dart';
 import 'package:sumikanova/core/utils/reusablemethod.dart';
 import 'package:sumikanova/core/widget/appbutton.dart';
@@ -70,7 +71,7 @@ class _CreateNewPwdScreenState extends State<CreateNewPwdScreen> {
             ),
           ),
           Expanded(
-            child: Padding(
+            child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 50),
               child: Form(
                 key: formKey,
@@ -91,12 +92,7 @@ class _CreateNewPwdScreenState extends State<CreateNewPwdScreen> {
                               labelText: 'Password',
                               obscureText: true,
                               showSuffixIcon: true,
-                              validator: (value) {
-                                return validationEmpty(
-                                  value,
-                                  'Enter your password',
-                                );
-                              },
+                              validator: validatePassword,
                             ),
                             CustomTxtFormField(
                               controller: cfmpwdCtl,
@@ -106,12 +102,8 @@ class _CreateNewPwdScreenState extends State<CreateNewPwdScreen> {
                               labelText: 'Confirm Password',
                               obscureText: true,
                               showSuffixIcon: true,
-                              validator: (value) {
-                                return validationEmpty(
-                                  value,
-                                  'Enter your confirm password',
-                                );
-                              },
+                              validator: (value) =>
+                                  validateConfirmPassword(value, pwdCtl.text),
                             ),
                           ],
                         ),
@@ -120,8 +112,19 @@ class _CreateNewPwdScreenState extends State<CreateNewPwdScreen> {
                     AppButton(
                       text: 'Reset Password',
                       onPressed: () {
-                        if (formKey.currentState!.validate()) {
-                          context.go(RouteName.login);
+                        // Run empty, password and confirm-password validation on tap
+                        final isValid = formKey.currentState!.validate();
+                        if (isValid) {
+                          showDialog(
+                            context: context,
+                            barrierColor: Colors.black.withValues(alpha: 0.4),
+
+                            builder: (context) => CustomModal(
+                              onPressed: () {
+                                context.go(RouteName.login);
+                              },
+                            ),
+                          );
                         }
                       },
                     ),

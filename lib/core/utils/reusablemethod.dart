@@ -27,6 +27,14 @@ String? validatePassword(String? value) {
   return null;
 }
 
+/// Validate confirm password matches the given [password]
+String? validateConfirmPassword(String? value, String? password) {
+  final emptyError = validationEmpty(value, 'Enter your confirm password');
+  if (emptyError != null) return emptyError;
+  if (value != password) return 'Passwords do not match';
+  return null;
+}
+
 String? validationEmpty(String? value, message) {
   if (value == null || value.isEmpty) {
     return message;

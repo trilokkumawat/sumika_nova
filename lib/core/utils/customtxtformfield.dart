@@ -273,8 +273,8 @@ class _CustomTxtFormFieldState extends State<CustomTxtFormField> {
         },
         child: Icon(
           _obscureText
-              ? Icons.visibility_outlined
-              : Icons.visibility_off_outlined,
+              ? Icons.visibility_off_outlined
+              : Icons.visibility_outlined,
           size: 24,
           color: _getIconColor(),
         ),

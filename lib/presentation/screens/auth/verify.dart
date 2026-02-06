@@ -8,8 +8,8 @@ import 'package:sumikanova/core/widget/appbutton.dart';
 import 'package:sumikanova/core/widget/customback.dart';
 
 class VerifyScreen extends StatefulWidget {
-  final String extra;
-  const VerifyScreen({super.key, required this.extra});
+  final String? extra;
+  const VerifyScreen({super.key, this.extra});
 
   @override
   State<VerifyScreen> createState() => _VerifyScreenState();
@@ -68,7 +68,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
             ),
           ),
           Expanded(
-            child: Padding(
+            child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 50),
               child: Form(
                 key: formKey,
