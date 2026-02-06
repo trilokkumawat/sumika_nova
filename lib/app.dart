@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
+import 'package:sumikanova/presentation/screens/home/home.dart';
 
 class AppState extends StatefulWidget {
   const AppState({super.key});
@@ -13,7 +14,7 @@ class _AppStateState extends State<AppState> {
   int _currentIndex = 0;
 
   static const List<Widget> _screens = <Widget>[
-    Home(),
+    HomeScreen(),
     About(),
     Contact(),
     Contact(),
@@ -130,14 +131,5 @@ class Contact extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Center(child: Text('Contact'));
-  }
-}
-
-class Home extends StatelessWidget {
-  const Home({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: Text('Home')));
   }
 }

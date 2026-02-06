@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sumikanova/core/navigation/route_name.dart';
-import 'package:sumikanova/presentation/screens/app.dart';
+import 'package:sumikanova/app.dart';
 import 'package:sumikanova/presentation/screens/auth/createnewpwd.dart';
 import 'package:sumikanova/presentation/screens/auth/forget.dart';
 import 'package:sumikanova/presentation/screens/auth/login.dart';
