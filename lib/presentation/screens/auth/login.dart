@@ -6,6 +6,7 @@ import 'package:sumikanova/core/constant/typography_font.dart';
 import 'package:sumikanova/core/navigation/route_name.dart';
 import 'package:sumikanova/core/utils/customtxtformfield.dart';
 import 'package:sumikanova/core/utils/reusablemethod.dart';
+import 'package:sumikanova/core/utils/snakbar.dart';
 import 'package:sumikanova/core/widget/appbutton.dart';
 import 'package:sumikanova/core/widget/customback.dart';
 import 'package:sumikanova/core/widget/customrichtext.dart';
@@ -43,12 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
               now.difference(_lastBackPress!).inSeconds >= 2) {
             _lastBackPress = now;
             if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: const Text('Tap again to exit'),
-                  behavior: SnackBarBehavior.fixed,
-                ),
-              );
+              SnakBarUtils.showSnakBar(context, 'Tap again to exit');
             }
           } else {
             SystemNavigator.pop();

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sumikanova/core/navigation/route_name.dart';
+import 'package:sumikanova/presentation/screens/app.dart';
 import 'package:sumikanova/presentation/screens/auth/createnewpwd.dart';
 import 'package:sumikanova/presentation/screens/auth/forget.dart';
 import 'package:sumikanova/presentation/screens/auth/login.dart';
 import 'package:sumikanova/presentation/screens/auth/register.dart';
 import 'package:sumikanova/presentation/screens/auth/verify.dart';
-import 'package:sumikanova/presentation/screens/home.dart';
 import 'package:sumikanova/presentation/screens/onboarding.dart';
 import 'package:sumikanova/presentation/screens/splash.dart';
 
@@ -23,8 +23,8 @@ final GoRouter appRouter = GoRouter(
           const Onboarding(),
     ),
     GoRoute(
-      path: RouteName.home,
-      builder: (BuildContext context, GoRouterState state) => const Home(),
+      path: RouteName.app,
+      builder: (BuildContext context, GoRouterState state) => const AppState(),
     ),
     GoRoute(
       path: RouteName.login,

@@ -197,7 +197,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                           if (widget.extra == 'forget_pwd') {
                             context.push(RouteName.createnewpwd);
                           } else {
-                            context.push(RouteName.home);
+                            context.push(RouteName.app);
                           }
                         }
                       },
