@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
+import 'package:sumikanova/core/navigation/route_name.dart';
+import 'package:sumikanova/core/utils/customheader.dart';
+import 'package:sumikanova/core/widget/appbutton.dart';
 import 'package:sumikanova/core/widget/custom_iot_type.dart';
 import 'package:sumikanova/core/widget/custom_switch.dart';
 import 'package:sumikanova/core/widget/customback.dart';
@@ -20,42 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: AppColor.white2,
       body: Column(
         children: <Widget>[
-          ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(24),
-              topRight: Radius.circular(24),
-            ),
-            child: SizedBox(
-              width: double.infinity,
-              height: appBarHeight,
-              child: Stack(
-                fit: StackFit.expand,
-                children: <Widget>[
-                  Container(color: AppColor.primary),
-                  Positioned.fill(
-                    child: Transform.rotate(
-                      angle: 3.141592653589793, // 180 degrees in radians
-                      child: Image.asset(
-                        'assets/icons/btmbg.png',
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  SafeArea(
-                    child: CustomBack(
-                      isAllowBack: false,
-                      isPopupmenu: true,
-                      title: 'Thomas Home',
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                      onPopupMenuItemTap: (int index) {
-                        print(index);
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+          CustomHeader(),
           Expanded(
             child: Column(
               spacing: 20,
@@ -72,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       boxShadow: [
                         BoxShadow(
                           color: AppColor.gray3.withValues(alpha: 0.3),
-                          blurRadius: 10,
+                          blurRadius: 20,
                           offset: const Offset(0, 10),
                         ),
                       ],
@@ -114,6 +83,29 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                   ),
+                ),
+                Column(
+                  spacing: 20,
+                  children: [
+                    Image.asset('assets/icons/empty.png'),
+                    Column(
+                      spacing: 10,
+                      children: [
+                        AppButton(
+                          text: 'Add Device',
+                          onPressed: () {},
+                          width: MediaQuery.of(context).size.width * 0.6,
+                        ),
+                        AppButton(
+                          text: 'Create Room',
+                          onPressed: () {
+                            context.push(RouteName.roomAdd);
+                          },
+                          width: MediaQuery.of(context).size.width * 0.6,
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ],
             ),

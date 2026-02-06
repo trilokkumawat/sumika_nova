@@ -9,4 +9,5 @@ class RouteName {
   static const String forget = '/forget';
   static const String verify = '/verify';
   static const String createnewpwd = '/createnewpwd';
+  static const String roomAdd = '/room-add';
 }

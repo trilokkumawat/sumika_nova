@@ -7,6 +7,7 @@ class AppButton extends StatelessWidget {
     super.key,
     required this.text,
     required this.onPressed,
+    this.width,
     this.height = 52,
     this.borderRadius = 12,
     this.textStyle,
@@ -15,6 +16,7 @@ class AppButton extends StatelessWidget {
   final String text;
   final VoidCallback? onPressed;
   final double height;
+  final double? width;
   final double borderRadius;
   final TextStyle? textStyle;
 
@@ -26,7 +28,7 @@ class AppButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: height,
-      width: double.infinity,
+      width: width ?? double.infinity,
       child: DecoratedBox(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(borderRadius),

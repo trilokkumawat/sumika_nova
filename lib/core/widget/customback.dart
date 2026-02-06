@@ -21,10 +21,13 @@ class CustomBack extends StatefulWidget {
     this.padding,
     this.isPopupmenu = false,
     this.onPopupMenuItemTap,
+    this.isSubmit = false,
+    this.onSubmit,
   });
 
   final String title;
   final VoidCallback? onBack;
+  final VoidCallback? onSubmit;
   final IconData? trailingIcon;
   final VoidCallback? onTrailingTap;
   final TextStyle? titleStyle;
@@ -34,7 +37,7 @@ class CustomBack extends StatefulWidget {
   final EdgeInsets? padding;
   final bool isPopupmenu;
   final void Function(int index)? onPopupMenuItemTap;
-
+  final bool isSubmit;
   @override
   State<CustomBack> createState() => _CustomBackState();
 }
@@ -76,6 +79,16 @@ class _CustomBackState extends State<CustomBack> {
                 widget.title.titleCase(),
                 style: style,
                 overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          if (widget.isSubmit)
+            GestureDetector(
+              onTap: widget.onSubmit ?? () {},
+              child: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(shape: BoxShape.circle, color: bg),
+                child: Icon(Icons.check, color: iconClr, size: 24),
               ),
             ),
           if (widget.isPopupmenu)
