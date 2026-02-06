@@ -21,7 +21,7 @@ class CustomSwitch extends StatefulWidget {
 }
 
 class _CustomSwitchState extends State<CustomSwitch> {
-  double get _width => widget.width ?? 40.0;
+  double get _width => widget.width ?? 35.0;
   double get _height => widget.height ?? 50.0;
   static const Color _onColor = Color(0xFF17DB94);
 
