@@ -75,70 +75,86 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
           ),
           Expanded(
-            child: Padding(
+            child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 50),
-              child: Column(
-                spacing: 32,
-                children: [
-                  Column(
-                    spacing: 20,
-                    children: [
-                      CustomTxtFormField(
-                        controller: nameCtl,
-                        prefixIcon: Icons.email_outlined,
-                        showPrefixIcon: true,
-                        hintText: 'Username',
-                        labelText: 'Username',
-                        validator: (value) {
-                          return validationEmpty(value, 'Enter your username');
-                        },
-                      ),
-                      CustomTxtFormField(
-                        controller: emailCtl,
-                        prefixIcon: Icons.lock_outline_rounded,
-                        showPrefixIcon: true,
-                        hintText: 'Password',
-                        labelText: 'Password',
-                        obscureText: true,
-                        showSuffixIcon: true,
-                        validator: (value) {
-                          return validatePassword(value);
-                        },
-                      ),
-                      CustomTxtFormField(
-                        controller: cfmpwdCtl,
-                        prefixIcon: Icons.lock_outline_rounded,
-                        showPrefixIcon: true,
-                        hintText: 'Confirm Password',
-                        labelText: 'Confirm Password',
-                        obscureText: true,
-                        showSuffixIcon: true,
-                        validator: (value) {
-                          return validatePassword(value);
-                        },
-                      ),
-                    ],
-                  ),
-                  AppButton(
-                    text: 'Sign In',
-                    onPressed: () {
-                      context.push(RouteName.verify);
-                    },
-                  ),
-                  CustomRichText(
-                    normalText: "Have an account? ",
-                    actionText: "Sign In",
-                    normalStyle: TypographyFont.uih5reg.copyWith(
-                      color: AppColor.gray11,
+              child: Form(
+                key: formKey,
+                child: Column(
+                  spacing: 32,
+                  children: [
+                    Column(
+                      spacing: 20,
+                      children: [
+                        CustomTxtFormField(
+                          controller: nameCtl,
+                          prefixIcon: Icons.person_outlined,
+                          showPrefixIcon: true,
+                          hintText: 'Username',
+                          labelText: 'Username',
+                          validator: (value) {
+                            return validationEmpty(value, 'Enter username');
+                          },
+                        ),
+                        CustomTxtFormField(
+                          controller: emailCtl,
+                          prefixIcon: Icons.email_outlined,
+                          showPrefixIcon: true,
+                          hintText: 'Email',
+                          labelText: 'Email',
+                          keyboardType: TextInputType.emailAddress,
+                          validator: (value) {
+                            return validateEmail(value);
+                          },
+                        ),
+                        CustomTxtFormField(
+                          controller: pwdCtl,
+                          prefixIcon: Icons.lock_outline_rounded,
+                          showPrefixIcon: true,
+                          hintText: 'Password',
+                          labelText: 'Password',
+                          obscureText: true,
+                          showSuffixIcon: true,
+                          validator: (value) {
+                            return validatePassword(value);
+                          },
+                        ),
+                        CustomTxtFormField(
+                          controller: cfmpwdCtl,
+                          prefixIcon: Icons.lock_outline_rounded,
+                          showPrefixIcon: true,
+                          hintText: 'Confirm Password',
+                          labelText: 'Confirm Password',
+                          obscureText: true,
+                          showSuffixIcon: true,
+                          validator: (value) {
+                            return validateConfirmPassword(value, pwdCtl.text);
+                          },
+                        ),
+                      ],
                     ),
-                    actionStyle: TypographyFont.uih5bold.copyWith(
-                      color: AppColor.blue11,
+                    AppButton(
+                      text: 'Sign In',
+                      onPressed: () {
+                        if (formKey.currentState!.validate()) {
+                          context.push(RouteName.verify);
+                        }
+                      },
                     ),
-                    onTap: () {
-                      context.pop();
-                    },
-                  ),
-                ],
+                    CustomRichText(
+                      normalText: "Have an account? ",
+                      actionText: "Sign In",
+                      normalStyle: TypographyFont.uih5reg.copyWith(
+                        color: AppColor.gray11,
+                      ),
+                      actionStyle: TypographyFont.uih5bold.copyWith(
+                        color: AppColor.blue11,
+                      ),
+                      onTap: () {
+                        context.pop();
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
