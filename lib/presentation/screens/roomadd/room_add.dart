@@ -108,9 +108,10 @@ class _RoomAddScreenState extends State<RoomAddScreen> {
                             borderRadius: BorderRadius.circular(4),
                             boxShadow: [
                               BoxShadow(
-                                color: AppColor.gray3.withValues(alpha: 0.3),
-                                blurRadius: 4,
+                                color: const Color(0x40C7C6C6),
+                                blurRadius: 6,
                                 offset: const Offset(0, 2),
+                                spreadRadius: 0,
                               ),
                             ],
                           ),

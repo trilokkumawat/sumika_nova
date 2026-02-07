@@ -24,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: AppColor.white2,
       body: Column(
         children: <Widget>[
-          CustomHeader(),
+          CustomHeader(title: 'Thomes Home'),
           Expanded(
             child: Column(
               spacing: 20,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
+import 'package:sumikanova/presentation/screens/activity/activity.dart';
 import 'package:sumikanova/presentation/screens/home/home.dart';
 
 class AppState extends StatefulWidget {
@@ -16,7 +17,7 @@ class _AppStateState extends State<AppState> {
   static const List<Widget> _screens = <Widget>[
     HomeScreen(),
     About(),
-    Contact(),
+    ActivityScreen(),
     Contact(),
   ];
 
