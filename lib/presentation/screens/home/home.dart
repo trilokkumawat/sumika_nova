@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/navigation/route_name.dart';
+import 'package:sumikanova/core/utils/snakbar.dart';
 import 'package:sumikanova/core/widget/customheader.dart';
 import 'package:sumikanova/core/widget/appbutton.dart';
 import 'package:sumikanova/core/widget/custom_iot_type.dart';
@@ -24,7 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: AppColor.white2,
       body: Column(
         children: <Widget>[
-          CustomHeader(title: 'Thomes Home'),
+          CustomHeader(title: 'Thomes Home', isPopupmenu: true),
           Expanded(
             child: Column(
               spacing: 20,
@@ -94,7 +95,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         AppButton(
                           text: 'Add Device',
                           onPressed: () {
-                            context.push(RouteName.addDevice);
+                            SnakBarUtils.showSnakBar(
+                              context,
+                              'Add Device feature is coming soon',
+                            );
+                            // context.push(RouteName.addDevice);
                           },
                           width: MediaQuery.of(context).size.width * 0.6,
                         ),

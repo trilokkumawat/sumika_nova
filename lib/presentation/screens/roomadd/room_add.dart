@@ -54,6 +54,12 @@ class _RoomAddScreenState extends State<RoomAddScreen> {
               onSubmit: () {
                 final isValid = formKey.currentState!.validate();
                 if (isValid) {
+                  roomList.add({
+                    'id': roomList.length + 1,
+                    'name': roomNameController.text,
+                  });
+                  roomNameController.clear();
+                  FocusScope.of(context).unfocus();
                   SnakBarUtils.showSnakBar(context, 'Room added successfully');
                 }
               },
@@ -73,7 +79,6 @@ class _RoomAddScreenState extends State<RoomAddScreen> {
                       hintText: 'Room Name',
                       labelText: 'Room Name',
                       hintColor: AppColor.black,
-
                       validator: (String? value) {
                         return validationEmpty(value, 'Enter room name');
                       },

@@ -27,7 +27,7 @@ class CustomPopupMenuItem extends StatelessWidget {
             Expanded(
               child: Text(
                 label,
-                style: TypographyFont.uih5med.copyWith(color: AppColor.primary),
+                style: TypographyFont.uih5reg.copyWith(color: AppColor.black),
               ),
             ),
           ],

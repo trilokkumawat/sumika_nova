@@ -1,5 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
+import 'package:sumikanova/core/navigation/route_name.dart';
+import 'package:sumikanova/core/utils/snakbar.dart';
 import 'package:sumikanova/core/widget/customback.dart';
 
 class CustomHeader extends StatefulWidget {
@@ -30,7 +35,7 @@ class _CustomHeaderState extends State<CustomHeader> {
     return ClipRRect(
       child: SizedBox(
         width: double.infinity,
-        height: 110,
+        height: Platform.isMacOS ? 110 : 90,
         child: Stack(
           // fit: StackFit.expand,
           children: <Widget>[
@@ -46,7 +51,7 @@ class _CustomHeaderState extends State<CustomHeader> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 60),
+              padding: EdgeInsets.only(top: Platform.isMacOS ? 60 : 40),
               child: CustomBack(
                 isAllowBack: widget.isAllowBack,
                 isPopupmenu: widget.isPopupmenu,
@@ -56,6 +61,25 @@ class _CustomHeaderState extends State<CustomHeader> {
                 onSubmit: widget.onSubmit,
                 onPopupMenuItemTap: (int index) {
                   print(index);
+                  if (index == 0) {
+                    // context.push(RouteName.addDevice);
+                    SnakBarUtils.showSnakBar(
+                      context,
+                      'Add Device feature is coming soon',
+                    );
+                  } else if (index == 1) {
+                    SnakBarUtils.showSnakBar(
+                      context,
+                      'Create Scene feature is coming soon',
+                    );
+                    // context.push(RouteName.createScene);
+                  } else if (index == 2) {
+                    // context.push(RouteName.scan);
+                    SnakBarUtils.showSnakBar(
+                      context,
+                      'Scan feature is coming soon',
+                    );
+                  }
                 },
               ),
             ),
