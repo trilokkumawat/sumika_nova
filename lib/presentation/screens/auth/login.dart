@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
 import 'package:sumikanova/core/navigation/route_name.dart';
+import 'package:sumikanova/core/services/secure_auth_storage.dart';
 import 'package:sumikanova/core/utils/customtxtformfield.dart';
 import 'package:sumikanova/core/utils/reusablemethod.dart';
 import 'package:sumikanova/core/utils/snakbar.dart';
@@ -148,9 +149,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       AppButton(
                         text: 'Sign In',
-                        onPressed: () {
+                        onPressed: () async {
                           if (formKey.currentState!.validate()) {
-                            context.push(RouteName.verify);
+                            await SecureAuthStorage.saveLogin();
+                            if (context.mounted) {
+                              context.push(RouteName.verify);
+                            }
                           }
                         },
                       ),

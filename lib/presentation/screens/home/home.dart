@@ -93,7 +93,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         AppButton(
                           text: 'Add Device',
-                          onPressed: () {},
+                          onPressed: () {
+                            context.push(RouteName.addDevice);
+                          },
                           width: MediaQuery.of(context).size.width * 0.6,
                         ),
                         AppButton(

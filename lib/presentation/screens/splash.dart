@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sumikanova/core/navigation/route_name.dart';
+import 'package:sumikanova/core/services/secure_auth_storage.dart';
 
 class Splash extends StatefulWidget {
   const Splash({super.key});
@@ -11,10 +12,15 @@ class Splash extends StatefulWidget {
 
 class _SplashState extends State<Splash> {
   Future<void> redirectToOnboarding() async {
-    await Future.delayed(const Duration(seconds: 2), () {
-      if (!mounted) return;
+    await Future.delayed(const Duration(seconds: 2));
+    if (!mounted) return;
+    final isLoggedIn = await SecureAuthStorage.isLoggedIn();
+    if (!mounted) return;
+    if (isLoggedIn) {
+      context.go(RouteName.app);
+    } else {
       context.go(RouteName.onboarding);
-    });
+    }
   }
 
   @override
