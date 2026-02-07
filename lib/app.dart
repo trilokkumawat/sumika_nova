@@ -3,6 +3,7 @@ import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
 import 'package:sumikanova/presentation/screens/activity/activity.dart';
 import 'package:sumikanova/presentation/screens/home/home.dart';
+import 'package:sumikanova/presentation/screens/setting/profile.dart';
 
 class AppState extends StatefulWidget {
   const AppState({super.key});
@@ -18,7 +19,7 @@ class _AppStateState extends State<AppState> {
     HomeScreen(),
     About(),
     ActivityScreen(),
-    Contact(),
+    ProfileScreen(),
   ];
 
   static const List<_NavItem> _navItems = <_NavItem>[
