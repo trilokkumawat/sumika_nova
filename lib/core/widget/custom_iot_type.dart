@@ -26,25 +26,27 @@ class CustomIotType extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bg =
-        backgroundColor ??
-        (index != null
-            ? (index!.isEven ? AppColor.white : AppColor.gray13)
-            : AppColor.white);
-    final iconClr = iconColor ?? AppColor.black;
     final txtClr = textColor ?? AppColor.black;
 
     return Container(
       width: width,
       padding: padding,
-      decoration: BoxDecoration(color: bg),
+      decoration: BoxDecoration(
+        color: label == '00' ? AppColor.white : AppColor.gray13,
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Align(
             alignment: Alignment.centerLeft,
-            child: Icon(icon, color: iconClr, size: 25),
+            child: Icon(
+              icon,
+              color: label == '00'
+                  ? AppColor.gray3
+                  : AppColor.black.withValues(alpha: 0.5),
+              size: 25,
+            ),
           ),
           Text(label, style: TypographyFont.uih7reg.copyWith(color: txtClr)),
         ],

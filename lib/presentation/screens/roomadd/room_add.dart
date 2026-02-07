@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
-import 'package:sumikanova/core/utils/customheader.dart';
+import 'package:sumikanova/core/widget/customheader.dart';
 import 'package:sumikanova/core/utils/customtxtformfield.dart';
 import 'package:sumikanova/core/utils/reusablemethod.dart';
 import 'package:sumikanova/core/utils/snakbar.dart';

@@ -30,7 +30,7 @@ class _CustomHeaderState extends State<CustomHeader> {
     return ClipRRect(
       child: SizedBox(
         width: double.infinity,
-        height: 100,
+        height: 110,
         child: Stack(
           // fit: StackFit.expand,
           children: <Widget>[

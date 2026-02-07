@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
-import 'package:sumikanova/core/utils/customheader.dart';
+import 'package:sumikanova/core/widget/customheader.dart';
 import 'package:sumikanova/core/widget/activitycard.dart';
 
 class ActivityScreen extends StatefulWidget {

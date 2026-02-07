@@ -27,39 +27,45 @@ class ProfileMenuCard extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          for (int i = 0; i < items.length; i++) ...[
-            if (i > 0) _buildDashedDivider(),
-            InkWell(
-              onTap: items[i].onTap,
-              borderRadius: BorderRadius.circular(12),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 14,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      items[i].label,
-                      style: TypographyFont.uih4med.copyWith(
-                        color: AppColor.black,
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(12),
+        clipBehavior: Clip.antiAlias,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (int i = 0; i < items.length; i++) ...[
+              if (i > 0) _buildDashedDivider(),
+              InkWell(
+                onTap: items[i].onTap,
+                splashColor: AppColor.gray3.withValues(alpha: 0.3),
+                highlightColor: AppColor.gray2.withValues(alpha: 0.2),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        items[i].label,
+                        style: TypographyFont.uih4med.copyWith(
+                          color: AppColor.black,
+                        ),
                       ),
-                    ),
-                    Icon(
-                      Icons.arrow_forward_ios_outlined,
-                      color: AppColor.gray4,
-                      size: 26,
-                    ),
-                  ],
+                      Icon(
+                        Icons.arrow_forward_ios_outlined,
+                        color: AppColor.gray4,
+                        size: 26,
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }

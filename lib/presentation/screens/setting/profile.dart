@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
-import 'package:sumikanova/core/utils/customheader.dart';
+import 'package:sumikanova/core/widget/customheader.dart';
 import 'package:sumikanova/core/widget/nicknamecard.dart';
 import 'package:sumikanova/core/widget/profilemenuitem.dart';
 
@@ -33,6 +33,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         label: 'Home Management',
                         onTap: () {
                           print('Home Management');
+                        },
+                      ),
+                      ProfileMenuItem(
+                        label: 'Logout',
+                        onTap: () {
+                          print('Logout Center');
                         },
                       ),
                       ProfileMenuItem(

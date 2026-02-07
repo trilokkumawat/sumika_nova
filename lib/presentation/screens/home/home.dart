@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/navigation/route_name.dart';
-import 'package:sumikanova/core/utils/customheader.dart';
+import 'package:sumikanova/core/widget/customheader.dart';
 import 'package:sumikanova/core/widget/appbutton.dart';
 import 'package:sumikanova/core/widget/custom_iot_type.dart';
 import 'package:sumikanova/core/widget/custom_switch.dart';
