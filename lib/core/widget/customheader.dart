@@ -14,7 +14,7 @@ class CustomHeader extends StatefulWidget {
   final String title;
   final bool isSubmit;
   final VoidCallback? onSubmit;
-
+  final Icon? submitIcon;
   const CustomHeader({
     super.key,
     this.appBarHeight = 0,
@@ -23,6 +23,7 @@ class CustomHeader extends StatefulWidget {
     this.title = '',
     this.isSubmit = false,
     this.onSubmit,
+    this.submitIcon,
   });
 
   @override
@@ -35,7 +36,7 @@ class _CustomHeaderState extends State<CustomHeader> {
     return ClipRRect(
       child: SizedBox(
         width: double.infinity,
-        height: Platform.isMacOS ? 110 : 90,
+        height: Platform.isIOS ? 100 : 90,
         child: Stack(
           // fit: StackFit.expand,
           children: <Widget>[
@@ -51,7 +52,7 @@ class _CustomHeaderState extends State<CustomHeader> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(top: Platform.isMacOS ? 60 : 40),
+              padding: EdgeInsets.only(top: Platform.isIOS ? 55 : 40),
               child: CustomBack(
                 isAllowBack: widget.isAllowBack,
                 isPopupmenu: widget.isPopupmenu,
@@ -59,6 +60,7 @@ class _CustomHeaderState extends State<CustomHeader> {
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 isSubmit: widget.isSubmit,
                 onSubmit: widget.onSubmit,
+                submitIcon: widget.submitIcon,
                 onPopupMenuItemTap: (int index) {
                   print(index);
                   if (index == 0) {

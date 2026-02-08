@@ -20,7 +20,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    final double appBarHeight = MediaQuery.sizeOf(context).height / 7.3;
     return Scaffold(
       backgroundColor: AppColor.white2,
       body: Column(
@@ -95,11 +94,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         AppButton(
                           text: 'Add Device',
                           onPressed: () {
-                            SnakBarUtils.showSnakBar(
-                              context,
-                              'Add Device feature is coming soon',
-                            );
-                            // context.push(RouteName.addDevice);
+                            // SnakBarUtils.showSnakBar(
+                            //   context,
+                            //   'Add Device feature is coming soon',
+                            // );
+                            context.push(RouteName.addDevice);
                           },
                           width: MediaQuery.of(context).size.width * 0.6,
                         ),

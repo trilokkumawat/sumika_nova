@@ -23,6 +23,7 @@ class CustomBack extends StatefulWidget {
     this.onPopupMenuItemTap,
     this.isSubmit = false,
     this.onSubmit,
+    this.submitIcon,
   });
 
   final String title;
@@ -38,6 +39,7 @@ class CustomBack extends StatefulWidget {
   final bool isPopupmenu;
   final void Function(int index)? onPopupMenuItemTap;
   final bool isSubmit;
+  final Icon? submitIcon;
   @override
   State<CustomBack> createState() => _CustomBackState();
 }
@@ -88,7 +90,9 @@ class _CustomBackState extends State<CustomBack> {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(shape: BoxShape.circle, color: bg),
-                child: Icon(Icons.check, color: iconClr, size: 24),
+                child:
+                    widget.submitIcon ??
+                    Icon(Icons.check, color: iconClr, size: 24),
               ),
             ),
           if (widget.isPopupmenu)
