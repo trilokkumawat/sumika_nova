@@ -41,16 +41,16 @@ class _CustomHeaderState extends State<CustomHeader> {
           // fit: StackFit.expand,
           children: <Widget>[
             Container(color: AppColor.primary),
-            Positioned.fill(
-              child: Transform.rotate(
-                angle: 3.141592653589793, // 180 degrees in radians
-                child: Image.asset(
-                  'assets/icons/btmbg.png',
-                  height: widget.appBarHeight,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
+            // Positioned.fill(
+            //   child: Transform.rotate(
+            //     angle: 3.141592653589793, // 180 degrees in radians
+            //     child: Image.asset(
+            //       'assets/icons/btmbg.png',
+            //       height: widget.appBarHeight,
+            //       fit: BoxFit.cover,
+            //     ),
+            //   ),
+            // ),
             Padding(
               padding: EdgeInsets.only(top: Platform.isIOS ? 55 : 40),
               child: CustomBack(
@@ -64,11 +64,11 @@ class _CustomHeaderState extends State<CustomHeader> {
                 onPopupMenuItemTap: (int index) {
                   print(index);
                   if (index == 0) {
-                    // context.push(RouteName.addDevice);
-                    SnakBarUtils.showSnakBar(
-                      context,
-                      'Add Device feature is coming soon',
-                    );
+                    context.push(RouteName.addDevice);
+                    // SnakBarUtils.showSnakBar(
+                    //   context,
+                    //   'Add Device feature is coming soon',
+                    // );
                   } else if (index == 1) {
                     SnakBarUtils.showSnakBar(
                       context,

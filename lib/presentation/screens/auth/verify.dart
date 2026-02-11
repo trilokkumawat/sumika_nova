@@ -4,6 +4,7 @@ import 'package:pinput/pinput.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
 import 'package:sumikanova/core/navigation/route_name.dart';
+import 'package:sumikanova/core/services/secure_auth_storage.dart';
 import 'package:sumikanova/core/widget/appbutton.dart';
 import 'package:sumikanova/core/widget/customback.dart';
 
@@ -192,12 +193,15 @@ class _VerifyScreenState extends State<VerifyScreen> {
                     ),
                     AppButton(
                       text: 'Continue',
-                      onPressed: () {
+                      onPressed: () async {
                         if (formKey.currentState!.validate()) {
                           if (widget.extra == 'forget_pwd') {
                             context.push(RouteName.createnewpwd);
                           } else {
-                            context.push(RouteName.app);
+                            await SecureAuthStorage.saveLogin();
+                            if (context.mounted) {
+                              context.push(RouteName.app);
+                            }
                           }
                         }
                       },

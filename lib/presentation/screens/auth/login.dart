@@ -55,7 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
           children: [
             Container(
               width: double.infinity,
-              height: 238,
+              height: MediaQuery.sizeOf(context).height / 3.6,
               color: AppColor.primary,
               child: SafeArea(
                 bottom: false,

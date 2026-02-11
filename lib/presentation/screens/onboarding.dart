@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sumikanova/core/constant/app_color.dart';
+import 'package:sumikanova/core/constant/typography_font.dart';
 import 'package:sumikanova/core/navigation/route_name.dart';
 
 class Onboarding extends StatefulWidget {
@@ -13,7 +15,7 @@ class Onboarding extends StatefulWidget {
 
 class _OnboardingState extends State<Onboarding> {
   static const _delaySeconds = 2;
-  static const _totalSlides = 4;
+  static const _totalSlides = 3;
 
   int _currentIndex = 0;
   Timer? _timer;
@@ -29,7 +31,7 @@ class _OnboardingState extends State<Onboarding> {
       setState(() => _currentIndex++);
     } else {
       _timer?.cancel();
-      Future.delayed(const Duration(seconds: _delaySeconds), () {
+      Future.delayed(Duration(seconds: _delaySeconds), () {
         _redirect();
       });
     }
@@ -67,30 +69,69 @@ class _OnboardingState extends State<Onboarding> {
           ),
           if (_currentIndex == 0)
             Center(
-              child: Image.asset(
-                'assets/icons/smartcontrol.png',
-                fit: BoxFit.cover,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'assets/icons/smartcontrol.png',
+                    fit: BoxFit.cover,
+                    width: 134,
+                    height: 137,
+                  ),
+                  Text(
+                    'Smart Control',
+                    style: TypographyFont.uih1bold.copyWith(
+                      color: AppColor.primary,
+                      fontSize: 48,
+                    ),
+                  ),
+                ],
               ),
             ),
           if (_currentIndex == 1)
             Center(
-              child: Image.asset(
-                'assets/icons/smartcontrol.png',
-                fit: BoxFit.cover,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'assets/icons/smartsecurity.png',
+                    fit: BoxFit.cover,
+                    width: 134,
+                    height: 137,
+                  ),
+                  Text(
+                    'Smart Security',
+                    style: TypographyFont.uih1bold.copyWith(
+                      color: AppColor.primary,
+                      fontSize: 48,
+                    ),
+                  ),
+                ],
               ),
             ),
+
           if (_currentIndex == 2)
             Center(
-              child: Image.asset(
-                'assets/icons/smartsecurity.png',
-                fit: BoxFit.cover,
-              ),
-            ),
-          if (_currentIndex == 3)
-            Center(
-              child: Image.asset(
-                'assets/icons/saveenergy.png',
-                fit: BoxFit.cover,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'assets/icons/saveenergy.png',
+                    fit: BoxFit.cover,
+                    width: 134,
+                    height: 137,
+                  ),
+                  Text(
+                    'Save Energy',
+                    style: TypographyFont.uih1bold.copyWith(
+                      color: AppColor.primary,
+                      fontSize: 48,
+                    ),
+                  ),
+                ],
               ),
             ),
         ],

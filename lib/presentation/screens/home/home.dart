@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/navigation/route_name.dart';
+import 'package:sumikanova/core/utils/date_helper.dart';
 import 'package:sumikanova/core/utils/snakbar.dart';
 import 'package:sumikanova/core/widget/customheader.dart';
 import 'package:sumikanova/core/widget/appbutton.dart';
@@ -30,7 +31,10 @@ class _HomeScreenState extends State<HomeScreen> {
               spacing: 20,
               children: [
                 SizedBox(height: 0),
-                SunsetCard(temperature: 20, dateLabel: 'Tuesday, 23 December'),
+                SunsetCard(
+                  temperature: DateHelper().tempratureFormat(20),
+                  dateLabel: DateHelper().formatFullDate(),
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Container(

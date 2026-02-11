@@ -77,9 +77,10 @@ class _SunsetCardState extends State<SunsetCard> {
               ),
             ),
             Positioned(
-              top: 4,
-              right: 0,
-              child: Image.asset(widget.sunAsset, width: 100, height: 100),
+              top: 20,
+              right: 15,
+              child: Icon(Icons.sunny, size: 50, color: AppColor.white),
+              //  Image.asset(widget.sunAsset, width: 100, height: 100),
             ),
           ],
         ),

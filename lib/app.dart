@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
-import 'package:sumikanova/presentation/screens/activity/activity.dart';
 import 'package:sumikanova/presentation/screens/home/home.dart';
-import 'package:sumikanova/presentation/screens/setting/profile.dart';
 
 class AppState extends StatefulWidget {
   const AppState({super.key});
@@ -17,9 +15,11 @@ class _AppStateState extends State<AppState> {
 
   static const List<Widget> _screens = <Widget>[
     HomeScreen(),
-    About(),
+    SceneScreen(),
     ActivityScreen(),
     ProfileScreen(),
+    // ActivityScreen(),
+    // ProfileScreen(),
   ];
 
   static const List<_NavItem> _navItems = <_NavItem>[
@@ -118,20 +118,29 @@ class _CustomNavTile extends StatelessWidget {
   }
 }
 
-class About extends StatelessWidget {
-  const About({super.key});
+class SceneScreen extends StatelessWidget {
+  const SceneScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: Text('About'));
+    return const Center(child: Text('Scene'));
   }
 }
 
-class Contact extends StatelessWidget {
-  const Contact({super.key});
+class ActivityScreen extends StatelessWidget {
+  const ActivityScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: Text('Contact'));
+    return const Center(child: Text('Activity'));
+  }
+}
+
+class ProfileScreen extends StatelessWidget {
+  const ProfileScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: Text('Profile'));
   }
 }
