@@ -1,22 +1,39 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/services/api_config.dart';
 import 'package:sumikanova/core/services/secure_auth_storage.dart';
-import 'package:sumikanova/core/utils/snakbar.dart';
 import 'package:sumikanova/presentation/screens/auth/loginstate.dart';
 
 class AuthController extends StateNotifier<AuthState> {
   AuthController() : super(AuthState());
 
-  Future<void> login(String email, String password) async {
+  Future<Map<String, dynamic>?> login(String email, String password) async {
     state = state.copyWith(isLoading: true, error: null);
+    try {
+      final response = await SumikiNovaApi.loginCall.call(
+        email: email,
+        password: password,
+      );
+      if (response.succeeded) {
+        final data = response.jsonBody['data'];
+        await SecureAuthStorage.saveLogin(token: data['token']);
+        await SecureAuthStorage.saveUserData(data['user']);
+        state = state.copyWith(
+          isLoading: false,
+          message: response.jsonBody['message'],
+        );
 
-    await Future.delayed(const Duration(seconds: 2));
-
-    if (email == "admin@gmail.com" && password == "123456") {
-      state = state.copyWith(isLoading: false, isLoggedIn: true);
-    } else {
-      state = state.copyWith(isLoading: false, error: "Invalid credentials");
+        return data;
+      } else {
+        final errorMsg = _extractErrorMessage(response);
+        state = state.copyWith(isLoading: false, error: errorMsg);
+        return null;
+      }
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        error: 'Something went wrong. Please try again.',
+      );
+      return null;
     }
   }
 
@@ -36,11 +53,11 @@ class AuthController extends StateNotifier<AuthState> {
         passwordConfirmation: password,
       );
       if (response.succeeded) {
+        final data = response.jsonBody['data'];
+        await SecureAuthStorage.saveLogin(token: data['token']);
+        await SecureAuthStorage.saveUserData(data['user']);
         state = state.copyWith(isLoading: false);
-        response.jsonBody.addAll({'email': email});
-        return response.jsonBody is Map<String, dynamic>
-            ? response.jsonBody as Map<String, dynamic>
-            : <String, dynamic>{'data': response.jsonBody};
+        return data;
       } else {
         final errorMsg = _extractErrorMessage(response);
         state = state.copyWith(isLoading: false, error: errorMsg);

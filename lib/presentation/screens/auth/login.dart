@@ -11,6 +11,7 @@ import 'package:sumikanova/core/utils/snakbar.dart';
 import 'package:sumikanova/core/widget/appbutton.dart';
 import 'package:sumikanova/core/widget/customback.dart';
 import 'package:sumikanova/core/widget/customrichtext.dart';
+import 'package:sumikanova/presentation/screens/auth/provider.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -34,6 +35,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authStateWatch = ref.watch(authProvider);
+    final authStateRead = ref.read(authProvider.notifier);
     return Scaffold(
       backgroundColor: AppColor.white,
       body: PopScope(
@@ -148,10 +151,29 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ],
                       ),
                       AppButton(
-                        text: 'Sign In',
-                        onPressed: () {
-                          context.push(RouteName.verify);
-                        },
+                        text: authStateWatch.isLoading
+                            ? 'Sign In...'
+                            : 'Sign In',
+                        onPressed: authStateWatch.isLoading
+                            ? null
+                            : () async {
+                                if (!formKey.currentState!.validate()) return;
+                                final email = emailController.text.trim();
+                                final password = passwordController.text.trim();
+                                final data = await authStateRead.login(
+                                  email,
+                                  password,
+                                );
+                                if (data != null && mounted) {
+                                  SnakBarUtils.showSnakBar(
+                                    context,
+                                    authStateWatch.message ?? '',
+                                    bgcolor: AppColor.green,
+                                    textColor: Colors.white,
+                                  );
+                                  context.go(RouteName.app);
+                                }
+                              },
                       ),
                       CustomRichText(
                         normalText: "Don't have an account? ",
