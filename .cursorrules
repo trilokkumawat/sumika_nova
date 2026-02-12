@@ -1,12 +1,31 @@
-## state management
-- riverpod
+# sumika_nova — project rules
 
-## route
-- go_route
+## package
+- Package name: `sumikanova`. Use `package:sumikanova/...` for internal imports.
+
+## project structure
+- `lib/core/` — shared code: `constant/` (AppColor, TypographyFont, app_theme), `navigation/`, `services/`, `utils/`, `widget/`.
+- `lib/presentation/screens/` — feature screens: `auth/`, `device/`, `home/`, `activity/`, `setting/`, `roomadd/`, etc.
+- New screens go under `presentation/screens/<feature>/`; shared UI in `core/widget/`, helpers in `core/utils/`.
+
+## routing
+- Use **go_router**. Routes live in `lib/core/navigation/`: `routeconfig.dart` (GoRouter + route list), `route_name.dart` (path constants).
+- Use `RouteName.*` for navigation (e.g. `context.push(RouteName.login)`). Add new paths to `RouteName` and a matching `GoRoute` in `routeconfig.dart`.
+
+## state management
+- Use **Riverpod** for state management (app-wide and per-feature).
+
+## API / services
+- HTTP: **Dio**. API entry point: `lib/core/services/api_config.dart` (SumikiNovaApi, ApiCallResponse, ApiException).
+- Endpoint names in `api_name.dart`. Auth persistence: `secure_auth_storage.dart`.
 
 ## models / serialization
-- freezed
-- json_serializable
+- For new DTOs or API models, use **freezed** and **json_serializable** (add as dev_dependencies when introducing).
+
+## theming / UI
+- Use `AppColor` and `TypographyFont` from `lib/core/constant/` for colors and text styles. Use existing `core/widget/` components where they fit.
 
 ## rules
-- unused import line remove
+- Remove unused import lines.
+- Prefer `const` constructors and widgets where possible.
+- Use `flutter_lints` (see `analysis_options.yaml`).

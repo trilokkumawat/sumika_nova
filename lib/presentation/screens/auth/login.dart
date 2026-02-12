@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
 import 'package:sumikanova/core/navigation/route_name.dart';
-import 'package:sumikanova/core/services/secure_auth_storage.dart';
+import 'package:sumikanova/core/services/api_config.dart';
 import 'package:sumikanova/core/utils/customtxtformfield.dart';
 import 'package:sumikanova/core/utils/reusablemethod.dart';
 import 'package:sumikanova/core/utils/snakbar.dart';
@@ -12,14 +13,16 @@ import 'package:sumikanova/core/widget/appbutton.dart';
 import 'package:sumikanova/core/widget/customback.dart';
 import 'package:sumikanova/core/widget/customrichtext.dart';
 
-class LoginScreen extends StatefulWidget {
+import 'login_provider.dart';
+
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -34,6 +37,23 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loginState = ref.watch(loginNotifierProvider);
+
+    ref.listen<AsyncValue<void>>(loginNotifierProvider, (prev, next) {
+      if (prev?.isLoading == true && next.hasValue && context.mounted) {
+        context.push(RouteName.verify);
+      }
+      next.whenOrNull(
+        error: (err, _) {
+          if (context.mounted) {
+            final message =
+                err is ApiException ? err.message : err.toString();
+            SnakBarUtils.showSnakBar(context, message);
+          }
+        },
+      );
+    });
+
     return Scaffold(
       backgroundColor: AppColor.white,
       body: PopScope(
@@ -149,14 +169,18 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       AppButton(
                         text: 'Sign In',
-                        onPressed: () async {
-                          if (formKey.currentState!.validate()) {
-                            await SecureAuthStorage.saveLogin();
-                            if (context.mounted) {
-                              context.push(RouteName.verify);
-                            }
-                          }
-                        },
+                        onPressed: loginState.isLoading
+                            ? null
+                            : () async {
+                                if (formKey.currentState!.validate()) {
+                                  await ref
+                                      .read(loginNotifierProvider.notifier)
+                                      .login(
+                                        emailController.text.trim(),
+                                        passwordController.text,
+                                      );
+                                }
+                              },
                       ),
                       CustomRichText(
                         normalText: "Don't have an account? ",
