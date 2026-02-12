@@ -23,7 +23,6 @@ class CustomIotType extends StatelessWidget {
   final Color? textColor;
   final double width;
   final EdgeInsets padding;
-
   @override
   Widget build(BuildContext context) {
     final txtClr = textColor ?? AppColor.black;

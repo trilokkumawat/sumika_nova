@@ -35,56 +35,61 @@ class _HomeScreenState extends State<HomeScreen> {
                   temperature: DateHelper().tempratureFormat(20),
                   dateLabel: DateHelper().formatFullDate(),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Container(
-                    padding: const EdgeInsets.only(left: 16, right: 5),
-                    decoration: BoxDecoration(
-                      color: AppColor.white,
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColor.gray3.withValues(alpha: 0.3),
-                          blurRadius: 20,
-                          offset: const Offset(0, 10),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          spacing: 4,
-                          children: [
-                            Image.asset('assets/icons/kitchen.png'),
-                            Text(
-                              'Kitchen',
-                              style: TextStyle(color: AppColor.black),
-                            ),
-                          ],
-                        ),
-                        const Spacer(),
-                        CustomIotType(
-                          icon: Icons.lightbulb_outline,
-                          label: '04',
-                          index: 0,
-                        ),
-                        CustomIotType(icon: Icons.air, label: '00', index: 1),
-                        CustomIotType(
-                          icon: Icons.vertical_split,
-                          label: '00',
-                          index: 2,
-                        ),
-                        CustomIotType(
-                          icon: Icons.ac_unit,
-                          label: '00',
-                          index: 3,
-                        ),
-                        const SizedBox(width: 5),
-                        CustomSwitch(
-                          height: MediaQuery.of(context).size.height * 0.06,
-                        ),
-                      ],
+                InkWell(
+                  onTap: () {
+                    context.push(RouteName.deviceDetails);
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Container(
+                      padding: const EdgeInsets.only(left: 16, right: 5),
+                      decoration: BoxDecoration(
+                        color: AppColor.white,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColor.gray3.withValues(alpha: 0.3),
+                            blurRadius: 20,
+                            offset: const Offset(0, 10),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            spacing: 4,
+                            children: [
+                              Image.asset('assets/icons/kitchen.png'),
+                              Text(
+                                'Kitchen',
+                                style: TextStyle(color: AppColor.black),
+                              ),
+                            ],
+                          ),
+                          const Spacer(),
+                          CustomIotType(
+                            icon: Icons.lightbulb_outline,
+                            label: '04',
+                            index: 0,
+                          ),
+                          CustomIotType(icon: Icons.air, label: '00', index: 1),
+                          CustomIotType(
+                            icon: Icons.vertical_split,
+                            label: '00',
+                            index: 2,
+                          ),
+                          CustomIotType(
+                            icon: Icons.ac_unit,
+                            label: '00',
+                            index: 3,
+                          ),
+                          const SizedBox(width: 5),
+                          CustomSwitch(
+                            height: MediaQuery.of(context).size.height * 0.06,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

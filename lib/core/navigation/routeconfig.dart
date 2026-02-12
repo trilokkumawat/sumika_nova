@@ -8,6 +8,7 @@ import 'package:sumikanova/presentation/screens/auth/login.dart';
 import 'package:sumikanova/presentation/screens/auth/register.dart';
 import 'package:sumikanova/presentation/screens/auth/verify.dart';
 import 'package:sumikanova/presentation/screens/device/add_device.dart';
+import 'package:sumikanova/presentation/screens/device/device_details.dart';
 import 'package:sumikanova/presentation/screens/onboarding.dart';
 import 'package:sumikanova/presentation/screens/roomadd/room_add.dart';
 import 'package:sumikanova/presentation/screens/splash.dart';
@@ -62,6 +63,11 @@ final GoRouter appRouter = GoRouter(
       path: RouteName.addDevice,
       builder: (BuildContext context, GoRouterState state) =>
           const AddDeviceScreen(),
+    ),
+    GoRoute(
+      path: RouteName.deviceDetails,
+      builder: (BuildContext context, GoRouterState state) =>
+          DeviceDetailsScreen(deviceid: state.extra as String?),
     ),
   ],
 );

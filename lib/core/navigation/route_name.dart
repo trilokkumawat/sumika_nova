@@ -11,4 +11,6 @@ class RouteName {
   static const String createnewpwd = '/createnewpwd';
   static const String roomAdd = '/room-add';
   static const String addDevice = '/add-device';
+
+  static String deviceDetails = '/device-details';
 }

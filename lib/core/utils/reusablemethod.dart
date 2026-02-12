@@ -1,3 +1,8 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:sumikanova/core/navigation/route_name.dart';
+import 'package:sumikanova/core/services/secure_auth_storage.dart';
+
 String? validateEmail(String? value, {String? msg}) {
   if (value == null || value.trim().isEmpty) {
     return msg ?? 'Enter your email address';
@@ -67,4 +72,11 @@ String getGreeting() {
   if (hour < 17) return 'Good Afternoon';
   if (hour < 21) return 'Good Evening';
   return 'Good Night';
+}
+
+void logout(BuildContext context) async {
+  await SecureAuthStorage.clear();
+  if (context.mounted) {
+    context.go(RouteName.login);
+  }
 }

@@ -1,0 +1,343 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
+
+import 'api_name.dart';
+import 'secure_auth_storage.dart';
+
+enum ApiCallType { GET, POST, DELETE, PUT, PATCH }
+
+class ApiCallResponse {
+  const ApiCallResponse(
+    this.jsonBody,
+    this.headers,
+    this.statusCode, {
+    this.exception,
+  });
+
+  final dynamic jsonBody;
+  final Map<String, String> headers;
+  final int statusCode;
+  final Object? exception;
+
+  bool get succeeded => statusCode >= 200 && statusCode < 300;
+
+  String getHeader(String headerName) => headers[headerName] ?? '';
+
+  String get bodyText =>
+      jsonBody is String ? jsonBody as String : jsonEncode(jsonBody ?? {});
+
+  String get exceptionMessage => exception?.toString() ?? '';
+}
+
+/// MDL-style check: response succeeded and has non-empty data list.
+bool apicheckJsonNull(ApiCallResponse response) {
+  if (response.succeeded &&
+      response.jsonBody != null &&
+      response.jsonBody is Map &&
+      response.jsonBody['data'] != null &&
+      response.jsonBody['data'] is List &&
+      (response.jsonBody['data'] as List).isNotEmpty) {
+    return true;
+  }
+  return false;
+}
+
+class ApiException implements Exception {
+  const ApiException(this.message, {this.statusCode, this.original});
+
+  final String message;
+  final int? statusCode;
+  final dynamic original;
+
+  @override
+  String toString() =>
+      'ApiException: $message${statusCode != null ? ' (status: $statusCode)' : ''}';
+}
+
+class SumikiNovaApi {
+  SumikiNovaApi._();
+
+  static String getBaseUrl() => 'http://5.9.161.137/~logiccar/sumika/api/';
+
+  static final Dio _dio = Dio(
+    BaseOptions(
+      baseUrl: getBaseUrl(),
+      connectTimeout: const Duration(seconds: 30),
+      receiveTimeout: const Duration(seconds: 30),
+      sendTimeout: const Duration(seconds: 30),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+    ),
+  );
+
+  static Dio get dio => _dio;
+
+  static final SendMessageCall sendMessageCall = SendMessageCall();
+  static final RegisterCall registerCall = RegisterCall();
+  static final LoginCall loginCall = LoginCall();
+  static final VerifyOtpCall verifyOtpCall = VerifyOtpCall();
+  static final ForgotPasswordCall forgotPasswordCall = ForgotPasswordCall();
+  static final ResetPasswordCall resetPasswordCall = ResetPasswordCall();
+  static final ChangePasswordCall changePasswordCall = ChangePasswordCall();
+}
+
+/// Builds headers with optional Bearer token from [SecureAuthStorage].
+Future<Map<String, String>> buildApiHeaders() async {
+  final headers = <String, String>{
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  };
+  final token = await SecureAuthStorage.getToken();
+  if (token != null && token.isNotEmpty) {
+    headers['Authorization'] = 'Bearer $token';
+  }
+  return headers;
+}
+
+/// Dio-based implementation of MDL-style makeApiCall. Reference for adding more endpoints.
+Future<ApiCallResponse> makeApiCall({
+  required String apiUrl,
+  required ApiCallType callType,
+  Map<String, dynamic> headers = const {},
+  Map<String, dynamic> params = const {},
+  dynamic body,
+  bool returnBody = true,
+}) async {
+  final h = Map<String, String>.from(
+    headers.isEmpty
+        ? await buildApiHeaders()
+        : headers.map((k, v) => MapEntry(k, v.toString())),
+  );
+
+  try {
+    switch (callType) {
+      case ApiCallType.GET:
+        final response = await SumikiNovaApi.dio.get<dynamic>(
+          apiUrl,
+          queryParameters: params.isNotEmpty ? params : null,
+          options: Options(headers: h),
+        );
+        return _toApiCallResponse(response, returnBody);
+      case ApiCallType.POST:
+        final response = await SumikiNovaApi.dio.post<dynamic>(
+          apiUrl,
+          queryParameters: params.isNotEmpty ? params : null,
+          data: body,
+          options: Options(headers: h),
+        );
+        return _toApiCallResponse(response, returnBody);
+      case ApiCallType.PUT:
+        final response = await SumikiNovaApi.dio.put<dynamic>(
+          apiUrl,
+          queryParameters: params.isNotEmpty ? params : null,
+          data: body,
+          options: Options(headers: h),
+        );
+        return _toApiCallResponse(response, returnBody);
+      case ApiCallType.PATCH:
+        final response = await SumikiNovaApi.dio.patch<dynamic>(
+          apiUrl,
+          queryParameters: params.isNotEmpty ? params : null,
+          data: body,
+          options: Options(headers: h),
+        );
+        return _toApiCallResponse(response, returnBody);
+      case ApiCallType.DELETE:
+        final response = await SumikiNovaApi.dio.delete<dynamic>(
+          apiUrl,
+          queryParameters: params.isNotEmpty ? params : null,
+          data: body,
+          options: Options(headers: h),
+        );
+        return _toApiCallResponse(response, returnBody);
+    }
+  } on DioException catch (e) {
+    final statusCode = e.response?.statusCode ?? -1;
+    final responseHeaders =
+        e.response?.headers.map.map((k, v) => MapEntry(k, v.join(','))) ??
+        <String, String>{};
+    dynamic jsonBody;
+    try {
+      if (e.response?.data != null) {
+        jsonBody = e.response!.data is Map
+            ? e.response!.data
+            : jsonDecode(e.response!.data.toString());
+      }
+    } catch (_) {
+      jsonBody = e.response?.data?.toString();
+    }
+    return ApiCallResponse(jsonBody, responseHeaders, statusCode, exception: e);
+  } catch (e) {
+    return ApiCallResponse(null, {}, -1, exception: e);
+  }
+}
+
+ApiCallResponse _toApiCallResponse(
+  Response<dynamic> response,
+  bool returnBody,
+) {
+  final statusCode = response.statusCode ?? 0;
+  final headers = response.headers.map.map((k, v) => MapEntry(k, v.join(',')));
+  return ApiCallResponse(
+    returnBody ? response.data : null,
+    headers,
+    statusCode,
+  );
+}
+
+class SendMessageCall {
+  Future<ApiCallResponse> call({
+    String? user = '',
+    String? contact = '',
+    String? messageContent = '',
+    String? conversation = '',
+  }) async {
+    final baseUrl = SumikiNovaApi.getBaseUrl();
+    final body = <String, String>{
+      'User': user ?? '',
+      'Contact': contact ?? '',
+      'Message Content': messageContent ?? '',
+      'Conversation': conversation ?? '',
+    };
+    return makeApiCall(
+      apiUrl: '${baseUrl}send_twilio_sms',
+      callType: ApiCallType.POST,
+      params: {},
+      body: body,
+      returnBody: true,
+    );
+  }
+}
+
+/// POST BASE_PATH/register — name, email, password, password_confirmation
+class RegisterCall {
+  Future<ApiCallResponse> call({
+    required String name,
+    required String email,
+    required String password,
+    required String passwordConfirmation,
+  }) async {
+    final baseUrl = SumikiNovaApi.getBaseUrl();
+    final body = <String, String>{
+      'name': name,
+      'email': email,
+      'password': password,
+      'password_confirmation': passwordConfirmation,
+    };
+    return makeApiCall(
+      apiUrl: '${baseUrl}${ApiName.signUp}',
+      callType: ApiCallType.POST,
+      body: body,
+      returnBody: true,
+    );
+  }
+}
+
+/// POST BASE_PATH/login — email, password
+class LoginCall {
+  Future<ApiCallResponse> call({
+    required String email,
+    required String password,
+  }) async {
+    final baseUrl = SumikiNovaApi.getBaseUrl();
+    final body = <String, String>{
+      'email': email,
+      'password': password,
+    };
+    return makeApiCall(
+      apiUrl: '${baseUrl}${ApiName.signIn}',
+      callType: ApiCallType.POST,
+      body: body,
+      returnBody: true,
+    );
+  }
+}
+
+/// POST BASE_PATH/verify-register-otp — email, otp
+class VerifyOtpCall {
+  Future<ApiCallResponse> call({
+    required String email,
+    required String otp,
+  }) async {
+    final baseUrl = SumikiNovaApi.getBaseUrl();
+    final body = <String, String>{
+      'email': email,
+      'otp': otp,
+    };
+    return makeApiCall(
+      apiUrl: '${baseUrl}${ApiName.verifyotp}',
+      callType: ApiCallType.POST,
+      body: body,
+      returnBody: true,
+    );
+  }
+}
+
+/// POST BASE_PATH/forgot-password — email
+class ForgotPasswordCall {
+  Future<ApiCallResponse> call({
+    required String email,
+  }) async {
+    final baseUrl = SumikiNovaApi.getBaseUrl();
+    final body = <String, String>{
+      'email': email,
+    };
+    return makeApiCall(
+      apiUrl: '${baseUrl}${ApiName.forgetpassword}',
+      callType: ApiCallType.POST,
+      body: body,
+      returnBody: true,
+    );
+  }
+}
+
+/// POST BASE_PATH/reset-password — email, otp, password, password_confirmation
+class ResetPasswordCall {
+  Future<ApiCallResponse> call({
+    required String email,
+    required String otp,
+    required String password,
+    required String passwordConfirmation,
+  }) async {
+    final baseUrl = SumikiNovaApi.getBaseUrl();
+    final body = <String, String>{
+      'email': email,
+      'otp': otp,
+      'password': password,
+      'password_confirmation': passwordConfirmation,
+    };
+    return makeApiCall(
+      apiUrl: '${baseUrl}${ApiName.resetpassword}',
+      callType: ApiCallType.POST,
+      body: body,
+      returnBody: true,
+    );
+  }
+}
+
+/// POST BASE_PATH/change-password — Authorization: Bearer required; current_password, password, password_confirmation
+class ChangePasswordCall {
+  Future<ApiCallResponse> call({
+    required String currentPassword,
+    required String password,
+    required String passwordConfirmation,
+  }) async {
+    final baseUrl = SumikiNovaApi.getBaseUrl();
+    final headers = await buildApiHeaders();
+    final body = <String, String>{
+      'current_password': currentPassword,
+      'password': password,
+      'password_confirmation': passwordConfirmation,
+    };
+    return makeApiCall(
+      apiUrl: '${baseUrl}${ApiName.changepassword}',
+      callType: ApiCallType.POST,
+      headers: headers,
+      body: body,
+      returnBody: true,
+    );
+  }
+}
