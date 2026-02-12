@@ -1,24 +1,54 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pinput/pinput.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
 import 'package:sumikanova/core/navigation/route_name.dart';
 import 'package:sumikanova/core/services/secure_auth_storage.dart';
+import 'package:sumikanova/core/utils/snakbar.dart';
 import 'package:sumikanova/core/widget/appbutton.dart';
 import 'package:sumikanova/core/widget/customback.dart';
+import 'package:sumikanova/presentation/screens/auth/provider.dart';
 
-class VerifyScreen extends StatefulWidget {
+class VerifyScreen extends ConsumerStatefulWidget {
   final String? extra;
-  const VerifyScreen({super.key, this.extra});
+  final Map<String, dynamic>? extraData;
+  const VerifyScreen({super.key, this.extra, this.extraData});
 
   @override
-  State<VerifyScreen> createState() => _VerifyScreenState();
+  ConsumerState<VerifyScreen> createState() => _VerifyScreenState();
 }
 
-class _VerifyScreenState extends State<VerifyScreen> {
+class _VerifyScreenState extends ConsumerState<VerifyScreen> {
   final TextEditingController _pinController = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  String? _errorText;
+
+  /// Extract OTP from the API response data.
+  /// Checks common paths: data.otp, otp
+  String? get _serverOtp {
+    final data = widget.extraData;
+    if (data == null) return null;
+    // Try nested: { "data": { "otp": "1234" } }
+    if (data['data'] is Map && data['data']['otp'] != null) {
+      return data['data']['otp'].toString();
+    }
+    // Try top-level: { "otp": "1234" }
+    if (data['otp'] != null) return data['otp'].toString();
+    return null;
+  }
+
+  /// Extract email from the API response data.
+  String? get _email {
+    final data = widget.extraData;
+    if (data == null) return null;
+    if (data['data'] is Map && data['data']['email'] != null) {
+      return data['data']['email'].toString();
+    }
+    if (data['email'] != null) return data['email'].toString();
+    return null;
+  }
 
   @override
   void dispose() {
@@ -28,6 +58,9 @@ class _VerifyScreenState extends State<VerifyScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authProvider);
+    final authController = ref.read(authProvider.notifier);
+
     return Scaffold(
       backgroundColor: AppColor.white,
       body: Column(
@@ -44,7 +77,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                   spacing: 10,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CustomBack(isAllowBack: true),
+                    const CustomBack(isAllowBack: true),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       spacing: 8,
@@ -76,6 +109,26 @@ class _VerifyScreenState extends State<VerifyScreen> {
                 child: Column(
                   spacing: 25,
                   children: [
+                    // Show the OTP from response (for development/testing)
+                    if (_serverOtp != null)
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: AppColor.primary.withOpacity(0.08),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: AppColor.primary.withOpacity(0.3),
+                          ),
+                        ),
+                        child: Text(
+                          'Your OTP: $_serverOtp',
+                          textAlign: TextAlign.center,
+                          style: TypographyFont.uih4bold.copyWith(
+                            color: AppColor.primary,
+                          ),
+                        ),
+                      ),
                     Column(
                       spacing: 10,
                       children: [
@@ -90,7 +143,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                                 if (pin.isEmpty) {
                                   return 'Enter verification code';
                                 }
-                                if (pin.length != 4) {
+                                if (pin.length != 6) {
                                   return 'Enter complete 4-digit code';
                                 }
                                 return null;
@@ -102,7 +155,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                                   children: [
                                     Pinput(
                                       controller: _pinController,
-                                      length: 4,
+                                      length: 6,
                                       onChanged: (pin) => state.didChange(pin),
                                       defaultPinTheme: PinTheme(
                                         width: 56,
@@ -183,7 +236,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                               child: Text(
                                 'Resend Code',
                                 style: TypographyFont.uih5bold.copyWith(
-                                  color: Color(0xFF455AF7),
+                                  color: const Color(0xFF455AF7),
                                 ),
                               ),
                             ),
@@ -191,20 +244,65 @@ class _VerifyScreenState extends State<VerifyScreen> {
                         ),
                       ],
                     ),
+                    // Show error from auth state or local error
+                    if (authState.error != null || _errorText != null)
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.red.shade50,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.red.shade200),
+                        ),
+                        child: Text(
+                          authState.error ?? _errorText ?? '',
+                          style: TypographyFont.uih5reg.copyWith(
+                            color: Colors.red.shade700,
+                          ),
+                        ),
+                      ),
                     AppButton(
-                      text: 'Continue',
-                      onPressed: () async {
-                        if (formKey.currentState!.validate()) {
-                          if (widget.extra == 'forget_pwd') {
-                            context.push(RouteName.createnewpwd);
-                          } else {
-                            await SecureAuthStorage.saveLogin();
-                            if (context.mounted) {
-                              context.push(RouteName.app);
-                            }
-                          }
-                        }
-                      },
+                      text: authState.isLoading ? 'Verifying...' : 'Continue',
+                      onPressed: authState.isLoading
+                          ? null
+                          : () async {
+                              if (!formKey.currentState!.validate()) return;
+
+                              final enteredPin = _pinController.text.trim();
+
+                              if (widget.extra == 'forget_pwd') {
+                                context.push(RouteName.createnewpwd);
+                              } else {
+                                if (_serverOtp != null &&
+                                    enteredPin != _serverOtp) {
+                                  setState(() {
+                                    _errorText =
+                                        'OTP does not match. Please try again.';
+                                  });
+                                  return;
+                                }
+
+                                setState(() => _errorText = null);
+
+                                final email = _email ?? '';
+                                final success = await authController.verifyOtp(
+                                  email,
+                                  enteredPin,
+                                  context,
+                                );
+                                print('success: $success');
+                                if (!mounted) return;
+                                if (success) {
+                                  SnakBarUtils.showSnakBar(
+                                    context,
+                                    'OTP verified successfully',
+                                    bgcolor: AppColor.green,
+                                    textColor: Colors.white,
+                                  );
+                                  context.push(RouteName.app);
+                                }
+                              }
+                            },
                     ),
                   ],
                 ),

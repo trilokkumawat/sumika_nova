@@ -46,8 +46,13 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: RouteName.verify,
-      builder: (BuildContext context, GoRouterState state) =>
-          VerifyScreen(extra: state.extra as String?),
+      builder: (BuildContext context, GoRouterState state) {
+        final extra = state.extra;
+        if (extra is Map<String, dynamic>) {
+          return VerifyScreen(extraData: extra);
+        }
+        return VerifyScreen(extra: extra as String?);
+      },
     ),
     GoRoute(
       path: RouteName.createnewpwd,

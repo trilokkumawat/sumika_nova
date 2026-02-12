@@ -107,9 +107,7 @@ Future<ApiCallResponse> makeApiCall({
   bool returnBody = true,
 }) async {
   final h = Map<String, String>.from(
-    headers.isEmpty
-        ? await buildApiHeaders()
-        : headers.map((k, v) => MapEntry(k, v.toString())),
+    headers.map((k, v) => MapEntry(k, v.toString())),
   );
 
   try {
@@ -243,10 +241,11 @@ class LoginCall {
     required String password,
   }) async {
     final baseUrl = SumikiNovaApi.getBaseUrl();
-    final body = <String, String>{
-      'email': email,
-      'password': password,
-    };
+    print('email: $email');
+    print('password: $password');
+    final body = <String, String>{'email': email, 'password': password};
+    print('body: $body');
+    print('baseUrl: $baseUrl');
     return makeApiCall(
       apiUrl: '${baseUrl}${ApiName.signIn}',
       callType: ApiCallType.POST,
@@ -263,10 +262,7 @@ class VerifyOtpCall {
     required String otp,
   }) async {
     final baseUrl = SumikiNovaApi.getBaseUrl();
-    final body = <String, String>{
-      'email': email,
-      'otp': otp,
-    };
+    final body = <String, String>{'email': email, 'otp': otp};
     return makeApiCall(
       apiUrl: '${baseUrl}${ApiName.verifyotp}',
       callType: ApiCallType.POST,
@@ -278,13 +274,9 @@ class VerifyOtpCall {
 
 /// POST BASE_PATH/forgot-password — email
 class ForgotPasswordCall {
-  Future<ApiCallResponse> call({
-    required String email,
-  }) async {
+  Future<ApiCallResponse> call({required String email}) async {
     final baseUrl = SumikiNovaApi.getBaseUrl();
-    final body = <String, String>{
-      'email': email,
-    };
+    final body = <String, String>{'email': email};
     return makeApiCall(
       apiUrl: '${baseUrl}${ApiName.forgetpassword}',
       callType: ApiCallType.POST,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
@@ -8,15 +9,16 @@ import 'package:sumikanova/core/utils/reusablemethod.dart';
 import 'package:sumikanova/core/widget/appbutton.dart';
 import 'package:sumikanova/core/widget/customback.dart';
 import 'package:sumikanova/core/widget/customrichtext.dart';
+import 'package:sumikanova/presentation/screens/auth/provider.dart';
 
-class RegisterScreen extends StatefulWidget {
+class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
 
   @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
+  ConsumerState<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
+class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final TextEditingController nameCtl = TextEditingController();
   final TextEditingController emailCtl = TextEditingController();
   final TextEditingController pwdCtl = TextEditingController();
@@ -34,6 +36,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authStateWatch = ref.watch(authProvider);
+    final authStateRead = ref.read(authProvider.notifier);
     return Scaffold(
       backgroundColor: AppColor.white,
       body: Column(
@@ -132,13 +136,43 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                       ],
                     ),
+                    if (authStateWatch.error != null)
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.red.shade50,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.red.shade200),
+                        ),
+                        child: Text(
+                          authStateWatch.error!,
+                          style: TypographyFont.uih5reg.copyWith(
+                            color: Colors.red.shade700,
+                          ),
+                        ),
+                      ),
                     AppButton(
-                      text: 'Sign In',
-                      onPressed: () {
-                        if (formKey.currentState!.validate()) {
-                          context.push(RouteName.verify);
-                        }
-                      },
+                      text: authStateWatch.isLoading
+                          ? 'Signing Up...'
+                          : 'Sign Up',
+                      onPressed: authStateWatch.isLoading
+                          ? null
+                          : () async {
+                              if (formKey.currentState!.validate()) {
+                                final responseData = await authStateRead.signup(
+                                  nameCtl.text,
+                                  emailCtl.text,
+                                  pwdCtl.text,
+                                );
+                                if (responseData != null && mounted) {
+                                  context.push(
+                                    RouteName.verify,
+                                    extra: responseData,
+                                  );
+                                }
+                              }
+                            },
                     ),
                     CustomRichText(
                       normalText: "Have an account? ",

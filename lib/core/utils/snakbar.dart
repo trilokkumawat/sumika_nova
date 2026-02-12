@@ -6,16 +6,19 @@ class SnakBarUtils {
   static void showSnakBar(
     BuildContext context,
     String message, {
-    Color? color,
+    Color? bgcolor,
+    Color? textColor,
   }) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
           message,
 
-          style: TypographyFont.uih5med.copyWith(color: color ?? Colors.black),
+          style: TypographyFont.uih5med.copyWith(
+            color: textColor ?? Colors.black,
+          ),
         ),
-        backgroundColor: color ?? AppColor.gray4,
+        backgroundColor: bgcolor ?? AppColor.gray4,
         behavior: SnackBarBehavior.fixed,
       ),
     );
