@@ -129,6 +129,7 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
                           ),
                         ),
                       ),
+                    // Text('$_email'),
                     Column(
                       spacing: 10,
                       children: [

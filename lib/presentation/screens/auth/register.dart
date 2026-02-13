@@ -191,6 +191,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                         pwdCtl.text,
                                       );
                                   if (responseData != null && mounted) {
+                                    responseData['email'] = emailCtl.text;
                                     context.push(
                                       RouteName.verify,
                                       extra: responseData,

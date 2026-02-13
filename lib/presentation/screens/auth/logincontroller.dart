@@ -53,9 +53,8 @@ class AuthController extends StateNotifier<AuthState> {
         passwordConfirmation: password,
       );
       if (response.succeeded) {
+        print('response: ${response.jsonBody}');
         final data = response.jsonBody['data'];
-        await SecureAuthStorage.saveLogin(token: data['token']);
-        await SecureAuthStorage.saveUserData(data['user']);
         state = state.copyWith(isLoading: false);
         return data;
       } else {
@@ -80,14 +79,15 @@ class AuthController extends StateNotifier<AuthState> {
         email: email,
         otp: otp,
       );
+      print('response: ${response.jsonBody}');
       if (response.statusCode == 200) {
+        final data = response.jsonBody['data'];
         print('response: ${response.jsonBody}');
 
-        final data = response.jsonBody['data'];
-        await SecureAuthStorage.saveLogin(token: data['token']);
-        await SecureAuthStorage.saveUserData(data['user']);
+        // await SecureAuthStorage.saveLogin(token: data['token']);
+        // await SecureAuthStorage.saveUserData(data['user']);
 
-        state = state.copyWith(isLoading: false, isLoggedIn: true);
+        state = state.copyWith(isLoading: false, isLoggedIn: false);
         return true;
       }
       return false;
