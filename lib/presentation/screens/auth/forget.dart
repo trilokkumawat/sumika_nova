@@ -31,87 +31,109 @@ class _ForgetScreenState extends State<ForgetScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.white,
-      body: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            height: 238,
-            color: AppColor.primary,
-            child: SafeArea(
-              bottom: false,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  spacing: 10,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CustomBack(isAllowBack: true),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      spacing: 8,
-                      children: [
-                        Text(
-                          'Reset Password',
-                          style: TypographyFont.uih1bold.copyWith(
-                            color: Colors.white,
-                          ),
-                        ),
-                        Text(
-                          'Enter your email, we will send a verification code to your email',
-                          style: TypographyFont.uih3reg.copyWith(
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
+      body: SafeArea(
+        top: false,
+        child: Column(
+          children: [
+            Container(
+              width: double.infinity,
+              height: MediaQuery.sizeOf(context).height / 3.9,
+              color: AppColor.primary,
+              child: Stack(
+                clipBehavior: Clip.antiAlias,
+                children: [
+                  Positioned(
+                    top: -50,
+                    left: 0,
+                    right: 0,
+                    child: Image.asset(
+                      'assets/icons/bgappbar.png',
+                      fit: BoxFit.cover,
+                      height: 200,
                     ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 50),
-              child: Form(
-                key: formKey,
-                child: Column(
-                  spacing: 32,
-                  children: [
-                    Column(
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      top: 50,
+                    ),
+                    child: Column(
                       spacing: 10,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        CustomBack(isAllowBack: true),
                         Column(
-                          spacing: 20,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          spacing: 8,
                           children: [
-                            CustomTxtFormField(
-                              controller: emailController,
-                              prefixIcon: Icons.email_outlined,
-                              showPrefixIcon: true,
-                              hintText: 'Email',
-                              labelText: 'Email',
-                              keyboardType: TextInputType.emailAddress,
-                              validator: (value) {
-                                return validateEmail(value);
-                              },
+                            Text(
+                              'Reset Password',
+                              style: TypographyFont.uih1bold.copyWith(
+                                color: Colors.white,
+                              ),
+                            ),
+                            Text(
+                              'Enter your email, we will send a verification code to your email',
+                              style: TypographyFont.uih3reg.copyWith(
+                                color: Colors.white,
+                              ),
                             ),
                           ],
                         ),
                       ],
                     ),
-                    AppButton(
-                      text: 'Send Link',
-                      onPressed: () {
-                        if (formKey.currentState!.validate()) {
-                          context.push(RouteName.verify, extra: 'forget_pwd');
-                        }
-                      },
-                    ),
-                  ],
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 50,
+                ),
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    spacing: 32,
+                    children: [
+                      Column(
+                        spacing: 10,
+                        children: [
+                          Column(
+                            spacing: 20,
+                            children: [
+                              CustomTxtFormField(
+                                controller: emailController,
+                                prefixIcon: Icons.email_outlined,
+                                showPrefixIcon: true,
+                                hintText: 'Email',
+                                labelText: 'Email',
+                                keyboardType: TextInputType.emailAddress,
+                                validator: (value) {
+                                  return validateEmail(value);
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      AppButton(
+                        text: 'Send Link',
+                        onPressed: () {
+                          if (formKey.currentState!.validate()) {
+                            context.push(RouteName.verify, extra: 'forget_pwd');
+                          }
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
