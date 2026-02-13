@@ -1,26 +1,22 @@
-class AuthState {
+class LoginState {
   final bool isLoading;
   final String? error;
-  final bool isLoggedIn;
   final String? message;
 
-  AuthState({
+  LoginState({
     this.isLoading = false,
     this.error,
-    this.isLoggedIn = false,
     this.message,
   });
 
-  AuthState copyWith({
+  LoginState copyWith({
     bool? isLoading,
     String? error,
-    bool? isLoggedIn,
     String? message,
   }) {
-    return AuthState(
+    return LoginState(
       isLoading: isLoading ?? this.isLoading,
       error: error,
-      isLoggedIn: isLoggedIn ?? this.isLoggedIn,
       message: message ?? this.message,
     );
   }

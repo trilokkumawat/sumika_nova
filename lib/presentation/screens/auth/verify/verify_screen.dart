@@ -5,7 +5,6 @@ import 'package:pinput/pinput.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
 import 'package:sumikanova/core/navigation/route_name.dart';
-import 'package:sumikanova/core/services/secure_auth_storage.dart';
 import 'package:sumikanova/core/utils/snakbar.dart';
 import 'package:sumikanova/core/widget/appbutton.dart';
 import 'package:sumikanova/core/widget/customback.dart';
@@ -26,15 +25,12 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
   String? _errorText;
 
   /// Extract OTP from the API response data.
-  /// Checks common paths: data.otp, otp
   String? get _serverOtp {
     final data = widget.extraData;
     if (data == null) return null;
-    // Try nested: { "data": { "otp": "1234" } }
     if (data['data'] is Map && data['data']['otp'] != null) {
       return data['data']['otp'].toString();
     }
-    // Try top-level: { "otp": "1234" }
     if (data['otp'] != null) return data['otp'].toString();
     return null;
   }
@@ -58,8 +54,8 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final authState = ref.watch(authProvider);
-    final authController = ref.read(authProvider.notifier);
+    final verifyState = ref.watch(verifyProvider);
+    final verifyController = ref.read(verifyProvider.notifier);
 
     return Scaffold(
       backgroundColor: AppColor.white,
@@ -109,7 +105,6 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
                 child: Column(
                   spacing: 25,
                   children: [
-                    // Show the OTP from response (for development/testing)
                     if (_serverOtp != null)
                       Container(
                         width: double.infinity,
@@ -129,7 +124,6 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
                           ),
                         ),
                       ),
-                    // Text('$_email'),
                     Column(
                       spacing: 10,
                       children: [
@@ -245,8 +239,7 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
                         ),
                       ],
                     ),
-                    // Show error from auth state or local error
-                    if (authState.error != null || _errorText != null)
+                    if (verifyState.error != null || _errorText != null)
                       Container(
                         width: double.infinity,
                         padding: const EdgeInsets.all(12),
@@ -256,15 +249,15 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
                           border: Border.all(color: Colors.red.shade200),
                         ),
                         child: Text(
-                          authState.error ?? _errorText ?? '',
+                          verifyState.error ?? _errorText ?? '',
                           style: TypographyFont.uih5reg.copyWith(
                             color: Colors.red.shade700,
                           ),
                         ),
                       ),
                     AppButton(
-                      text: authState.isLoading ? 'Verifying...' : 'Continue',
-                      onPressed: authState.isLoading
+                      text: verifyState.isLoading ? 'Verifying...' : 'Continue',
+                      onPressed: verifyState.isLoading
                           ? null
                           : () async {
                               if (!formKey.currentState!.validate()) return;
@@ -286,12 +279,8 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
                                 setState(() => _errorText = null);
 
                                 final email = _email ?? '';
-                                final success = await authController.verifyOtp(
-                                  email,
-                                  enteredPin,
-                                  context,
-                                );
-                                print('success: $success');
+                                final success = await verifyController
+                                    .verifyOtp(email, enteredPin);
                                 if (!mounted) return;
                                 if (success) {
                                   SnakBarUtils.showSnakBar(

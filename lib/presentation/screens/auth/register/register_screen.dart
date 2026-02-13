@@ -36,8 +36,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final authStateWatch = ref.watch(authProvider);
-    final authStateRead = ref.read(authProvider.notifier);
+    final registerState = ref.watch(registerProvider);
+    final registerController = ref.read(registerProvider.notifier);
     return Scaffold(
       backgroundColor: AppColor.white,
       body: SafeArea(
@@ -160,7 +160,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           ),
                         ],
                       ),
-                      if (authStateWatch.error != null)
+                      if (registerState.error != null)
                         Container(
                           width: double.infinity,
                           padding: const EdgeInsets.all(12),
@@ -170,21 +170,19 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             border: Border.all(color: Colors.red.shade200),
                           ),
                           child: Text(
-                            authStateWatch.error!,
+                            registerState.error!,
                             style: TypographyFont.uih5reg.copyWith(
                               color: Colors.red.shade700,
                             ),
                           ),
                         ),
                       AppButton(
-                        text: authStateWatch.isLoading
-                            ? 'Signing Up...'
-                            : 'Sign Up',
-                        onPressed: authStateWatch.isLoading
+                        text: 'Sign Up',
+                        onPressed: registerState.isLoading
                             ? null
                             : () async {
                                 if (formKey.currentState!.validate()) {
-                                  final responseData = await authStateRead
+                                  final responseData = await registerController
                                       .signup(
                                         nameCtl.text,
                                         emailCtl.text,

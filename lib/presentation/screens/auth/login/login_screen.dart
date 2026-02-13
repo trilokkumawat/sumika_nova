@@ -35,8 +35,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final authStateWatch = ref.watch(authProvider);
-    final authStateRead = ref.read(authProvider.notifier);
+    final loginState = ref.watch(loginProvider);
+    final loginController = ref.read(loginProvider.notifier);
     return Scaffold(
       backgroundColor: AppColor.white,
       body: PopScope(
@@ -161,7 +161,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 child: Text(
                                   'Forgot Password?',
                                   style: TypographyFont.uih5bold.copyWith(
-                                    color: Color(0xFF455AF7),
+                                    color: const Color(0xFF455AF7),
                                   ),
                                 ),
                               ),
@@ -169,24 +169,24 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           ],
                         ),
                         AppButton(
-                          text: authStateWatch.isLoading
-                              ? 'Sign In...'
-                              : 'Sign In',
-                          onPressed: authStateWatch.isLoading
+                          text: 'Sign In',
+                          onPressed: loginState.isLoading
                               ? null
                               : () async {
                                   if (!formKey.currentState!.validate()) return;
                                   final email = emailController.text.trim();
                                   final password = passwordController.text
                                       .trim();
-                                  final data = await authStateRead.login(
+                                  final data = await loginController.login(
                                     email,
                                     password,
                                   );
-                                  if (data != null && mounted) {
+                                  if (loginState.message != null &&
+                                      !loginState.isLoading &&
+                                      mounted) {
                                     SnakBarUtils.showSnakBar(
                                       context,
-                                      authStateWatch.message ?? '',
+                                      loginState.message ?? '',
                                       bgcolor: AppColor.green,
                                       textColor: Colors.white,
                                     );
