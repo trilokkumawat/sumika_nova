@@ -18,6 +18,11 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  Future<String> _headerTitle() async {
+    final user = await getUserInfo();
+    return user?.name ?? user?.email ?? '';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,12 +30,10 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Column(
         children: <Widget>[
           FutureBuilder<String>(
-            future: getUserInfo().then(
-              (value) => value?.name?.toUpperCase() ?? '',
-            ),
+            future: _headerTitle(),
             builder: (context, snapshot) {
               return CustomHeader(
-                title: snapshot.data ?? ' ',
+                title: snapshot.data ?? '',
                 isPopupmenu: true,
               );
             },

@@ -194,6 +194,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                   if (!mounted) return;
 
                                   if (loginState.isLoading == false &&
+                                      loginState.error == null &&
                                       mounted) {
                                     SnakBarUtils.showSnakBar(
                                       context,
