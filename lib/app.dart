@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
 import 'package:sumikanova/presentation/screens/home/home.dart';
-import 'package:sumikanova/presentation/screens/setting/profile.dart';
 
 class AppState extends StatefulWidget {
   const AppState({super.key});
@@ -137,11 +136,11 @@ class ActivityScreen extends StatelessWidget {
   }
 }
 
-// class ProfileScreen extends StatelessWidget {
-//   const ProfileScreen({super.key});
+class ProfileScreen extends StatelessWidget {
+  const ProfileScreen({super.key});
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return const Center(child: Text('Profile'));
-//   }
-// }
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: Text('Profile'));
+  }
+}

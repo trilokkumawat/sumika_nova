@@ -8,18 +8,18 @@ class SnakBarUtils {
     String message, {
     Color? bgcolor,
     Color? textColor,
+    SnackBarBehavior? behavior,
   }) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
           message,
-
           style: TypographyFont.uih5med.copyWith(
             color: textColor ?? Colors.black,
           ),
         ),
         backgroundColor: bgcolor ?? AppColor.gray4,
-        behavior: SnackBarBehavior.fixed,
+        behavior: behavior ?? SnackBarBehavior.floating,
       ),
     );
   }

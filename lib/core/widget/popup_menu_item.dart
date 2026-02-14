@@ -5,12 +5,15 @@ import 'package:sumikanova/core/constant/typography_font.dart';
 class CustomPopupMenuItem extends StatelessWidget {
   const CustomPopupMenuItem({
     super.key,
-    required this.iconPath,
+    this.iconPath,
+    this.icon,
     required this.label,
     required this.onTap,
-  });
+  }) : assert(iconPath != null || icon != null,
+            'Either iconPath or icon must be provided');
 
-  final String iconPath;
+  final String? iconPath;
+  final IconData? icon;
   final String label;
   final VoidCallback onTap;
 
@@ -22,7 +25,10 @@ class CustomPopupMenuItem extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Row(
           children: <Widget>[
-            Image.asset(iconPath, width: 20, height: 20, fit: BoxFit.contain),
+            if (icon != null)
+              Icon(icon, size: 20, color: AppColor.black)
+            else
+              Image.asset(iconPath!, width: 20, height: 20, fit: BoxFit.contain),
             const SizedBox(width: 12),
             Expanded(
               child: Text(

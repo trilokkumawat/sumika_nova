@@ -11,6 +11,7 @@ import 'package:sumikanova/core/utils/snakbar.dart';
 import 'package:sumikanova/core/widget/appbutton.dart';
 import 'package:sumikanova/core/widget/customback.dart';
 import 'package:sumikanova/core/widget/customrichtext.dart';
+import 'package:sumikanova/core/widget/errorshow.dart';
 import 'package:sumikanova/presentation/screens/auth/provider.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -166,6 +167,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 ),
                               ),
                             ),
+                            if (loginState.error != null)
+                              CustomErrorShow(errorMessage: loginState.error!),
                           ],
                         ),
                         AppButton(

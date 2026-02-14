@@ -135,6 +135,15 @@ class _CustomBackState extends State<CustomBack> {
                       label: 'Scan',
                       onTap: () => _onPopupItemTap(2),
                     ),
+                    CustomDivider(),
+                    CustomPopupMenuItem(
+                      icon: Icons.logout,
+                      label: 'Logout',
+                      onTap: () {
+                        _onPopupItemTap(3);
+                        logout(context);
+                      },
+                    ),
                   ],
                 ),
               ),
