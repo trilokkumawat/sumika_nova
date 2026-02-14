@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
@@ -8,15 +9,17 @@ import 'package:sumikanova/core/utils/customtxtformfield.dart';
 import 'package:sumikanova/core/utils/reusablemethod.dart';
 import 'package:sumikanova/core/widget/appbutton.dart';
 import 'package:sumikanova/core/widget/customback.dart';
+import 'package:sumikanova/presentation/screens/auth/provider.dart';
 
-class CreateNewPwdScreen extends StatefulWidget {
-  const CreateNewPwdScreen({super.key});
+class CreateNewPwdScreen extends ConsumerStatefulWidget {
+  final Map<String, dynamic>? extra;
+  const CreateNewPwdScreen({super.key, this.extra});
 
   @override
-  State<CreateNewPwdScreen> createState() => _CreateNewPwdScreenState();
+  ConsumerState<CreateNewPwdScreen> createState() => _CreateNewPwdScreenState();
 }
 
-class _CreateNewPwdScreenState extends State<CreateNewPwdScreen> {
+class _CreateNewPwdScreenState extends ConsumerState<CreateNewPwdScreen> {
   final TextEditingController pwdCtl = TextEditingController();
   final TextEditingController cfmpwdCtl = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -30,6 +33,7 @@ class _CreateNewPwdScreenState extends State<CreateNewPwdScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final createNewPwdState = ref.watch(createNewPwdProvider);
     return Scaffold(
       backgroundColor: AppColor.white,
       body: Column(
@@ -105,28 +109,68 @@ class _CreateNewPwdScreenState extends State<CreateNewPwdScreen> {
                               validator: (value) =>
                                   validateConfirmPassword(value, pwdCtl.text),
                             ),
+                            if (createNewPwdState.error != null)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8),
+                                child: Text(
+                                  createNewPwdState.error!,
+                                  style: TypographyFont.uih5reg.copyWith(
+                                    color: AppColor.red,
+                                  ),
+                                ),
+                              ),
                           ],
                         ),
                       ],
                     ),
                     AppButton(
                       text: 'Reset Password',
-                      onPressed: () {
-                        // Run empty, password and confirm-password validation on tap
-                        final isValid = formKey.currentState!.validate();
-                        if (isValid) {
-                          showDialog(
-                            context: context,
-                            barrierColor: Colors.black.withValues(alpha: 0.4),
-
-                            builder: (context) => CustomModal(
-                              onPressed: () {
-                                context.go(RouteName.login);
-                              },
-                            ),
-                          );
-                        }
-                      },
+                      onPressed: createNewPwdState.isLoading
+                          ? null
+                          : () async {
+                              ref
+                                  .read(createNewPwdProvider.notifier)
+                                  .clearError();
+                              final isValid = formKey.currentState!.validate();
+                              if (!isValid) return;
+                              final email =
+                                  widget.extra?['email']?.toString() ?? '';
+                              final otp =
+                                  widget.extra?['otp']?.toString() ?? '';
+                              if (email.isEmpty || otp.isEmpty) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'Missing email or OTP. Please start from forgot password.',
+                                    ),
+                                  ),
+                                );
+                                return;
+                              }
+                              final success = await ref
+                                  .read(createNewPwdProvider.notifier)
+                                  .resetPassword(
+                                    email: email,
+                                    otp: otp,
+                                    password: pwdCtl.text,
+                                    passwordConfirmation: cfmpwdCtl.text,
+                                  );
+                              if (!context.mounted) return;
+                              if (success) {
+                                showDialog(
+                                  barrierDismissible: false,
+                                  context: context,
+                                  barrierColor: Colors.black.withValues(
+                                    alpha: 0.4,
+                                  ),
+                                  builder: (context) => CustomModal(
+                                    onPressed: () {
+                                      context.go(RouteName.login);
+                                    },
+                                  ),
+                                );
+                              }
+                            },
                     ),
                   ],
                 ),
