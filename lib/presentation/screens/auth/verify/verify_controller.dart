@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sumikanova/core/services/api_config.dart';
+import 'package:sumikanova/core/services/secure_auth_storage.dart';
 import 'package:sumikanova/presentation/screens/auth/verify/verify_state.dart';
 
 class VerifyController extends StateNotifier<VerifyState> {
@@ -14,6 +15,9 @@ class VerifyController extends StateNotifier<VerifyState> {
         otp: otp,
       );
       if (response.statusCode == 200) {
+        final data = response.jsonBody['data'];
+        await SecureAuthStorage.saveLogin(token: data['token']);
+        await SecureAuthStorage.saveUserData(data['user']);
         state = state.copyWith(isLoading: false);
         return true;
       }

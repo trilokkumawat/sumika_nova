@@ -12,18 +12,14 @@ class CustomErrorShow extends StatefulWidget {
 class _CustomErrorShowState extends State<CustomErrorShow> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.red.shade50,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.red.shade200),
-      ),
-      child: Text(
-        widget.errorMessage,
-        style: TypographyFont.uih5reg.copyWith(color: Colors.red.shade700),
-      ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Text(
+          widget.errorMessage,
+          style: TypographyFont.uih5reg.copyWith(color: Colors.red.shade700),
+        ),
+      ],
     );
   }
 }

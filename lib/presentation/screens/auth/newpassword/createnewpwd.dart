@@ -36,148 +36,171 @@ class _CreateNewPwdScreenState extends ConsumerState<CreateNewPwdScreen> {
     final createNewPwdState = ref.watch(createNewPwdProvider);
     return Scaffold(
       backgroundColor: AppColor.white,
-      body: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            height: 238,
-            color: AppColor.primary,
-            child: SafeArea(
-              bottom: false,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  spacing: 10,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CustomBack(isAllowBack: true),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      spacing: 8,
-                      children: [
-                        Text(
-                          'Create New Password',
-                          style: TypographyFont.uih1bold.copyWith(
-                            color: Colors.white,
-                          ),
-                        ),
-                        Text(
-                          'Your password must be different from previous used password',
-                          style: TypographyFont.uih3reg.copyWith(
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
+      body: SafeArea(
+        top: false,
+        child: Column(
+          children: [
+            Container(
+              width: double.infinity,
+              height: MediaQuery.sizeOf(context).height / 3.9,
+              color: AppColor.primary,
+              child: Stack(
+                clipBehavior: Clip.antiAlias,
+                children: [
+                  Positioned(
+                    top: -50,
+                    left: 0,
+                    right: 0,
+                    child: Image.asset(
+                      'assets/icons/bgappbar.png',
+                      fit: BoxFit.cover,
+                      height: 200,
                     ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 50),
-              child: Form(
-                key: formKey,
-                child: Column(
-                  spacing: 32,
-                  children: [
-                    Column(
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      top: 50,
+                    ),
+                    child: Column(
                       spacing: 10,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        CustomBack(isAllowBack: true),
                         Column(
-                          spacing: 20,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          spacing: 8,
                           children: [
-                            CustomTxtFormField(
-                              controller: pwdCtl,
-                              prefixIcon: Icons.lock_outline_rounded,
-                              showPrefixIcon: true,
-                              hintText: 'Password',
-                              labelText: 'Password',
-                              obscureText: true,
-                              showSuffixIcon: true,
-                              validator: validatePassword,
-                            ),
-                            CustomTxtFormField(
-                              controller: cfmpwdCtl,
-                              prefixIcon: Icons.lock_outline_rounded,
-                              showPrefixIcon: true,
-                              hintText: 'Confirm Password',
-                              labelText: 'Confirm Password',
-                              obscureText: true,
-                              showSuffixIcon: true,
-                              validator: (value) =>
-                                  validateConfirmPassword(value, pwdCtl.text),
-                            ),
-                            if (createNewPwdState.error != null)
-                              Padding(
-                                padding: const EdgeInsets.only(top: 8),
-                                child: Text(
-                                  createNewPwdState.error!,
-                                  style: TypographyFont.uih5reg.copyWith(
-                                    color: AppColor.red,
-                                  ),
-                                ),
+                            Text(
+                              'Create New Password',
+                              style: TypographyFont.uih1bold.copyWith(
+                                color: Colors.white,
                               ),
+                            ),
+                            Text(
+                              'Your password must be different from previous used password',
+                              style: TypographyFont.uih3reg.copyWith(
+                                color: Colors.white,
+                              ),
+                            ),
                           ],
                         ),
                       ],
                     ),
-                    AppButton(
-                      text: 'Reset Password',
-                      onPressed: createNewPwdState.isLoading
-                          ? null
-                          : () async {
-                              ref
-                                  .read(createNewPwdProvider.notifier)
-                                  .clearError();
-                              final isValid = formKey.currentState!.validate();
-                              if (!isValid) return;
-                              final email =
-                                  widget.extra?['email']?.toString() ?? '';
-                              final otp =
-                                  widget.extra?['otp']?.toString() ?? '';
-                              if (email.isEmpty || otp.isEmpty) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'Missing email or OTP. Please start from forgot password.',
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 50,
+                ),
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    spacing: 32,
+                    children: [
+                      Column(
+                        spacing: 10,
+                        children: [
+                          Column(
+                            spacing: 20,
+                            children: [
+                              CustomTxtFormField(
+                                controller: pwdCtl,
+                                prefixIcon: Icons.lock_outline_rounded,
+                                showPrefixIcon: true,
+                                hintText: 'Password',
+                                labelText: 'Password',
+                                obscureText: true,
+                                showSuffixIcon: true,
+                                validator: validatePassword,
+                              ),
+                              CustomTxtFormField(
+                                controller: cfmpwdCtl,
+                                prefixIcon: Icons.lock_outline_rounded,
+                                showPrefixIcon: true,
+                                hintText: 'Confirm Password',
+                                labelText: 'Confirm Password',
+                                obscureText: true,
+                                showSuffixIcon: true,
+                                validator: (value) =>
+                                    validateConfirmPassword(value, pwdCtl.text),
+                              ),
+                              if (createNewPwdState.error != null)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 8),
+                                  child: Text(
+                                    createNewPwdState.error!,
+                                    style: TypographyFont.uih5reg.copyWith(
+                                      color: AppColor.red,
                                     ),
                                   ),
-                                );
-                                return;
-                              }
-                              final success = await ref
-                                  .read(createNewPwdProvider.notifier)
-                                  .resetPassword(
-                                    email: email,
-                                    otp: otp,
-                                    password: pwdCtl.text,
-                                    passwordConfirmation: cfmpwdCtl.text,
+                                ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      AppButton(
+                        text: 'Reset Password',
+                        onPressed: createNewPwdState.isLoading
+                            ? null
+                            : () async {
+                                ref
+                                    .read(createNewPwdProvider.notifier)
+                                    .clearError();
+                                final isValid = formKey.currentState!
+                                    .validate();
+                                if (!isValid) return;
+                                final email =
+                                    widget.extra?['email']?.toString() ?? '';
+                                final otp =
+                                    widget.extra?['otp']?.toString() ?? '';
+                                if (email.isEmpty || otp.isEmpty) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'Missing email or OTP. Please start from forgot password.',
+                                      ),
+                                    ),
                                   );
-                              if (!context.mounted) return;
-                              if (success) {
-                                showDialog(
-                                  barrierDismissible: false,
-                                  context: context,
-                                  barrierColor: Colors.black.withValues(
-                                    alpha: 0.4,
-                                  ),
-                                  builder: (context) => CustomModal(
-                                    onPressed: () {
-                                      context.go(RouteName.login);
-                                    },
-                                  ),
-                                );
-                              }
-                            },
-                    ),
-                  ],
+                                  return;
+                                }
+                                final success = await ref
+                                    .read(createNewPwdProvider.notifier)
+                                    .resetPassword(
+                                      email: email,
+                                      otp: otp,
+                                      password: pwdCtl.text,
+                                      passwordConfirmation: cfmpwdCtl.text,
+                                    );
+                                if (!context.mounted) return;
+                                if (success) {
+                                  showDialog(
+                                    barrierDismissible: false,
+                                    context: context,
+                                    barrierColor: Colors.black.withValues(
+                                      alpha: 0.4,
+                                    ),
+                                    builder: (context) => CustomModal(
+                                      onPressed: () {
+                                        context.go(RouteName.login);
+                                      },
+                                    ),
+                                  );
+                                }
+                              },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

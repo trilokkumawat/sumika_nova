@@ -8,6 +8,7 @@ import 'package:sumikanova/core/utils/customtxtformfield.dart';
 import 'package:sumikanova/core/utils/reusablemethod.dart';
 import 'package:sumikanova/core/widget/appbutton.dart';
 import 'package:sumikanova/core/widget/customback.dart';
+import 'package:sumikanova/core/widget/errorshow.dart';
 import 'package:sumikanova/presentation/screens/auth/provider.dart';
 
 class ForgetScreen extends ConsumerStatefulWidget {
@@ -101,22 +102,6 @@ class _ForgetScreenState extends ConsumerState<ForgetScreen> {
                   child: Column(
                     spacing: 32,
                     children: [
-                      if (forgetState.error != null)
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.red.shade50,
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: Colors.red.shade200),
-                          ),
-                          child: Text(
-                            forgetState.error!,
-                            style: TypographyFont.uih5reg.copyWith(
-                              color: Colors.red.shade700,
-                            ),
-                          ),
-                        ),
                       Column(
                         spacing: 10,
                         children: [
@@ -136,12 +121,12 @@ class _ForgetScreenState extends ConsumerState<ForgetScreen> {
                               ),
                             ],
                           ),
+                          if (forgetState.error != null)
+                            CustomErrorShow(errorMessage: forgetState.error!),
                         ],
                       ),
                       AppButton(
-                        text: forgetState.isLoading
-                            ? 'Sending...'
-                            : 'Send Link',
+                        text: 'Send Link',
                         onPressed: forgetState.isLoading
                             ? null
                             : () async {
@@ -151,13 +136,17 @@ class _ForgetScreenState extends ConsumerState<ForgetScreen> {
                                 if (!mounted) return;
                                 final currentState = ref.read(forgetProvider);
                                 if (currentState.otp == null) return;
-                                context.push(
-                                  RouteName.createnewpwd,
-                                  extra: <String, dynamic>{
-                                    'email': currentState.email ?? email,
-                                    'otp': currentState.otp!,
-                                  },
-                                );
+                                print(currentState.otp);
+                                if (currentState.otp != null &&
+                                    currentState.error == null) {
+                                  context.push(
+                                    RouteName.createnewpwd,
+                                    extra: <String, dynamic>{
+                                      'email': currentState.email ?? email,
+                                      'otp': currentState.otp!,
+                                    },
+                                  );
+                                }
                               },
                       ),
                     ],
