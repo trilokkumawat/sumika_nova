@@ -1,0 +1,26 @@
+# Build and tooling
+/build/
+.dart_tool/
+.pub-cache/
+.pub/
+
+# Generated code (freezed, json_serializable)
+*.g.dart
+*.freezed.dart
+
+# Platform build outputs
+**/ios/Pods/
+**/ios/.symlinks/
+**/macos/Flutter/ephemeral/
+**/android/app/debug
+**/android/app/profile
+**/android/app/release
+
+# Coverage and symbols
+coverage/
+app.*.symbols
+app.*.map.json
+
+# Environment / secrets
+.env
+.env.*
