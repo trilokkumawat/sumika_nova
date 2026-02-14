@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
+import 'package:sumikanova/core/widget/loader.dart';
 
 /// Button with gradient background: linear-gradient(180deg, #E37A2A 0%, #C31D69 100%).
 class AppButton extends StatelessWidget {
@@ -44,12 +45,14 @@ class AppButton extends StatelessWidget {
             onTap: onPressed,
             borderRadius: BorderRadius.circular(borderRadius),
             child: Center(
-              child: Text(
-                text,
-                style:
-                    textStyle ??
-                    TypographyFont.uih5bold.copyWith(color: Colors.white),
-              ),
+              child: onPressed == null
+                  ? const CustomLoader()
+                  : Text(
+                      text,
+                      style:
+                          textStyle ??
+                          TypographyFont.uih5bold.copyWith(color: Colors.white),
+                    ),
             ),
           ),
         ),

@@ -59,4 +59,8 @@ class LoginController extends StateNotifier<LoginState> {
   void clearError() {
     state = state.copyWith(error: null);
   }
+
+  void reset() {
+    state = LoginState();
+  }
 }

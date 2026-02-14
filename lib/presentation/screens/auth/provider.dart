@@ -7,11 +7,16 @@ import 'package:sumikanova/presentation/screens/auth/verify/verify_controller.da
 import 'package:sumikanova/presentation/screens/auth/verify/verify_state.dart';
 
 final loginProvider =
-    StateNotifierProvider<LoginController, LoginState>((ref) => LoginController());
+    StateNotifierProvider.autoDispose<LoginController, LoginState>(
+      (ref) => LoginController(),
+    );
 
-final registerProvider = StateNotifierProvider<RegisterController, RegisterState>(
-  (ref) => RegisterController(),
-);
+final registerProvider =
+    StateNotifierProvider.autoDispose<RegisterController, RegisterState>(
+      (ref) => RegisterController(),
+    );
 
 final verifyProvider =
-    StateNotifierProvider<VerifyController, VerifyState>((ref) => VerifyController());
+    StateNotifierProvider.autoDispose<VerifyController, VerifyState>(
+      (ref) => VerifyController(),
+    );
