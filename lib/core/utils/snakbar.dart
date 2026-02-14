@@ -15,11 +15,11 @@ class SnakBarUtils {
         content: Text(
           message,
           style: TypographyFont.uih5med.copyWith(
-            color: textColor ?? Colors.black,
+            color: textColor ?? Colors.white,
           ),
         ),
-        backgroundColor: bgcolor ?? AppColor.gray4,
-        behavior: behavior ?? SnackBarBehavior.floating,
+        backgroundColor: bgcolor ?? AppColor.primary,
+        behavior: behavior ?? SnackBarBehavior.fixed,
       ),
     );
   }

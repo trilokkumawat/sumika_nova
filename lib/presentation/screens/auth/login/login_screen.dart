@@ -184,12 +184,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                     email,
                                     password,
                                   );
-                                  if (loginState.message != null &&
-                                      !loginState.isLoading &&
+                                  print('data: $data');
+                                  print(
+                                    'loginState.isLoading: ${loginState.message}',
+                                  );
+                                  print('mounted: $mounted');
+                                  print('mounted: $mounted');
+
+                                  if (!mounted) return;
+
+                                  if (loginState.isLoading == false &&
                                       mounted) {
                                     SnakBarUtils.showSnakBar(
                                       context,
-                                      loginState.message ?? '',
+                                      loginState.message ?? 'Login successful',
                                       bgcolor: AppColor.green,
                                       textColor: Colors.white,
                                     );

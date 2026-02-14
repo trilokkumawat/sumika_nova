@@ -3,13 +3,12 @@ import 'package:go_router/go_router.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/navigation/route_name.dart';
 import 'package:sumikanova/core/utils/date_helper.dart';
-import 'package:sumikanova/core/utils/snakbar.dart';
 import 'package:sumikanova/core/widget/customheader.dart';
 import 'package:sumikanova/core/widget/appbutton.dart';
 import 'package:sumikanova/core/widget/custom_iot_type.dart';
 import 'package:sumikanova/core/widget/custom_switch.dart';
-import 'package:sumikanova/core/widget/customback.dart';
 import 'package:sumikanova/core/widget/sunsetcard.dart';
+import 'package:sumikanova/data/user/userinfo.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -25,7 +24,18 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: AppColor.white2,
       body: Column(
         children: <Widget>[
-          CustomHeader(title: 'Thomes Home', isPopupmenu: true),
+          FutureBuilder<String>(
+            future: getUserInfo().then(
+              (value) => value?.name?.toUpperCase() ?? '',
+            ),
+            builder: (context, snapshot) {
+              return CustomHeader(
+                title: snapshot.data ?? ' ',
+                isPopupmenu: true,
+              );
+            },
+          ),
+
           Expanded(
             child: Column(
               spacing: 20,

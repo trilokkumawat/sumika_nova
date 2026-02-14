@@ -67,7 +67,11 @@ class _CustomBackState extends State<CustomBack> {
         children: <Widget>[
           if (widget.isAllowBack)
             GestureDetector(
-              onTap: widget.onBack ?? () => context.pop(),
+              onTap:
+                  widget.onBack ??
+                  () async {
+                    context.pop();
+                  },
               child: Container(
                 width: 40,
                 height: 40,
