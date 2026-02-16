@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -61,7 +63,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             children: [
               Container(
                 width: double.infinity,
-                height: MediaQuery.sizeOf(context).height / 3.9,
+                height: math.max(220, MediaQuery.sizeOf(context).height / 3.9),
                 decoration: BoxDecoration(color: AppColor.primary),
                 child: Stack(
                   clipBehavior: Clip.antiAlias,

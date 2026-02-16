@@ -65,11 +65,11 @@ dev_dependencies:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/icons/saveenergy.png"
-  image_path_android: "assets/icons/saveenergy.png"
-  image_path_ios: "assets/icons/saveenergy.png"
+  image_path: "assets/icons/logo1024x1024.png"
+  image_path_android: "assets/icons/logo1024x1024.png"
+  image_path_ios: "assets/icons/logo1024x1024.png"
   adaptive_icon_background: "#FFFFFF"
-  adaptive_icon_foreground: "assets/icons/saveenergy.png"
+  adaptive_icon_foreground: "assets/icons/logo1024x1024.png"
   web:
     generate: true
 # For information on the generic Dart part of this file, see the

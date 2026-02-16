@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -41,7 +43,7 @@ class _ForgetScreenState extends ConsumerState<ForgetScreen> {
           children: [
             Container(
               width: double.infinity,
-              height: MediaQuery.sizeOf(context).height / 3.9,
+              height: math.max(220, MediaQuery.sizeOf(context).height / 3.9),
               color: AppColor.primary,
               child: Stack(
                 clipBehavior: Clip.antiAlias,
