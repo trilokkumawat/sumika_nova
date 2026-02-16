@@ -125,8 +125,6 @@ void logout(BuildContext context) async {
     SnakBarUtils.showSnakBar(
       context,
       'User logged out successfully',
-      bgcolor: AppColor.green,
-      textColor: Colors.white,
       behavior: SnackBarBehavior.floating,
     );
   }

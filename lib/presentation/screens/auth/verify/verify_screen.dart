@@ -44,8 +44,7 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
 
   /// True when opened from forget-password flow.
   bool get _isForgetPwdFlow =>
-      widget.extra == 'forget_pwd' ||
-      widget.extraData?['flow'] == 'forget_pwd';
+      widget.extra == 'forget_pwd' || widget.extraData?['flow'] == 'forget_pwd';
 
   @override
   void dispose() {
@@ -251,15 +250,15 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
                                   );
                                 },
                               ),
-                              InkWell(
-                                onTap: () {},
-                                child: Text(
-                                  'Resend Code',
-                                  style: TypographyFont.uih5bold.copyWith(
-                                    color: const Color(0xFF455AF7),
-                                  ),
-                                ),
-                              ),
+                              // InkWell(
+                              //   onTap: () {},
+                              //   child: Text(
+                              //     'Resend Code',
+                              //     style: TypographyFont.uih5bold.copyWith(
+                              //       color: const Color(0xFF455AF7),
+                              //     ),
+                              //   ),
+                              // ),
                             ],
                           ),
                         ],

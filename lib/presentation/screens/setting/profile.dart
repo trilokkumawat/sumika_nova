@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/navigation/route_name.dart';
 import 'package:sumikanova/core/services/secure_auth_storage.dart';
+import 'package:sumikanova/core/utils/reusablemethod.dart';
 import 'package:sumikanova/core/widget/customheader.dart';
 import 'package:sumikanova/core/widget/nicknamecard.dart';
 import 'package:sumikanova/core/widget/profilemenuitem.dart';
@@ -40,10 +41,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ProfileMenuItem(
                         label: 'Logout',
                         onTap: () async {
-                          await SecureAuthStorage.clear();
-                          if (context.mounted) {
-                            context.go(RouteName.login);
-                          }
+                          logout(context);
                         },
                       ),
                       ProfileMenuItem(
