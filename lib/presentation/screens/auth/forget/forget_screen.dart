@@ -138,14 +138,14 @@ class _ForgetScreenState extends ConsumerState<ForgetScreen> {
                                 if (!mounted) return;
                                 final currentState = ref.read(forgetProvider);
                                 if (currentState.otp == null) return;
-                                print(currentState.otp);
                                 if (currentState.otp != null &&
                                     currentState.error == null) {
                                   context.push(
-                                    RouteName.createnewpwd,
+                                    RouteName.verify,
                                     extra: <String, dynamic>{
                                       'email': currentState.email ?? email,
                                       'otp': currentState.otp!,
+                                      'flow': 'forget_pwd',
                                     },
                                   );
                                 }

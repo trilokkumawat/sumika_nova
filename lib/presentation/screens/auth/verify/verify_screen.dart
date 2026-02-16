@@ -26,27 +26,26 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   String? _errorText;
 
-  /// Extract OTP from the API response data.
+  /// Extract OTP from route extra (email + otp only).
   String? get _serverOtp {
     final data = widget.extraData;
     if (data == null) return null;
-    if (data['data'] is Map && data['data']['otp'] != null) {
-      return data['data']['otp'].toString();
-    }
     if (data['otp'] != null) return data['otp'].toString();
     return null;
   }
 
-  /// Extract email from the API response data.
+  /// Extract email from route extra (email + otp only).
   String? get _email {
     final data = widget.extraData;
     if (data == null) return null;
-    if (data['data'] is Map && data['data']['email'] != null) {
-      return data['data']['email'].toString();
-    }
     if (data['email'] != null) return data['email'].toString();
     return null;
   }
+
+  /// True when opened from forget-password flow.
+  bool get _isForgetPwdFlow =>
+      widget.extra == 'forget_pwd' ||
+      widget.extraData?['flow'] == 'forget_pwd';
 
   @override
   void dispose() {
@@ -292,8 +291,14 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
 
                                 final enteredPin = _pinController.text.trim();
 
-                                if (widget.extra == 'forget_pwd') {
-                                  context.push(RouteName.createnewpwd);
+                                if (_isForgetPwdFlow) {
+                                  context.push(
+                                    RouteName.createnewpwd,
+                                    extra: <String, dynamic>{
+                                      'email': _email ?? '',
+                                      'otp': enteredPin,
+                                    },
+                                  );
                                 } else {
                                   if (_serverOtp != null &&
                                       enteredPin != _serverOtp) {
@@ -314,8 +319,6 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
                                     SnakBarUtils.showSnakBar(
                                       context,
                                       'OTP verified successfully',
-                                      bgcolor: AppColor.green,
-                                      textColor: Colors.white,
                                     );
                                     context.push(RouteName.app);
                                   }

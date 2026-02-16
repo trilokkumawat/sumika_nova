@@ -19,6 +19,7 @@ class ForgetController extends StateNotifier<ForgetState> {
           message: response.jsonBody['message']?.toString(),
           otp: data['otp']?.toString(),
           email: email,
+          error: null,
         );
         return;
       }
@@ -29,6 +30,7 @@ class ForgetController extends StateNotifier<ForgetState> {
         isLoading: false,
         error: 'Something went wrong. Please try again.',
       );
+      return null;
     }
   }
 

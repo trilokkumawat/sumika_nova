@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sumikanova/core/navigation/route_name.dart';
 import 'package:sumikanova/app.dart';
+import 'package:sumikanova/core/utils/fluttermap.dart';
 import 'package:sumikanova/presentation/screens/auth/newpassword/createnewpwd.dart';
 import 'package:sumikanova/presentation/screens/auth/forget/forget_screen.dart';
 import 'package:sumikanova/presentation/screens/auth/login/login_screen.dart';
@@ -11,6 +12,7 @@ import 'package:sumikanova/presentation/screens/device/add_device.dart';
 import 'package:sumikanova/presentation/screens/device/device_details.dart';
 import 'package:sumikanova/presentation/screens/onboarding.dart';
 import 'package:sumikanova/presentation/screens/roomadd/room_add.dart';
+import 'package:sumikanova/presentation/screens/setting/home_mngmt_screen.dart';
 import 'package:sumikanova/presentation/screens/splash.dart';
 
 final GoRouter appRouter = GoRouter(
@@ -73,6 +75,16 @@ final GoRouter appRouter = GoRouter(
       path: RouteName.deviceDetails,
       builder: (BuildContext context, GoRouterState state) =>
           DeviceDetailsScreen(deviceid: state.extra as String?),
+    ),
+    GoRoute(
+      path: RouteName.homeManagement,
+      builder: (BuildContext context, GoRouterState state) =>
+          const HomeManagementScreen(),
+    ),
+    GoRoute(
+      path: RouteName.mapView,
+      builder: (BuildContext context, GoRouterState state) =>
+          const MapViewScreen(),
     ),
   ],
 );

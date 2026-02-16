@@ -191,11 +191,16 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                         pwdCtl.text,
                                       );
                                   if (responseData != null && mounted) {
-                                    responseData['email'] = emailCtl.text;
-                                    context.push(
-                                      RouteName.verify,
-                                      extra: responseData,
-                                    );
+                                    final otp = responseData['otp']?.toString();
+                                    if (otp != null) {
+                                      context.push(
+                                        RouteName.verify,
+                                        extra: <String, dynamic>{
+                                          'email': emailCtl.text,
+                                          'otp': otp,
+                                        },
+                                      );
+                                    }
                                   }
                                 }
                               },

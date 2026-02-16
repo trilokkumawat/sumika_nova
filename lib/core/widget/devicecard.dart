@@ -6,13 +6,15 @@ class CustomDeviceCard extends StatelessWidget {
   const CustomDeviceCard({
     super.key,
     required this.device,
-    required this.cardSize,
+    required this.cardwidth,
+    required this.cardheight,
     required this.isSelected,
     required this.onTap,
   });
 
   final Map<String, String> device;
-  final double cardSize;
+  final double cardwidth;
+  final double cardheight;
   final bool isSelected;
   final VoidCallback onTap;
 
@@ -21,8 +23,8 @@ class CustomDeviceCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: SizedBox(
-        width: cardSize,
-        height: cardSize,
+        width: cardwidth,
+        height: cardheight,
         child: Container(
           decoration: BoxDecoration(
             color: AppColor.white,

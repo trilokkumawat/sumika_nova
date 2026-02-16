@@ -201,8 +201,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                     SnakBarUtils.showSnakBar(
                                       context,
                                       loginState.message ?? 'Login successful',
-                                      bgcolor: AppColor.green,
-                                      textColor: Colors.white,
                                     );
                                     context.go(RouteName.app);
                                   }

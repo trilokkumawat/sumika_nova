@@ -145,7 +145,8 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
                                 selectedDeviceType == device['id'];
                             return CustomDeviceCard(
                               device: device,
-                              cardSize: cardSize,
+                              cardwidth: cardSize,
+                              cardheight: cardSize,
                               isSelected: isSelected,
                               onTap: () => setState(
                                 () => selectedDeviceType = device['id'],
