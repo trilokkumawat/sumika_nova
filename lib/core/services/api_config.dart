@@ -82,6 +82,8 @@ class SumikiNovaApi {
   static final ForgotPasswordCall forgotPasswordCall = ForgotPasswordCall();
   static final ResetPasswordCall resetPasswordCall = ResetPasswordCall();
   static final ChangePasswordCall changePasswordCall = ChangePasswordCall();
+  static final CreateHomeCall createHomeCall = CreateHomeCall();
+  static final GetRoomCall getRoomCall = GetRoomCall();
 }
 
 /// Builds headers with optional Bearer token from [SecureAuthStorage].
@@ -234,6 +236,20 @@ class RegisterCall {
   }
 }
 
+/// POST BASE_PATH/location_list — Authorization: Bearer required
+class GetRoomCall {
+  Future<ApiCallResponse> call() async {
+    final baseUrl = SumikiNovaApi.getBaseUrl();
+    final headers = await buildApiHeaders();
+    return makeApiCall(
+      apiUrl: '${baseUrl}${ApiName.getroom}',
+      callType: ApiCallType.GET,
+      headers: headers,
+      returnBody: true,
+    );
+  }
+}
+
 /// POST BASE_PATH/login — email, password
 class LoginCall {
   Future<ApiCallResponse> call({
@@ -304,6 +320,30 @@ class ResetPasswordCall {
     return makeApiCall(
       apiUrl: '${baseUrl}${ApiName.resetpassword}',
       callType: ApiCallType.POST,
+      body: body,
+      returnBody: true,
+    );
+  }
+}
+
+/// POST BASE_PATH/create-home — Authorization: Bearer required; name, address, city, state, zip, country
+class CreateHomeCall {
+  Future<ApiCallResponse> call({
+    required String name,
+    required String userid,
+    required String is_active,
+  }) async {
+    final baseUrl = SumikiNovaApi.getBaseUrl();
+    final headers = await buildApiHeaders();
+    final body = <String, String>{
+      'name': name,
+      'user_id': userid,
+      'is_active': is_active,
+    };
+    return makeApiCall(
+      apiUrl: '${baseUrl}${ApiName.createHome}',
+      callType: ApiCallType.POST,
+      headers: headers,
       body: body,
       returnBody: true,
     );

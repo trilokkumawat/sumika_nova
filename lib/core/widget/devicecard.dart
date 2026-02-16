@@ -18,6 +18,28 @@ class CustomDeviceCard extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
 
+  Widget _buildIcon(String icon) {
+    final isNetworkUrl =
+        icon.startsWith('http://') || icon.startsWith('https://');
+    if (isNetworkUrl) {
+      return Image.network(
+        icon,
+        width: 40,
+        height: 40,
+        fit: BoxFit.contain,
+        errorBuilder: (_, __, ___) =>
+            Icon(Icons.device_hub, size: 40, color: AppColor.gray6),
+      );
+    }
+    return Image.asset(
+      icon,
+      width: 40,
+      height: 40,
+      errorBuilder: (_, __, ___) =>
+          Icon(Icons.device_hub, size: 40, color: AppColor.gray6),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -52,16 +74,7 @@ class CustomDeviceCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Image.asset(
-                        device['icon']!,
-                        width: 40,
-                        height: 40,
-                        errorBuilder: (_, __, ___) => Icon(
-                          Icons.device_hub,
-                          size: 40,
-                          color: AppColor.gray6,
-                        ),
-                      ),
+                      _buildIcon(device['icon']!),
                       const SizedBox(height: 8),
                       Text(
                         device['label']!,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:sumikanova/core/navigation/route_name.dart';
 import 'package:sumikanova/app.dart';
 import 'package:sumikanova/core/utils/fluttermap.dart';
@@ -12,7 +13,7 @@ import 'package:sumikanova/presentation/screens/device/add_device.dart';
 import 'package:sumikanova/presentation/screens/device/device_details.dart';
 import 'package:sumikanova/presentation/screens/onboarding.dart';
 import 'package:sumikanova/presentation/screens/roomadd/room_add.dart';
-import 'package:sumikanova/presentation/screens/setting/home_mngmt_screen.dart';
+import 'package:sumikanova/presentation/screens/setting/homemanagement/home_mngmt_screen.dart';
 import 'package:sumikanova/presentation/screens/splash.dart';
 
 final GoRouter appRouter = GoRouter(
@@ -83,8 +84,19 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: RouteName.mapView,
-      builder: (BuildContext context, GoRouterState state) =>
-          const MapViewScreen(),
+      builder: (BuildContext context, GoRouterState state) {
+        LatLng? initialCenter;
+        final extra = state.extra;
+        if (extra is Map<String, dynamic> &&
+            extra['lat'] != null &&
+            extra['lng'] != null) {
+          initialCenter = LatLng(
+            (extra['lat'] as num).toDouble(),
+            (extra['lng'] as num).toDouble(),
+          );
+        }
+        return MapViewScreen(initialCenter: initialCenter);
+      },
     ),
   ],
 );
