@@ -4,7 +4,6 @@ import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
 import 'package:sumikanova/core/services/api_config.dart';
 import 'package:sumikanova/core/services/secure_auth_storage.dart';
-import 'package:sumikanova/core/widget/appbutton.dart';
 import 'package:sumikanova/core/widget/customheader.dart';
 import 'package:sumikanova/core/utils/customtxtformfield.dart';
 import 'package:sumikanova/core/utils/reusablemethod.dart';
@@ -14,7 +13,7 @@ import 'package:sumikanova/data/model/room_model_simple.dart';
 class RoomAddScreen extends StatefulWidget {
   const RoomAddScreen({super.key, this.extraData});
 
-  /// Data passed from Create Home (home name, location, selected rooms).
+  /// Data passed from Create Home (home name, location,).
   final Map<String, dynamic>? extraData;
 
   @override
@@ -31,8 +30,8 @@ class _RoomAddScreenState extends State<RoomAddScreen> {
   bool _roomsLoading = true;
   String? _roomsError;
 
-  /// Selected recommend room ids (location_list_id from API). Used when saving.
-  final Set<String> _selectedRecommendIds = {};
+  /// Selected recommended rooms (id, name). Used when saving.
+  final List<Map<String, dynamic>> _selectedRecommendRooms = [];
 
   /// User-added custom room names. Sent with location_list_id: "0" when saving.
   final List<Map<String, dynamic>> _userAddedRooms = [];
@@ -86,45 +85,6 @@ class _RoomAddScreenState extends State<RoomAddScreen> {
 
   /// Build locations list for CreateHomeWithLocationsCall: selected recommend
   /// (with their id) + custom rooms (location_list_id "0") + extraData selectedRooms.
-  List<Map<String, String>> _buildLocationsList() {
-    final List<Map<String, String>> list = [];
-
-    // From Create Home (extraData selectedRooms)
-    final extraRooms = widget.extraData?['selectedRooms'] as List?;
-    if (extraRooms != null) {
-      for (final r in extraRooms) {
-        if (r is Map) {
-          final map = Map<String, dynamic>.from(r);
-          final id = (map['id'] ?? '').toString();
-          final name = (map['label'] ?? map['name'] ?? '').toString();
-          if (name.isNotEmpty) {
-            list.add({'name': name, 'location_list_id': id, 'is_active': '1'});
-          }
-        }
-      }
-    }
-
-    // Selected recommend rooms (use API id)
-    for (final room in _recommendedRooms) {
-      if (_selectedRecommendIds.contains(room.id)) {
-        list.add({
-          'name': room.name,
-          'location_list_id': room.id,
-          'is_active': '1',
-        });
-      }
-    }
-
-    // Custom rooms (location_list_id 0)
-    for (final r in _userAddedRooms) {
-      final name = (r['name'] as String?)?.trim() ?? '';
-      if (name.isNotEmpty) {
-        list.add({'name': name, 'location_list_id': '0', 'is_active': '1'});
-      }
-    }
-
-    return list;
-  }
 
   Future<void> _saveHomeWithLocations() async {
     if (widget.extraData == null) {
@@ -142,21 +102,42 @@ class _RoomAddScreenState extends State<RoomAddScreen> {
       return;
     }
 
-    final locations = _buildLocationsList();
-    if (locations.isEmpty) {
-      SnakBarUtils.showSnakBar(
-        context,
-        'Select at least one room or add a custom room',
-      );
-      return;
-    }
-
     final userData = await SecureAuthStorage.getUserData();
     final userId = userData?['id']?.toString();
     if (userId == null || userId.isEmpty) {
       SnakBarUtils.showSnakBar(context, 'Please sign in again');
       return;
     }
+
+    final locations = <Map<String, String>>[
+      ..._selectedRecommendRooms.map<Map<String, String>>(
+        (m) => {
+          'name': (m['name'] as String?) ?? '',
+          'is_active': '1',
+          'location_list_id': (m['id'] as String?) ?? '',
+        },
+      ),
+      ..._userAddedRooms.map<Map<String, String>>(
+        (m) => {
+          'name': (m['name'] as String?) ?? '',
+          'is_active': '1',
+          'location_list_id': '0',
+        },
+      ),
+    ];
+    final customRoomName = roomNameController.text.trim();
+    if (customRoomName.isNotEmpty) {
+      locations.add({
+        'name': customRoomName,
+        'is_active': '1',
+        'location_list_id': '0',
+      });
+    }
+    print(locations.toString());
+    print(customRoomName);
+    print(userId.toString());
+    print(address);
+    print(homeName);
 
     setState(() => _saveLoading = true);
     try {
@@ -177,6 +158,7 @@ class _RoomAddScreenState extends State<RoomAddScreen> {
               : 'Home saved successfully',
         );
         context.pop();
+        context.pop();
       } else {
         final msg =
             response.jsonBody is Map && response.jsonBody['message'] != null
@@ -193,21 +175,6 @@ class _RoomAddScreenState extends State<RoomAddScreen> {
         );
       }
     }
-  }
-
-  void _addCustomRoom() {
-    if (!formKey.currentState!.validate()) return;
-    final name = roomNameController.text.trim();
-    if (name.isEmpty) return;
-    setState(() {
-      _userAddedRooms.add({
-        'id': 'custom_${_userAddedRooms.length}',
-        'name': name,
-      });
-    });
-    roomNameController.clear();
-    FocusScope.of(context).unfocus();
-    SnakBarUtils.showSnakBar(context, 'Room added');
   }
 
   @override
@@ -242,52 +209,43 @@ class _RoomAddScreenState extends State<RoomAddScreen> {
                   spacing: 20,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    if (widget.extraData != null &&
-                        (widget.extraData!['homeName'] != null ||
-                            widget.extraData!['address'] != null)) ...[
-                      Container(
-                        padding: const EdgeInsets.all(14),
-                        decoration: BoxDecoration(
-                          color: AppColor.white,
-                          borderRadius: BorderRadius.circular(15),
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(0x40C7C6C6),
-                              blurRadius: 6,
-                              offset: const Offset(0, 2),
-                              spreadRadius: 0,
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          spacing: 8,
-                          children: [
-                            if (widget.extraData!['homeName'] != null &&
-                                (widget.extraData!['homeName'] as String)
-                                    .isNotEmpty)
-                              _InfoRow(
-                                label: 'Home Name',
-                                value: widget.extraData!['homeName'] as String,
-                              ),
-                            if (widget.extraData!['address'] != null)
-                              _InfoRow(
-                                label: 'Location',
-                                value: widget.extraData!['address'] as String,
-                              ),
-                            if (widget.extraData!['selectedRooms'] != null) ...[
-                              const SizedBox(height: 4),
-                              Text(
-                                'Selected rooms: ${(widget.extraData!['selectedRooms'] as List).length}',
-                                style: TypographyFont.uih6reg.copyWith(
-                                  color: AppColor.black,
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
-                      ),
-                    ],
+                    // if (widget.extraData != null &&
+                    //     (widget.extraData!['homeName'] != null ||
+                    //         widget.extraData!['address'] != null)) ...[
+                    //   Container(
+                    //     padding: const EdgeInsets.all(14),
+                    //     decoration: BoxDecoration(
+                    //       color: AppColor.white,
+                    //       borderRadius: BorderRadius.circular(15),
+                    //       boxShadow: [
+                    //         BoxShadow(
+                    //           color: const Color(0x40C7C6C6),
+                    //           blurRadius: 6,
+                    //           offset: const Offset(0, 2),
+                    //           spreadRadius: 0,
+                    //         ),
+                    //       ],
+                    //     ),
+                    //     child: Column(
+                    //       crossAxisAlignment: CrossAxisAlignment.stretch,
+                    //       spacing: 8,
+                    //       children: [
+                    //         if (widget.extraData!['homeName'] != null &&
+                    //             (widget.extraData!['homeName'] as String)
+                    //                 .isNotEmpty)
+                    //           _InfoRow(
+                    //             label: 'Home Name',
+                    //             value: widget.extraData!['homeName'] as String,
+                    //           ),
+                    //         if (widget.extraData!['address'] != null)
+                    //           _InfoRow(
+                    //             label: 'Location',
+                    //             value: widget.extraData!['address'] as String,
+                    //           ),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ],
                     CustomTxtFormField(
                       controller: roomNameController,
                       hintText: 'Room Name',
@@ -297,8 +255,7 @@ class _RoomAddScreenState extends State<RoomAddScreen> {
                         return validationEmpty(value, 'Enter room name');
                       },
                     ),
-                    AppButton(text: 'Add room', onPressed: _addCustomRoom),
-
+                    // Text(_selectedRecommendRooms.toString()),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -333,24 +290,30 @@ class _RoomAddScreenState extends State<RoomAddScreen> {
                         runSpacing: 20,
                         alignment: WrapAlignment.center,
                         children: [
-                          ..._recommendedRooms.map<Widget>(
-                            (RoomModel room) => _RoomChip(
+                          ..._recommendedRooms.map<Widget>((RoomModel room) {
+                            final isSelected = _selectedRecommendRooms.any(
+                              (m) => m['id'] == room.id,
+                            );
+                            return _RoomChip(
                               name: room.name,
                               locationListId: room.id,
-                              isSelected: _selectedRecommendIds.contains(
-                                room.id,
-                              ),
+                              isSelected: isSelected,
                               onTap: () {
                                 setState(() {
-                                  if (_selectedRecommendIds.contains(room.id)) {
-                                    _selectedRecommendIds.remove(room.id);
+                                  final idx = _selectedRecommendRooms
+                                      .indexWhere((m) => m['id'] == room.id);
+                                  if (idx >= 0) {
+                                    _selectedRecommendRooms.removeAt(idx);
                                   } else {
-                                    _selectedRecommendIds.add(room.id);
+                                    _selectedRecommendRooms.add({
+                                      'id': room.id,
+                                      'name': room.name,
+                                    });
                                   }
                                 });
                               },
-                            ),
-                          ),
+                            );
+                          }),
                           ..._userAddedRooms.map<Widget>(
                             (Map<String, dynamic> room) => _RoomChip(
                               name: (room['name'] as String?) ?? '',

@@ -65,12 +65,7 @@ class _HomeManagementScreenState extends ConsumerState<HomeManagementScreen> {
             children: [
               Column(
                 children: [
-                  CustomHeader(
-                    title: 'Create Home',
-                    isAllowBack: true,
-                    isSubmit: true,
-                    onSubmit: () async {},
-                  ),
+                  CustomHeader(title: 'Create Home', isAllowBack: true),
                   Expanded(
                     child: SingleChildScrollView(
                       padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
@@ -270,6 +265,9 @@ class _HomeManagementScreenState extends ConsumerState<HomeManagementScreen> {
                                     },
                                   )
                                   .toList();
+                              print(locations.toString());
+                              print(address);
+                              print(deviceNameController.text.trim());
                               final success = await homeMngmtController
                                   .createHomeWithLocations(
                                     name: deviceNameController.text.trim(),
@@ -311,9 +309,6 @@ class _HomeManagementScreenState extends ConsumerState<HomeManagementScreen> {
                               final extra = <String, dynamic>{
                                 'homeName': deviceNameController.text.trim(),
                                 'address': address,
-                                'lat': _selectedLocation!.latitude,
-                                'lng': _selectedLocation!.longitude,
-                                'selectedRooms': _selectedDevices,
                               };
                               context.push(RouteName.roomAdd, extra: extra);
                             },

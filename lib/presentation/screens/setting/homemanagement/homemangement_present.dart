@@ -5,6 +5,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
 import 'package:sumikanova/core/navigation/route_name.dart';
+import 'package:sumikanova/core/services/secure_auth_storage.dart';
 import 'package:sumikanova/core/utils/customtxtformfield.dart';
 import 'package:sumikanova/core/utils/reusablemethod.dart';
 import 'package:sumikanova/core/utils/snakbar.dart';
@@ -132,6 +133,15 @@ class _HomeManagementParentScreenState
                               ),
                             ),
                           ),
+                          // ElevatedButton(
+                          //   onPressed: () async {
+                          //     final userData =
+                          //         await SecureAuthStorage.getUserData();
+                          //     final userId = userData?['id']?.toString();
+                          //     print(userId);
+                          //   },
+                          //   child: Text("data"),
+                          // ),
                         ],
                       ),
                     ),
