@@ -90,6 +90,7 @@ class SumikiNovaApi {
   static final GetUserHomeListCall getUserHomeListCall = GetUserHomeListCall();
   static final GetHomeByIdLocationCall getHomeByIdLocationCall =
       GetHomeByIdLocationCall();
+  static final EditProfileCall editProfileCall = EditProfileCall();
 }
 
 /// Builds headers with optional Bearer token from [SecureAuthStorage].
@@ -465,6 +466,23 @@ class GetHomeByIdLocationCall {
       apiUrl: apiUrl,
       callType: ApiCallType.GET,
       headers: headers,
+      returnBody: true,
+    );
+  }
+}
+
+/// POST edit-profile — Authorization: Bearer required; body: name (key-value).
+/// User is identified by the Bearer token, not by userId in the path.
+class EditProfileCall {
+  Future<ApiCallResponse> call({required String name}) async {
+    final baseUrl = SumikiNovaApi.getBaseUrl();
+    final headers = await buildApiHeaders();
+    final apiUrl = '${baseUrl}${ApiName.editprofile}';
+    return makeApiCall(
+      apiUrl: apiUrl,
+      callType: ApiCallType.POST,
+      headers: headers,
+      body: {'name': name},
       returnBody: true,
     );
   }
