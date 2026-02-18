@@ -15,6 +15,9 @@ class CustomHeader extends StatefulWidget {
   final bool isSubmit;
   final VoidCallback? onSubmit;
   final Icon? submitIcon;
+  final List<Map<String, dynamic>>? homeOptions;
+  final int? selectedHomeId;
+  final ValueChanged<int?>? onHomeChanged;
   const CustomHeader({
     super.key,
     this.appBarHeight = 0,
@@ -24,6 +27,9 @@ class CustomHeader extends StatefulWidget {
     this.isSubmit = false,
     this.onSubmit,
     this.submitIcon,
+    this.homeOptions,
+    this.selectedHomeId,
+    this.onHomeChanged,
   });
 
   @override
@@ -60,6 +66,9 @@ class _CustomHeaderState extends State<CustomHeader> {
                   isSubmit: widget.isSubmit,
                   onSubmit: widget.onSubmit,
                   submitIcon: widget.submitIcon,
+                  homeOptions: widget.homeOptions,
+                  selectedHomeId: widget.selectedHomeId,
+                  onHomeChanged: widget.onHomeChanged,
                   onPopupMenuItemTap: (int index) {
                     print(index);
                     if (index == 0) {

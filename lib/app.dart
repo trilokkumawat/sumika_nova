@@ -13,14 +13,13 @@ class AppState extends StatefulWidget {
 
 class _AppStateState extends State<AppState> {
   int _currentIndex = 0;
+  VoidCallback? _refreshHome;
 
-  static const List<Widget> _screens = <Widget>[
-    HomeScreen(),
-    SceneScreen(),
-    ActivityScreen(),
-    ProfileScreen(),
-    // ActivityScreen(),
-    // ProfileScreen(),
+  List<Widget> get _screens => <Widget>[
+    HomeScreen(onRegisterRefresh: (cb) => _refreshHome = cb),
+    const SceneScreen(),
+    const ActivityScreen(),
+    const ProfileScreen(),
   ];
 
   static const List<_NavItem> _navItems = <_NavItem>[
@@ -54,7 +53,10 @@ class _AppStateState extends State<AppState> {
               iconPath: _navItems[index].iconPath,
               label: _navItems[index].label,
               isSelected: _currentIndex == index,
-              onTap: () => setState(() => _currentIndex = index),
+              onTap: () {
+                setState(() => _currentIndex = index);
+                if (index == 0) _refreshHome?.call();
+              },
             ),
           ),
         ),

@@ -3,6 +3,7 @@ import 'package:flutter_popup/flutter_popup.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
+import 'package:sumikanova/core/utils/homedropdown.dart';
 import 'package:sumikanova/core/utils/reusablemethod.dart';
 import 'package:sumikanova/core/widget/custom_divider.dart';
 import 'package:sumikanova/core/widget/popup_menu_item.dart';
@@ -24,6 +25,9 @@ class CustomBack extends StatefulWidget {
     this.isSubmit = false,
     this.onSubmit,
     this.submitIcon,
+    this.homeOptions,
+    this.selectedHomeId,
+    this.onHomeChanged,
   });
 
   final String title;
@@ -40,11 +44,22 @@ class CustomBack extends StatefulWidget {
   final void Function(int index)? onPopupMenuItemTap;
   final bool isSubmit;
   final Icon? submitIcon;
+
+  /// When non-null, a pill-shaped home dropdown (150px wide) is shown next to the title.
+  /// Each map should have "id" (int) and "name" (String). Only name is shown in the dropdown.
+  final List<Map<String, dynamic>>? homeOptions;
+  final int? selectedHomeId;
+  final ValueChanged<int?>? onHomeChanged;
   @override
   State<CustomBack> createState() => _CustomBackState();
 }
 
 class _CustomBackState extends State<CustomBack> {
+  int? _localSelectedHomeId;
+
+  int? get _effectiveSelectedHomeId =>
+      widget.selectedHomeId ?? _localSelectedHomeId;
+
   void _onPopupItemTap(int index) {
     if (mounted) {
       Navigator.of(context).pop();
@@ -81,10 +96,29 @@ class _CustomBackState extends State<CustomBack> {
             ),
           if (widget.title.isNotEmpty)
             Expanded(
-              child: Text(
-                widget.title.titleCase(),
-                style: style,
-                overflow: TextOverflow.ellipsis,
+              child: Row(
+                spacing: 10,
+                children: [
+                  Flexible(
+                    child: Text(
+                      widget.title.titleCase(),
+                      style: style,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  if (widget.homeOptions != null &&
+                      widget.homeOptions!.isNotEmpty) ...[
+                    HomeDropdown(
+                      options: widget.homeOptions!,
+                      value: _effectiveSelectedHomeId,
+                      onChanged: (id) {
+                        setState(() => _localSelectedHomeId = id);
+                        widget.onHomeChanged?.call(id);
+                      },
+                      width: 150,
+                    ),
+                  ],
+                ],
               ),
             ),
           if (widget.isSubmit)
@@ -99,6 +133,7 @@ class _CustomBackState extends State<CustomBack> {
                     Icon(Icons.check, color: iconClr, size: 24),
               ),
             ),
+
           if (widget.isPopupmenu)
             CustomPopup(
               position: PopupPosition.bottom,
