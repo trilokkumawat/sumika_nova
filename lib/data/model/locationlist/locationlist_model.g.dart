@@ -45,9 +45,11 @@ _$LocationItemImpl _$$LocationItemImplFromJson(Map<String, dynamic> json) =>
       createdAt: json['created_at'] as String,
       updatedAt: json['updated_at'] as String,
       showPhotoPath: json['show_photo_path'] as String,
-      locationList: LocationListRef.fromJson(
-        json['location_list'] as Map<String, dynamic>,
-      ),
+      locationList: json['location_list'] == null
+          ? null
+          : LocationListRef.fromJson(
+              json['location_list'] as Map<String, dynamic>,
+            ),
     );
 
 Map<String, dynamic> _$$LocationItemImplToJson(_$LocationItemImpl instance) =>

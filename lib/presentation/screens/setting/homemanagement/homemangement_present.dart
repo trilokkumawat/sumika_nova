@@ -5,6 +5,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
 import 'package:sumikanova/core/navigation/route_name.dart';
+import 'package:sumikanova/core/utils/reusablemethod.dart';
 import 'package:sumikanova/core/services/api_config.dart';
 import 'package:sumikanova/core/services/secure_auth_storage.dart';
 import 'package:sumikanova/core/widget/customheader.dart';
@@ -168,7 +169,9 @@ class _HomeManagementParentScreenState
                                       borderRadius: BorderRadius.circular(10),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: AppColor.gray4.withOpacity(0.15),
+                                          color: AppColor.gray4.withOpacity(
+                                            0.15,
+                                          ),
                                           blurRadius: 12,
                                           spreadRadius: 2,
                                           offset: const Offset(0, 4),
@@ -189,11 +192,14 @@ class _HomeManagementParentScreenState
                                       .map<Widget>(
                                         (home) => _HomeListTile(
                                           home: home,
-                                          onTap: () {
-                                            context.push(
+                                          onTap: () async {
+                                            await context.push(
                                               RouteName.homeSettings,
                                               extra: home,
                                             );
+                                            if (context.mounted) {
+                                              _refreshHomeList();
+                                            }
                                           },
                                         ),
                                       )
@@ -201,53 +207,59 @@ class _HomeManagementParentScreenState
                                 );
                               },
                             ),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: AppColor.white,
-                              borderRadius: BorderRadius.circular(10),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: AppColor.gray4.withOpacity(0.15),
-                                  blurRadius: 12,
-                                  spreadRadius: 2,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
-                            ),
-                            child: Material(
-                              color: Colors.transparent,
-                              borderRadius: BorderRadius.circular(10),
-                              clipBehavior: Clip.antiAlias,
-                              child: InkWell(
-                                onTap: () {
-                                  context.push(RouteName.homeManagement);
-                                },
+                            Container(
+                              decoration: BoxDecoration(
+                                color: AppColor.white,
                                 borderRadius: BorderRadius.circular(10),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(10),
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        'Create a Home',
-                                        style: TypographyFont.uih5bold.copyWith(
-                                          color: AppColor.primary,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppColor.gray4.withOpacity(0.15),
+                                    blurRadius: 12,
+                                    spreadRadius: 2,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: Material(
+                                color: Colors.transparent,
+                                borderRadius: BorderRadius.circular(10),
+                                clipBehavior: Clip.antiAlias,
+                                child: InkWell(
+                                  onTap: () async {
+                                    await context.push(
+                                      RouteName.homeManagement,
+                                    );
+                                    if (context.mounted) {
+                                      _refreshHomeList();
+                                    }
+                                  },
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          'Create a Home',
+                                          style: TypographyFont.uih5bold
+                                              .copyWith(
+                                                color: AppColor.primary,
+                                              ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                          // ElevatedButton(
-                          //   onPressed: () async {
-                          //     final userData =
-                          //         await SecureAuthStorage.getUserData();
-                          //     final userId = userData?['id']?.toString();
-                          //     print(userId);
-                          //   },
-                          //   child: Text("data"),
-                          // ),
+                            // ElevatedButton(
+                            //   onPressed: () async {
+                            //     final userData =
+                            //         await SecureAuthStorage.getUserData();
+                            //     final userId = userData?['id']?.toString();
+                            //     print(userId);
+                            //   },
+                            //   child: Text("data"),
+                            // ),
                           ],
                         ),
                       ),
@@ -297,10 +309,8 @@ class _HomeListTile extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  home.name,
-                  style: TypographyFont.uih5bold.copyWith(
-                    color: AppColor.black,
-                  ),
+                  home.name.toUpperCase(),
+                  style: TypographyFont.uih5reg.copyWith(color: AppColor.gray4),
                 ),
                 const Icon(
                   Icons.arrow_forward_ios_rounded,

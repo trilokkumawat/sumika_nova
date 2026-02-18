@@ -92,6 +92,13 @@ String? validationEmpty(String? value, message) {
   return null;
 }
 
+/// Returns [value] with the first character in uppercase; rest unchanged.
+/// Returns empty string if [value] is null or empty.
+String capitalizeFirst(String? value) {
+  if (value == null || value.isEmpty) return value ?? '';
+  return value[0].toUpperCase() + value.substring(1);
+}
+
 extension SentenceCase on String {
   String sentenceCase() =>
       isEmpty ? this : this[0].toUpperCase() + substring(1).toLowerCase();

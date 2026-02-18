@@ -421,7 +421,7 @@ mixin _$LocationItem {
   @JsonKey(name: 'show_photo_path')
   String get showPhotoPath => throw _privateConstructorUsedError;
   @JsonKey(name: 'location_list')
-  LocationListRef get locationList => throw _privateConstructorUsedError;
+  LocationListRef? get locationList => throw _privateConstructorUsedError;
 
   /// Serializes this LocationItem to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -450,10 +450,10 @@ abstract class $LocationItemCopyWith<$Res> {
     @JsonKey(name: 'created_at') String createdAt,
     @JsonKey(name: 'updated_at') String updatedAt,
     @JsonKey(name: 'show_photo_path') String showPhotoPath,
-    @JsonKey(name: 'location_list') LocationListRef locationList,
+    @JsonKey(name: 'location_list') LocationListRef? locationList,
   });
 
-  $LocationListRefCopyWith<$Res> get locationList;
+  $LocationListRefCopyWith<$Res>? get locationList;
 }
 
 /// @nodoc
@@ -480,7 +480,7 @@ class _$LocationItemCopyWithImpl<$Res, $Val extends LocationItem>
     Object? createdAt = null,
     Object? updatedAt = null,
     Object? showPhotoPath = null,
-    Object? locationList = null,
+    Object? locationList = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -520,10 +520,10 @@ class _$LocationItemCopyWithImpl<$Res, $Val extends LocationItem>
                 ? _value.showPhotoPath
                 : showPhotoPath // ignore: cast_nullable_to_non_nullable
                       as String,
-            locationList: null == locationList
+            locationList: freezed == locationList
                 ? _value.locationList
                 : locationList // ignore: cast_nullable_to_non_nullable
-                      as LocationListRef,
+                      as LocationListRef?,
           )
           as $Val,
     );
@@ -533,8 +533,12 @@ class _$LocationItemCopyWithImpl<$Res, $Val extends LocationItem>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $LocationListRefCopyWith<$Res> get locationList {
-    return $LocationListRefCopyWith<$Res>(_value.locationList, (value) {
+  $LocationListRefCopyWith<$Res>? get locationList {
+    if (_value.locationList == null) {
+      return null;
+    }
+
+    return $LocationListRefCopyWith<$Res>(_value.locationList!, (value) {
       return _then(_value.copyWith(locationList: value) as $Val);
     });
   }
@@ -559,11 +563,11 @@ abstract class _$$LocationItemImplCopyWith<$Res>
     @JsonKey(name: 'created_at') String createdAt,
     @JsonKey(name: 'updated_at') String updatedAt,
     @JsonKey(name: 'show_photo_path') String showPhotoPath,
-    @JsonKey(name: 'location_list') LocationListRef locationList,
+    @JsonKey(name: 'location_list') LocationListRef? locationList,
   });
 
   @override
-  $LocationListRefCopyWith<$Res> get locationList;
+  $LocationListRefCopyWith<$Res>? get locationList;
 }
 
 /// @nodoc
@@ -589,7 +593,7 @@ class __$$LocationItemImplCopyWithImpl<$Res>
     Object? createdAt = null,
     Object? updatedAt = null,
     Object? showPhotoPath = null,
-    Object? locationList = null,
+    Object? locationList = freezed,
   }) {
     return _then(
       _$LocationItemImpl(
@@ -629,10 +633,10 @@ class __$$LocationItemImplCopyWithImpl<$Res>
             ? _value.showPhotoPath
             : showPhotoPath // ignore: cast_nullable_to_non_nullable
                   as String,
-        locationList: null == locationList
+        locationList: freezed == locationList
             ? _value.locationList
             : locationList // ignore: cast_nullable_to_non_nullable
-                  as LocationListRef,
+                  as LocationListRef?,
       ),
     );
   }
@@ -651,7 +655,7 @@ class _$LocationItemImpl implements _LocationItem {
     @JsonKey(name: 'created_at') required this.createdAt,
     @JsonKey(name: 'updated_at') required this.updatedAt,
     @JsonKey(name: 'show_photo_path') required this.showPhotoPath,
-    @JsonKey(name: 'location_list') required this.locationList,
+    @JsonKey(name: 'location_list') this.locationList,
   });
 
   factory _$LocationItemImpl.fromJson(Map<String, dynamic> json) =>
@@ -684,7 +688,7 @@ class _$LocationItemImpl implements _LocationItem {
   final String showPhotoPath;
   @override
   @JsonKey(name: 'location_list')
-  final LocationListRef locationList;
+  final LocationListRef? locationList;
 
   @override
   String toString() {
@@ -756,7 +760,7 @@ abstract class _LocationItem implements LocationItem {
     @JsonKey(name: 'created_at') required final String createdAt,
     @JsonKey(name: 'updated_at') required final String updatedAt,
     @JsonKey(name: 'show_photo_path') required final String showPhotoPath,
-    @JsonKey(name: 'location_list') required final LocationListRef locationList,
+    @JsonKey(name: 'location_list') final LocationListRef? locationList,
   }) = _$LocationItemImpl;
 
   factory _LocationItem.fromJson(Map<String, dynamic> json) =
@@ -789,7 +793,7 @@ abstract class _LocationItem implements LocationItem {
   String get showPhotoPath;
   @override
   @JsonKey(name: 'location_list')
-  LocationListRef get locationList;
+  LocationListRef? get locationList;
 
   /// Create a copy of LocationItem
   /// with the given fields replaced by the non-null parameter values.

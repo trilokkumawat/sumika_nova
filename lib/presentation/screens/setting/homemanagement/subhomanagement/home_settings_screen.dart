@@ -47,6 +47,7 @@ class _HomeSettingsScreenState extends State<HomeSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColor.white2,
       body: Column(
         children: [
           const CustomHeader(title: 'Home Settings', isAllowBack: true),
@@ -235,7 +236,7 @@ class _RoomListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final imageUrl = location.locationList.imageUrl;
+    final imageUrl = location.locationList?.imageUrl ?? '';
     return Material(
       color: Colors.transparent,
       child: InkWell(

@@ -19,9 +19,8 @@ class LocationListResponse with _$LocationListResponse {
 /// Wrapper for the locations array in the response.
 @freezed
 class LocationListData with _$LocationListData {
-  const factory LocationListData({
-    required List<LocationItem> locations,
-  }) = _LocationListData;
+  const factory LocationListData({required List<LocationItem> locations}) =
+      _LocationListData;
 
   factory LocationListData.fromJson(Map<String, dynamic> json) =>
       _$LocationListDataFromJson(json);
@@ -40,7 +39,7 @@ class LocationItem with _$LocationItem {
     @JsonKey(name: 'created_at') required String createdAt,
     @JsonKey(name: 'updated_at') required String updatedAt,
     @JsonKey(name: 'show_photo_path') required String showPhotoPath,
-    @JsonKey(name: 'location_list') required LocationListRef locationList,
+    @JsonKey(name: 'location_list') LocationListRef? locationList,
   }) = _LocationItem;
 
   factory LocationItem.fromJson(Map<String, dynamic> json) =>
