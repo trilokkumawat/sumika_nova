@@ -5,14 +5,10 @@ import 'package:latlong2/latlong.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
 import 'package:sumikanova/core/navigation/route_name.dart';
+import 'package:sumikanova/core/services/api_config.dart';
 import 'package:sumikanova/core/services/secure_auth_storage.dart';
-import 'package:sumikanova/core/utils/customtxtformfield.dart';
-import 'package:sumikanova/core/utils/reusablemethod.dart';
-import 'package:sumikanova/core/utils/snakbar.dart';
-import 'package:sumikanova/core/widget/appbutton.dart';
 import 'package:sumikanova/core/widget/customheader.dart';
-import 'package:sumikanova/core/widget/devicecard.dart';
-import 'package:sumikanova/core/widget/errorshow.dart';
+import 'package:sumikanova/data/model/homelist/homelist_model.dart';
 import 'package:sumikanova/presentation/screens/setting/homemanagement/subhomanagement/home_mngmt_provider.dart';
 
 class HomeManagementParentScreen extends ConsumerStatefulWidget {
@@ -34,11 +30,36 @@ class _HomeManagementParentScreenState
   LatLng? _selectedLocation;
   String? _selectedAddress;
   bool _roomsLoadTriggered = false;
+  late Future<ApiCallResponse> _homeListFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _homeListFuture = _fetchUserHomeList();
+  }
+
+  Future<void> _refreshHomeList() async {
+    setState(() {
+      _homeListFuture = _fetchUserHomeList();
+    });
+    await _homeListFuture;
+  }
 
   @override
   void dispose() {
     deviceNameController.dispose();
     super.dispose();
+  }
+
+  Future<ApiCallResponse> _fetchUserHomeList() async {
+    final userData = await SecureAuthStorage.getUserData();
+    final userId = userData?['id']?.toString();
+    print('userId: $userId');
+    final response = await SumikiNovaApi.getUserHomeListCall.call(
+      userId: userId ?? '',
+    );
+    print('UserHomeList response: ${response.jsonBody}');
+    return response;
   }
 
   @override
@@ -74,61 +95,146 @@ class _HomeManagementParentScreenState
                     onSubmit: () async {},
                   ),
                   Expanded(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
-                      child: Column(
-                        spacing: 16,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Material(
-                            color: AppColor.white,
-                            borderRadius: BorderRadius.circular(10),
-                            clipBehavior: Clip.antiAlias,
-                            child: InkWell(
-                              onTap: () {},
-                              borderRadius: BorderRadius.circular(10),
-                              child: Padding(
-                                padding: const EdgeInsets.all(10),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      'My Home',
-                                      style: TypographyFont.uih5bold.copyWith(
-                                        color: AppColor.black,
+                    child: RefreshIndicator(
+                      onRefresh: _refreshHomeList,
+                      child: SingleChildScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
+                        child: Column(
+                          spacing: 16,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            FutureBuilder<ApiCallResponse>(
+                              future: _homeListFuture,
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return Container(
+                                    padding: const EdgeInsets.all(16),
+                                    alignment: Alignment.center,
+                                    child: const SizedBox(
+                                      width: 24,
+                                      height: 24,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
                                       ),
                                     ),
-                                    const Icon(
-                                      Icons.arrow_forward_ios_rounded,
-                                      color: AppColor.gray4,
-                                      size: 20,
+                                  );
+                                }
+                                if (snapshot.hasError) {
+                                  return Padding(
+                                    padding: const EdgeInsets.all(8),
+                                    child: Text(
+                                      'Failed to load homes: ${snapshot.error}',
+                                      style: TypographyFont.uih5reg.copyWith(
+                                        color: AppColor.red,
+                                      ),
                                     ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          Material(
-                            color: AppColor.white,
-                            borderRadius: BorderRadius.circular(10),
-                            clipBehavior: Clip.antiAlias,
-                            child: InkWell(
-                              onTap: () {
-                                context.push(RouteName.homeManagement);
+                                  );
+                                }
+                                final response = snapshot.data!;
+                                if (!response.succeeded) {
+                                  return Padding(
+                                    padding: const EdgeInsets.all(8),
+                                    child: Text(
+                                      response.exceptionMessage.isNotEmpty
+                                          ? response.exceptionMessage
+                                          : 'Failed to load homes',
+                                      style: TypographyFont.uih5reg.copyWith(
+                                        color: AppColor.red,
+                                      ),
+                                    ),
+                                  );
+                                }
+                                HomeListResponse? homeList;
+                                try {
+                                  final body = response.jsonBody;
+                                  final map = body is Map<String, dynamic>
+                                      ? body
+                                      : (body is Map
+                                            ? Map<String, dynamic>.from(body)
+                                            : null);
+                                  if (map != null) {
+                                    homeList = HomeListResponse.fromJson(map);
+                                  }
+                                } catch (_) {}
+                                final homes =
+                                    homeList?.data.homes ?? <HomeItem>[];
+                                if (homes.isEmpty) {
+                                  return Container(
+                                    padding: const EdgeInsets.all(16),
+                                    decoration: BoxDecoration(
+                                      color: AppColor.white,
+                                      borderRadius: BorderRadius.circular(10),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: AppColor.gray4.withOpacity(0.15),
+                                          blurRadius: 12,
+                                          spreadRadius: 2,
+                                          offset: const Offset(0, 4),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Text(
+                                      'No homes yet',
+                                      style: TypographyFont.uih5reg.copyWith(
+                                        color: AppColor.gray4,
+                                      ),
+                                    ),
+                                  );
+                                }
+                                return Column(
+                                  spacing: 12,
+                                  children: homes
+                                      .map<Widget>(
+                                        (home) => _HomeListTile(
+                                          home: home,
+                                          onTap: () {
+                                            context.push(
+                                              RouteName.homeSettings,
+                                              extra: home,
+                                            );
+                                          },
+                                        ),
+                                      )
+                                      .toList(),
+                                );
                               },
+                            ),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: AppColor.white,
                               borderRadius: BorderRadius.circular(10),
-                              child: Padding(
-                                padding: const EdgeInsets.all(10),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      'Create a Home',
-                                      style: TypographyFont.uih5bold.copyWith(
-                                        color: AppColor.primary,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColor.gray4.withOpacity(0.15),
+                                  blurRadius: 12,
+                                  spreadRadius: 2,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: Material(
+                              color: Colors.transparent,
+                              borderRadius: BorderRadius.circular(10),
+                              clipBehavior: Clip.antiAlias,
+                              child: InkWell(
+                                onTap: () {
+                                  context.push(RouteName.homeManagement);
+                                },
+                                borderRadius: BorderRadius.circular(10),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        'Create a Home',
+                                        style: TypographyFont.uih5bold.copyWith(
+                                          color: AppColor.primary,
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
@@ -142,13 +248,67 @@ class _HomeManagementParentScreenState
                           //   },
                           //   child: Text("data"),
                           // ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ],
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _HomeListTile extends StatelessWidget {
+  const _HomeListTile({required this.home, required this.onTap});
+
+  final HomeItem home;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColor.white,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: AppColor.gray4.withOpacity(0.15),
+            blurRadius: 12,
+            spreadRadius: 2,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Material(
+        color: AppColor.white,
+        borderRadius: BorderRadius.circular(10),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(10),
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  home.name,
+                  style: TypographyFont.uih5bold.copyWith(
+                    color: AppColor.black,
+                  ),
+                ),
+                const Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  color: AppColor.gray4,
+                  size: 20,
+                ),
+              ],
+            ),
           ),
         ),
       ),

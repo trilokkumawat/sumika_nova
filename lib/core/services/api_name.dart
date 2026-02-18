@@ -9,4 +9,6 @@ class ApiName {
   static const String createHomeWithLocations = 'create-home-with-locations';
   static const String getroom = 'location_list';
   static const String getdevice = 'device_list';
+  static const String getuserhomelist = 'user-home-list';
+  static const String gethomebylocationid = 'user-location-list';
 }

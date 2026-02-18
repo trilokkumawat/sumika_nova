@@ -14,7 +14,9 @@ import 'package:sumikanova/presentation/screens/device/device_details.dart';
 import 'package:sumikanova/presentation/screens/onboarding.dart';
 import 'package:sumikanova/presentation/screens/roomadd/room_add.dart';
 import 'package:sumikanova/presentation/screens/setting/homemanagement/homemangement_present.dart';
+import 'package:sumikanova/data/model/homelist/homelist_model.dart';
 import 'package:sumikanova/presentation/screens/setting/homemanagement/subhomanagement/home_mngmt_screen.dart';
+import 'package:sumikanova/presentation/screens/setting/homemanagement/subhomanagement/home_settings_screen.dart';
 import 'package:sumikanova/presentation/screens/splash.dart';
 
 final GoRouter appRouter = GoRouter(
@@ -103,6 +105,18 @@ final GoRouter appRouter = GoRouter(
       path: RouteName.homeManagementParent,
       builder: (BuildContext context, GoRouterState state) =>
           const HomeManagementParentScreen(),
+    ),
+    GoRoute(
+      path: RouteName.homeSettings,
+      builder: (BuildContext context, GoRouterState state) {
+        final home = state.extra as HomeItem?;
+        if (home == null) {
+          return const Scaffold(
+            body: Center(child: Text('Home not found')),
+          );
+        }
+        return HomeSettingsScreen(home: home);
+      },
     ),
   ],
 );

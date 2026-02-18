@@ -87,6 +87,9 @@ class SumikiNovaApi {
       CreateHomeWithLocationsCall();
   static final GetRoomCall getRoomCall = GetRoomCall();
   static final GetDeviceCall getDeviceCall = GetDeviceCall();
+  static final GetUserHomeListCall getUserHomeListCall = GetUserHomeListCall();
+  static final GetHomeByIdLocationCall getHomeByIdLocationCall =
+      GetHomeByIdLocationCall();
 }
 
 /// Builds headers with optional Bearer token from [SecureAuthStorage].
@@ -391,10 +394,15 @@ class CreateHomeWithLocationsCall {
       formData.fields.addAll([
         MapEntry('locations[$i][name]', loc['name'] ?? ''),
         MapEntry('locations[$i][is_active]', loc['is_active'] ?? '1'),
-        MapEntry('locations[$i][location_list_id]', loc['location_list_id'] ?? ''),
+        MapEntry(
+          'locations[$i][location_list_id]',
+          loc['location_list_id'] ?? '',
+        ),
       ]);
       if (loc['photo_path'] != null && loc['photo_path']!.isNotEmpty) {
-        formData.fields.add(MapEntry('locations[$i][photo_path]', loc['photo_path']!));
+        formData.fields.add(
+          MapEntry('locations[$i][photo_path]', loc['photo_path']!),
+        );
       }
     }
     return makeApiCall(
@@ -426,6 +434,37 @@ class ChangePasswordCall {
       callType: ApiCallType.POST,
       headers: headers,
       body: body,
+      returnBody: true,
+    );
+  }
+}
+
+/// GET BASE_PATH/user-home-list/{userId} — Authorization: Bearer required
+class GetUserHomeListCall {
+  Future<ApiCallResponse> call({required String userId}) async {
+    final baseUrl = SumikiNovaApi.getBaseUrl();
+    final headers = await buildApiHeaders();
+    final apiUrl = '${baseUrl}${ApiName.getuserhomelist}/$userId';
+    print('apiUrl: $apiUrl');
+    return makeApiCall(
+      apiUrl: apiUrl,
+      callType: ApiCallType.GET,
+      headers: headers,
+      returnBody: true,
+    );
+  }
+}
+
+class GetHomeByIdLocationCall {
+  Future<ApiCallResponse> call({required String homeid}) async {
+    final baseUrl = SumikiNovaApi.getBaseUrl();
+    final headers = await buildApiHeaders();
+    final apiUrl = '${baseUrl}${ApiName.gethomebylocationid}/$homeid';
+    print('apiUrl: $apiUrl');
+    return makeApiCall(
+      apiUrl: apiUrl,
+      callType: ApiCallType.GET,
+      headers: headers,
       returnBody: true,
     );
   }

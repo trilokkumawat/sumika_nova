@@ -16,4 +16,5 @@ class RouteName {
   static String homeManagement = '/home-management';
   static String mapView = '/map-view';
   static String homeManagementParent = '/home-management-parent';
+  static const String homeSettings = '/home-settings';
 }
