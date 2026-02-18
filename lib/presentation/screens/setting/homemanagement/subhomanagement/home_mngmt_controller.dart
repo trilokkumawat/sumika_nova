@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sumikanova/core/services/api_config.dart';
 import 'package:sumikanova/core/services/secure_auth_storage.dart';
 import 'package:sumikanova/data/model/room_model_simple.dart';
-import 'package:sumikanova/presentation/screens/setting/homemanagement/home_mngmt_state.dart';
+import 'package:sumikanova/presentation/screens/setting/homemanagement/subhomanagement/home_mngmt_state.dart';
 
 class HomeMngmtController extends StateNotifier<HomeMngmtState> {
   HomeMngmtController() : super(HomeMngmtState());
@@ -19,7 +19,9 @@ class HomeMngmtController extends StateNotifier<HomeMngmtState> {
         if (data is List) {
           final rooms = data
               .where((e) => e is Map)
-              .map((e) => RoomModel.fromJson(Map<String, dynamic>.from(e as Map)))
+              .map(
+                (e) => RoomModel.fromJson(Map<String, dynamic>.from(e as Map)),
+              )
               .where((r) => r.id.isNotEmpty)
               .toList();
           state = state.copyWith(
@@ -59,6 +61,52 @@ class HomeMngmtController extends StateNotifier<HomeMngmtState> {
         name: name.trim(),
         userid: userId,
         is_active: '1',
+      );
+      if (response.succeeded) {
+        state = state.copyWith(
+          isLoading: false,
+          message:
+              response.jsonBody is Map && response.jsonBody['message'] != null
+              ? response.jsonBody['message'].toString()
+              : 'Home created successfully',
+        );
+        return true;
+      }
+      final errorMsg = _extractErrorMessage(response);
+      state = state.copyWith(isLoading: false, error: errorMsg);
+      return false;
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        error: 'Something went wrong. Please try again.',
+      );
+      return false;
+    }
+  }
+
+  /// Creates a home with address and selected locations (rooms). Returns true on success.
+  Future<bool> createHomeWithLocations({
+    required String name,
+    required String address,
+    required List<Map<String, String>> locations,
+  }) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final userData = await SecureAuthStorage.getUserData();
+      final userId = userData?['id']?.toString();
+      if (userId == null || userId.isEmpty) {
+        state = state.copyWith(
+          isLoading: false,
+          error: 'User not found. Please sign in again.',
+        );
+        return false;
+      }
+      final response = await SumikiNovaApi.createHomeWithLocationsCall.call(
+        name: name.trim(),
+        address: address,
+        userid: userId,
+        isActive: '1',
+        locations: locations,
       );
       if (response.succeeded) {
         state = state.copyWith(

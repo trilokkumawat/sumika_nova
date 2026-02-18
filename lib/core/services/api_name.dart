@@ -6,5 +6,7 @@ class ApiName {
   static const String resetpassword = 'reset-password';
   static const String changepassword = 'change-password';
   static const String createHome = 'create_home';
+  static const String createHomeWithLocations = 'create-home-with-locations';
   static const String getroom = 'location_list';
+  static const String getdevice = 'device_list';
 }

@@ -13,7 +13,8 @@ import 'package:sumikanova/presentation/screens/device/add_device.dart';
 import 'package:sumikanova/presentation/screens/device/device_details.dart';
 import 'package:sumikanova/presentation/screens/onboarding.dart';
 import 'package:sumikanova/presentation/screens/roomadd/room_add.dart';
-import 'package:sumikanova/presentation/screens/setting/homemanagement/home_mngmt_screen.dart';
+import 'package:sumikanova/presentation/screens/setting/homemanagement/homemangement_present.dart';
+import 'package:sumikanova/presentation/screens/setting/homemanagement/subhomanagement/home_mngmt_screen.dart';
 import 'package:sumikanova/presentation/screens/splash.dart';
 
 final GoRouter appRouter = GoRouter(
@@ -65,7 +66,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: RouteName.roomAdd,
       builder: (BuildContext context, GoRouterState state) =>
-          const RoomAddScreen(),
+          RoomAddScreen(extraData: state.extra as Map<String, dynamic>?),
     ),
     GoRoute(
       path: RouteName.addDevice,
@@ -97,6 +98,11 @@ final GoRouter appRouter = GoRouter(
         }
         return MapViewScreen(initialCenter: initialCenter);
       },
+    ),
+    GoRoute(
+      path: RouteName.homeManagementParent,
+      builder: (BuildContext context, GoRouterState state) =>
+          const HomeManagementParentScreen(),
     ),
   ],
 );

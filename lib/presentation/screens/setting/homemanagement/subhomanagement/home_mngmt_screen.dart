@@ -12,7 +12,7 @@ import 'package:sumikanova/core/widget/appbutton.dart';
 import 'package:sumikanova/core/widget/customheader.dart';
 import 'package:sumikanova/core/widget/devicecard.dart';
 import 'package:sumikanova/core/widget/errorshow.dart';
-import 'package:sumikanova/presentation/screens/setting/homemanagement/home_mngmt_provider.dart';
+import 'package:sumikanova/presentation/screens/setting/homemanagement/subhomanagement/home_mngmt_provider.dart';
 
 class HomeManagementScreen extends ConsumerStatefulWidget {
   const HomeManagementScreen({super.key});
@@ -23,11 +23,14 @@ class HomeManagementScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeManagementScreenState extends ConsumerState<HomeManagementScreen> {
+  static const int _maxRoomsToShow = 8;
+
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController deviceNameController = TextEditingController();
   Map<String, dynamic>? selectedRoomId;
-  String? selectedDeviceType;
+  final List<Map<String, dynamic>> _selectedDevices = [];
   LatLng? _selectedLocation;
+  String? _selectedAddress;
   bool _roomsLoadTriggered = false;
 
   @override
@@ -62,7 +65,12 @@ class _HomeManagementScreenState extends ConsumerState<HomeManagementScreen> {
             children: [
               Column(
                 children: [
-                  CustomHeader(title: 'Create Home', isAllowBack: true),
+                  CustomHeader(
+                    title: 'Create Home',
+                    isAllowBack: true,
+                    isSubmit: true,
+                    onSubmit: () async {},
+                  ),
                   Expanded(
                     child: SingleChildScrollView(
                       padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
@@ -89,6 +97,8 @@ class _HomeManagementScreenState extends ConsumerState<HomeManagementScreen> {
                             ),
                           InkWell(
                             onTap: () async {
+                              _selectedAddress = null;
+                              _selectedLocation = null;
                               final result = await context
                                   .push<Map<String, dynamic>?>(
                                     RouteName.mapView,
@@ -105,6 +115,8 @@ class _HomeManagementScreenState extends ConsumerState<HomeManagementScreen> {
                                     (result['lat'] as num).toDouble(),
                                     (result['lng'] as num).toDouble(),
                                   );
+                                  _selectedAddress =
+                                      result['address'] as String?;
                                 });
                               }
                             },
@@ -130,14 +142,22 @@ class _HomeManagementScreenState extends ConsumerState<HomeManagementScreen> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(
-                                    _selectedLocation != null
-                                        ? 'Location set (${_selectedLocation!.latitude.toStringAsFixed(4)}, ${_selectedLocation!.longitude.toStringAsFixed(4)})'
-                                        : 'Set Location',
-                                    style: TypographyFont.uih5med.copyWith(
-                                      color: AppColor.black,
+                                  Expanded(
+                                    child: Text(
+                                      _selectedLocation != null
+                                          ? (_selectedAddress != null &&
+                                                    _selectedAddress!.isNotEmpty
+                                                ? _selectedAddress!
+                                                : 'Location set (${_selectedLocation!.latitude.toStringAsFixed(4)}, ${_selectedLocation!.longitude.toStringAsFixed(4)})')
+                                          : 'Set Location',
+                                      style: TypographyFont.uih5med.copyWith(
+                                        color: AppColor.black,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
+                                  const SizedBox(width: 8),
                                   const Icon(
                                     Icons.arrow_forward_ios_rounded,
                                     color: AppColor.gray4,
@@ -165,20 +185,37 @@ class _HomeManagementScreenState extends ConsumerState<HomeManagementScreen> {
                                         mainAxisSpacing: 12.0,
                                         childAspectRatio: 1.5,
                                       ),
-                                  itemCount: homeMngmtState.rooms.length,
+                                  itemCount:
+                                      homeMngmtState.rooms.length >
+                                          _maxRoomsToShow
+                                      ? _maxRoomsToShow
+                                      : homeMngmtState.rooms.length,
                                   itemBuilder: (context, index) {
                                     final room = homeMngmtState.rooms[index];
                                     final device = room.toDeviceCardMap();
-                                    final isSelected =
-                                        selectedDeviceType == device['id'];
+                                    final deviceMap = Map<String, dynamic>.from(
+                                      device,
+                                    );
+                                    final isSelected = _selectedDevices.any(
+                                      (m) => m['id'] == device['id'],
+                                    );
                                     return CustomDeviceCard(
                                       device: device,
                                       cardwidth: 150.0,
                                       cardheight: 150.0,
                                       isSelected: isSelected,
-                                      onTap: () => setState(
-                                        () => selectedDeviceType = device['id'],
-                                      ),
+                                      onTap: () => setState(() {
+                                        final id = device['id'];
+                                        if (id == null) return;
+                                        final idx = _selectedDevices.indexWhere(
+                                          (m) => m['id'] == id,
+                                        );
+                                        if (idx >= 0) {
+                                          _selectedDevices.removeAt(idx);
+                                        } else {
+                                          _selectedDevices.add(deviceMap);
+                                        }
+                                      }),
                                     );
                                   },
                                 ),
@@ -195,13 +232,14 @@ class _HomeManagementScreenState extends ConsumerState<HomeManagementScreen> {
                 child: SafeArea(
                   bottom: true,
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 80),
-                    child: AppButton(
-                      borderRadius: 16,
-                      text: 'Add More',
-                      onPressed: homeMngmtState.isLoading
-                          ? null
-                          : () async {
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: AppButton(
+                            borderRadius: 16,
+                            text: 'Save',
+                            onPressed: () async {
                               if (!formKey.currentState!.validate()) return;
                               if (_selectedLocation == null) {
                                 SnakBarUtils.showSnakBar(
@@ -210,20 +248,78 @@ class _HomeManagementScreenState extends ConsumerState<HomeManagementScreen> {
                                 );
                                 return;
                               }
-                              final success = await homeMngmtController
-                                  .createHome(
-                                    name: deviceNameController.text.trim(),
-                                  );
-                              if (!mounted) return;
-                              if (success) {
-                                final msg = ref.read(homeMngmtProvider).message;
+                              if (_selectedDevices.isEmpty) {
                                 SnakBarUtils.showSnakBar(
                                   context,
-                                  msg ?? 'Home saved successfully',
+                                  'Please select location',
+                                );
+                                return;
+                              }
+                              final address =
+                                  (_selectedAddress != null &&
+                                      _selectedAddress!.isNotEmpty)
+                                  ? _selectedAddress!
+                                  : '${_selectedLocation!.latitude},${_selectedLocation!.longitude}';
+                              final locations = _selectedDevices
+                                  .map<Map<String, String>>(
+                                    (d) => {
+                                      'name': (d['label'] ?? '').toString(),
+                                      'location_list_id': (d['id'] ?? '')
+                                          .toString(),
+                                      'is_active': '1',
+                                    },
+                                  )
+                                  .toList();
+                              final success = await homeMngmtController
+                                  .createHomeWithLocations(
+                                    name: deviceNameController.text.trim(),
+                                    address: address,
+                                    locations: locations,
+                                  );
+                              if (success && mounted) {
+                                final message = ref
+                                    .read(homeMngmtProvider)
+                                    .message;
+                                SnakBarUtils.showSnakBar(
+                                  context,
+                                  message ?? 'Home created successfully',
                                 );
                                 context.pop();
                               }
                             },
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: AppButton(
+                            borderRadius: 16,
+                            text: 'Add Room',
+                            onPressed: () {
+                              if (!formKey.currentState!.validate()) return;
+                              if (_selectedLocation == null) {
+                                SnakBarUtils.showSnakBar(
+                                  context,
+                                  'Please set location first',
+                                );
+                                return;
+                              }
+                              final address =
+                                  (_selectedAddress != null &&
+                                      _selectedAddress!.isNotEmpty)
+                                  ? _selectedAddress!
+                                  : '${_selectedLocation!.latitude},${_selectedLocation!.longitude}';
+                              final extra = <String, dynamic>{
+                                'homeName': deviceNameController.text.trim(),
+                                'address': address,
+                                'lat': _selectedLocation!.latitude,
+                                'lng': _selectedLocation!.longitude,
+                                'selectedRooms': _selectedDevices,
+                              };
+                              context.push(RouteName.roomAdd, extra: extra);
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),

@@ -35,7 +35,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ProfileMenuItem(
                         label: 'Home Management',
                         onTap: () {
-                          context.push(RouteName.homeManagement);
+                          // context.push(RouteName.homeManagement);
+                          //
+                          context.push(RouteName.homeManagementParent);
                         },
                       ),
                       ProfileMenuItem(

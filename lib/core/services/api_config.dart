@@ -83,7 +83,10 @@ class SumikiNovaApi {
   static final ResetPasswordCall resetPasswordCall = ResetPasswordCall();
   static final ChangePasswordCall changePasswordCall = ChangePasswordCall();
   static final CreateHomeCall createHomeCall = CreateHomeCall();
+  static final CreateHomeWithLocationsCall createHomeWithLocationsCall =
+      CreateHomeWithLocationsCall();
   static final GetRoomCall getRoomCall = GetRoomCall();
+  static final GetDeviceCall getDeviceCall = GetDeviceCall();
 }
 
 /// Builds headers with optional Bearer token from [SecureAuthStorage].
@@ -250,6 +253,20 @@ class GetRoomCall {
   }
 }
 
+class GetDeviceCall {
+  Future<ApiCallResponse> call({String? roomId}) async {
+    final baseUrl = SumikiNovaApi.getBaseUrl();
+    final headers = await buildApiHeaders();
+    return makeApiCall(
+      apiUrl: '${baseUrl}${ApiName.getdevice}',
+      callType: ApiCallType.GET,
+      headers: headers,
+      // params: <String, String>{'room_id': roomId},
+      returnBody: true,
+    );
+  }
+}
+
 /// POST BASE_PATH/login — email, password
 class LoginCall {
   Future<ApiCallResponse> call({
@@ -345,6 +362,46 @@ class CreateHomeCall {
       callType: ApiCallType.POST,
       headers: headers,
       body: body,
+      returnBody: true,
+    );
+  }
+}
+
+/// POST form-data create-home-with-locations — name, address, user_id, is_active, locations[i][name], locations[i][is_active], locations[i][location_list_id]
+class CreateHomeWithLocationsCall {
+  Future<ApiCallResponse> call({
+    required String name,
+    required String address,
+    required String userid,
+    required String isActive,
+    required List<Map<String, String>> locations,
+  }) async {
+    final baseUrl = SumikiNovaApi.getBaseUrl();
+    final headers = await buildApiHeaders();
+    headers.remove('Content-Type');
+    final formData = FormData();
+    formData.fields.addAll([
+      MapEntry('name', name),
+      MapEntry('address', address),
+      MapEntry('user_id', userid),
+      MapEntry('is_active', isActive),
+    ]);
+    for (var i = 0; i < locations.length; i++) {
+      final loc = locations[i];
+      formData.fields.addAll([
+        MapEntry('locations[$i][name]', loc['name'] ?? ''),
+        MapEntry('locations[$i][is_active]', loc['is_active'] ?? '1'),
+        MapEntry('locations[$i][location_list_id]', loc['location_list_id'] ?? ''),
+      ]);
+      if (loc['photo_path'] != null && loc['photo_path']!.isNotEmpty) {
+        formData.fields.add(MapEntry('locations[$i][photo_path]', loc['photo_path']!));
+      }
+    }
+    return makeApiCall(
+      apiUrl: '${baseUrl}${ApiName.createHomeWithLocations}',
+      callType: ApiCallType.POST,
+      headers: headers,
+      body: formData,
       returnBody: true,
     );
   }

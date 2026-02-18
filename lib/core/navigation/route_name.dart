@@ -15,4 +15,5 @@ class RouteName {
   static String deviceDetails = '/device-details';
   static String homeManagement = '/home-management';
   static String mapView = '/map-view';
+  static String homeManagementParent = '/home-management-parent';
 }
