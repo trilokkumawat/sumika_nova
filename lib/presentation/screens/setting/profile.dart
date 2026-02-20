@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
@@ -7,44 +8,38 @@ import 'package:sumikanova/core/services/api_config.dart';
 import 'package:sumikanova/core/services/secure_auth_storage.dart';
 import 'package:sumikanova/core/utils/reusablemethod.dart';
 import 'package:sumikanova/core/utils/snakbar.dart';
-import 'package:sumikanova/core/widget/customheader.dart';
 import 'package:sumikanova/core/widget/appbutton.dart';
+import 'package:sumikanova/core/widget/customheader.dart';
 import 'package:sumikanova/core/widget/nicknamecard.dart';
 import 'package:sumikanova/core/widget/profilemenuitem.dart';
+import 'package:sumikanova/presentation/screens/setting/profile_provider.dart';
 
-class ProfileScreen extends StatefulWidget {
+class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
-  String? _userName;
-
+class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    _loadUserData();
-  }
-
-  Future<void> _loadUserData() async {
-    final userData = await SecureAuthStorage.getUserData();
-    if (!mounted) return;
-    setState(() {
-      _userName = userData?['name'] as String?;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(profileProvider.notifier).loadUserData();
     });
   }
 
   Future<void> _showEditNicknameBottomSheet() async {
+    final state = ref.read(profileProvider);
     await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) => _EditNameBottomSheet(
-        initialName: _userName ?? '',
+        initialName: state.userName ?? '',
         onSaved: (newName) {
-          setState(() => _userName = newName);
+          ref.read(profileProvider.notifier).setUserName(newName);
         },
       ),
     );
@@ -52,11 +47,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(profileProvider);
     return Scaffold(
       backgroundColor: AppColor.white2,
       body: Column(
         children: [
-          CustomHeader(title: 'Profile'),
+          const CustomHeader(title: 'Profile'),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(14),
@@ -64,7 +60,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 spacing: 10,
                 children: [
                   NicknameCard(
-                    displayName: _userName,
+                    displayName: state.userName,
                     onTap: _showEditNicknameBottomSheet,
                   ),
                   ProfileMenuCard(
@@ -72,8 +68,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ProfileMenuItem(
                         label: 'Home Management',
                         onTap: () {
-                          // context.push(RouteName.homeManagement);
-                          //
                           context.push(RouteName.homeManagementParent);
                         },
                       ),
@@ -83,12 +77,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           logout(context);
                         },
                       ),
-                      ProfileMenuItem(
-                        label: 'Help Center',
-                        onTap: () {
-                          print('Help Center');
-                        },
-                      ),
+                      ProfileMenuItem(label: 'Help Center', onTap: () {}),
                     ],
                   ),
                 ],

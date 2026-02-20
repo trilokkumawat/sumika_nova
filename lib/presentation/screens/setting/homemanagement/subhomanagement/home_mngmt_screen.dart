@@ -12,7 +12,7 @@ import 'package:sumikanova/core/widget/appbutton.dart';
 import 'package:sumikanova/core/widget/customheader.dart';
 import 'package:sumikanova/core/widget/devicecard.dart';
 import 'package:sumikanova/core/widget/errorshow.dart';
-import 'package:sumikanova/presentation/screens/setting/homemanagement/subhomanagement/home_mngmt_provider.dart';
+import 'package:sumikanova/presentation/screens/setting/homemanagement/home_management_provider.dart';
 
 class HomeManagementScreen extends ConsumerStatefulWidget {
   const HomeManagementScreen({super.key});
@@ -41,12 +41,12 @@ class _HomeManagementScreenState extends ConsumerState<HomeManagementScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final homeMngmtState = ref.watch(homeMngmtProvider);
-    final homeMngmtController = ref.read(homeMngmtProvider.notifier);
+    final state = ref.watch(homeManagementProvider);
+    final controller = ref.read(homeManagementProvider.notifier);
     if (!_roomsLoadTriggered) {
       _roomsLoadTriggered = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        homeMngmtController.loadRooms();
+        controller.loadRooms();
       });
     }
     return Scaffold(
@@ -82,13 +82,13 @@ class _HomeManagementScreenState extends ConsumerState<HomeManagementScreen> {
                               return validationEmpty(value, 'Enter home name');
                             },
                           ),
-                          if (homeMngmtState.error != null)
+                          if (state.error != null)
                             CustomErrorShow(
-                              errorMessage: homeMngmtState.error!,
+                              errorMessage: state.error!,
                             ),
-                          if (homeMngmtState.roomsError != null)
+                          if (state.roomsError != null)
                             CustomErrorShow(
-                              errorMessage: homeMngmtState.roomsError!,
+                              errorMessage: state.roomsError!,
                             ),
                           InkWell(
                             onTap: () async {
@@ -162,7 +162,7 @@ class _HomeManagementScreenState extends ConsumerState<HomeManagementScreen> {
                               ),
                             ),
                           ),
-                          homeMngmtState.roomsLoading
+                          state.roomsLoading
                               ? const Center(
                                   child: Padding(
                                     padding: EdgeInsets.all(24),
@@ -181,12 +181,11 @@ class _HomeManagementScreenState extends ConsumerState<HomeManagementScreen> {
                                         childAspectRatio: 1.5,
                                       ),
                                   itemCount:
-                                      homeMngmtState.rooms.length >
-                                          _maxRoomsToShow
+                                      state.rooms.length > _maxRoomsToShow
                                       ? _maxRoomsToShow
-                                      : homeMngmtState.rooms.length,
+                                      : state.rooms.length,
                                   itemBuilder: (context, index) {
-                                    final room = homeMngmtState.rooms[index];
+                                    final room = state.rooms[index];
                                     final device = room.toDeviceCardMap();
                                     final deviceMap = Map<String, dynamic>.from(
                                       device,
@@ -265,10 +264,7 @@ class _HomeManagementScreenState extends ConsumerState<HomeManagementScreen> {
                                     },
                                   )
                                   .toList();
-                              print(locations.toString());
-                              print(address);
-                              print(deviceNameController.text.trim());
-                              final success = await homeMngmtController
+                              final success = await controller
                                   .createHomeWithLocations(
                                     name: deviceNameController.text.trim(),
                                     address: address,
@@ -276,7 +272,7 @@ class _HomeManagementScreenState extends ConsumerState<HomeManagementScreen> {
                                   );
                               if (success && mounted) {
                                 final message = ref
-                                    .read(homeMngmtProvider)
+                                    .read(homeManagementProvider)
                                     .message;
                                 SnakBarUtils.showSnakBar(
                                   context,

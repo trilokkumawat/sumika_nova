@@ -1,51 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
-import 'package:sumikanova/core/services/api_config.dart';
 import 'package:sumikanova/core/widget/customheader.dart';
 import 'package:sumikanova/data/model/homelist/homelist_model.dart';
 import 'package:sumikanova/data/model/locationlist/locationlist_model.dart';
+import 'package:sumikanova/presentation/screens/setting/homemanagement/home_management_provider.dart';
 
 /// Home Settings screen: home header + room list.
-/// Modern UI with section cards and clear hierarchy.
-class HomeSettingsScreen extends StatefulWidget {
+/// Uses [homeManagementProvider] for state; loads locations via controller.
+class HomeSettingsScreen extends ConsumerStatefulWidget {
   const HomeSettingsScreen({super.key, required this.home});
 
   final HomeItem home;
 
   @override
-  State<HomeSettingsScreen> createState() => _HomeSettingsScreenState();
+  ConsumerState<HomeSettingsScreen> createState() =>
+      _HomeSettingsScreenState();
 }
 
-class _HomeSettingsScreenState extends State<HomeSettingsScreen> {
-  late Future<List<LocationItem>> _locationListFuture;
-
+class _HomeSettingsScreenState extends ConsumerState<HomeSettingsScreen> {
   @override
   void initState() {
     super.initState();
-    _locationListFuture = _fetchLocationsByHomeId(widget.home.id);
-  }
-
-  Future<List<LocationItem>> _fetchLocationsByHomeId(int homeId) async {
-    final response = await SumikiNovaApi.getHomeByIdLocationCall.call(
-      homeid: homeId.toString(),
-    );
-    if (!response.succeeded) return [];
-    try {
-      final body = response.jsonBody;
-      final map = body is Map<String, dynamic>
-          ? body
-          : (body is Map ? Map<String, dynamic>.from(body) : null);
-      if (map == null) return [];
-      final locationList = LocationListResponse.fromJson(map);
-      return locationList.data.locations;
-    } catch (_) {
-      return [];
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(homeManagementProvider.notifier).loadLocationsForHome(widget.home.id);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(homeManagementProvider);
     return Scaffold(
       backgroundColor: AppColor.white2,
       body: Column(
@@ -59,25 +44,17 @@ class _HomeSettingsScreenState extends State<HomeSettingsScreen> {
                 children: [
                   _HomeHeaderCard(homeName: widget.home.name),
                   const SizedBox(height: 24),
-                  FutureBuilder<List<LocationItem>>(
-                    future: _locationListFuture,
-                    builder: (context, locSnapshot) {
-                      if (locSnapshot.connectionState ==
-                          ConnectionState.waiting) {
-                        return _LoadingSection();
-                      }
-                      if (locSnapshot.hasError) {
-                        return _ErrorSection(
-                          message: 'Couldn’t load rooms. ${locSnapshot.error}',
-                        );
-                      }
-                      final rooms = locSnapshot.data ?? [];
-                      if (rooms.isEmpty) {
-                        return _EmptyRoomsSection();
-                      }
-                      return _RoomsSection(rooms: rooms);
-                    },
-                  ),
+                  if (state.locationsLoading) _LoadingSection(),
+                  if (!state.locationsLoading && state.locationsError != null)
+                    _ErrorSection(message: state.locationsError!),
+                  if (!state.locationsLoading &&
+                      state.locationsError == null &&
+                      state.locationsForCurrentHome.isEmpty)
+                    _EmptyRoomsSection(),
+                  if (!state.locationsLoading &&
+                      state.locationsError == null &&
+                      state.locationsForCurrentHome.isNotEmpty)
+                    _RoomsSection(rooms: state.locationsForCurrentHome),
                 ],
               ),
             ),
