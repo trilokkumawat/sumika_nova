@@ -29,6 +29,13 @@ String? validateEmail(String? value, {String? msg}) {
   return null;
 }
 
+String? validateCurrentPassword(String? value) {
+  if (value == null || value.isEmpty) {
+    return "Current password is required";
+  }
+  return null;
+}
+
 /// Validate password input
 String? validatePassword(String? value) {
   if (value == null || value.isEmpty) {

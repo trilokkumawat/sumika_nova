@@ -72,12 +72,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         },
                       ),
                       ProfileMenuItem(
+                        label: 'Change Password',
+                        onTap: () async {
+                          context.push(RouteName.changePassword);
+                        },
+                      ),
+                      ProfileMenuItem(
                         label: 'Logout',
                         onTap: () async {
                           logout(context);
                         },
                       ),
-                      ProfileMenuItem(label: 'Help Center', onTap: () {}),
+                      // ProfileMenuItem(label: 'Help Center', onTap: () {}),
                     ],
                   ),
                 ],

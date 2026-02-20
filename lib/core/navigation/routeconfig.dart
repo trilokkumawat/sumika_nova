@@ -13,6 +13,7 @@ import 'package:sumikanova/presentation/screens/device/add_device.dart';
 import 'package:sumikanova/presentation/screens/device/device_details.dart';
 import 'package:sumikanova/presentation/screens/onboarding.dart';
 import 'package:sumikanova/presentation/screens/roomadd/room_add.dart';
+import 'package:sumikanova/presentation/screens/setting/changepassword/changepassword.dart';
 import 'package:sumikanova/presentation/screens/setting/homemanagement/home_management_present.dart';
 import 'package:sumikanova/data/model/homelist/homelist_model.dart';
 import 'package:sumikanova/presentation/screens/setting/homemanagement/subhomanagement/home_mngmt_screen.dart';
@@ -111,12 +112,15 @@ final GoRouter appRouter = GoRouter(
       builder: (BuildContext context, GoRouterState state) {
         final home = state.extra as HomeItem?;
         if (home == null) {
-          return const Scaffold(
-            body: Center(child: Text('Home not found')),
-          );
+          return const Scaffold(body: Center(child: Text('Home not found')));
         }
         return HomeSettingsScreen(home: home);
       },
+    ),
+    GoRoute(
+      path: RouteName.changePassword,
+      builder: (BuildContext context, GoRouterState state) =>
+          const ChangePasswordScreen(),
     ),
   ],
 );
