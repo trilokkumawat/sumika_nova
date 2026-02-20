@@ -13,7 +13,7 @@ import 'package:sumikanova/presentation/screens/device/add_device.dart';
 import 'package:sumikanova/presentation/screens/device/device_details.dart';
 import 'package:sumikanova/presentation/screens/onboarding.dart';
 import 'package:sumikanova/presentation/screens/roomadd/room_add.dart';
-import 'package:sumikanova/presentation/screens/setting/homemanagement/homemangement_present.dart';
+import 'package:sumikanova/presentation/screens/setting/homemanagement/home_management_present.dart';
 import 'package:sumikanova/data/model/homelist/homelist_model.dart';
 import 'package:sumikanova/presentation/screens/setting/homemanagement/subhomanagement/home_mngmt_screen.dart';
 import 'package:sumikanova/presentation/screens/setting/homemanagement/subhomanagement/home_settings_screen.dart';

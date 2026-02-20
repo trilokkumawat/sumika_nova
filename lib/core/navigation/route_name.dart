@@ -12,9 +12,9 @@ class RouteName {
   static const String roomAdd = '/room-add';
   static const String addDevice = '/add-device';
 
-  static String deviceDetails = '/device-details';
-  static String homeManagement = '/home-management';
-  static String mapView = '/map-view';
-  static String homeManagementParent = '/home-management-parent';
+  static const String deviceDetails = '/device-details';
+  static const String homeManagement = '/home-management';
+  static const String mapView = '/map-view';
+  static const String homeManagementParent = '/home-management-parent';
   static const String homeSettings = '/home-settings';
 }

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'api_name.dart';
 import 'secure_auth_storage.dart';
@@ -58,7 +59,11 @@ class ApiException implements Exception {
 class SumikiNovaApi {
   SumikiNovaApi._();
 
-  static String getBaseUrl() => 'http://5.9.161.137/~logiccar/sumika/api/';
+  static String getBaseUrl() {
+    final base = dotenv.env['BASE_URL']?.trim() ?? '';
+    if (base.isEmpty) return '';
+    return base.endsWith('/') ? base : '$base/';
+  }
 
   static final Dio _dio = Dio(
     BaseOptions(
@@ -278,11 +283,7 @@ class LoginCall {
     required String password,
   }) async {
     final baseUrl = SumikiNovaApi.getBaseUrl();
-    print('email: $email');
-    print('password: $password');
     final body = <String, String>{'email': email, 'password': password};
-    print('body: $body');
-    print('baseUrl: $baseUrl');
     return makeApiCall(
       apiUrl: '${baseUrl}${ApiName.signIn}',
       callType: ApiCallType.POST,

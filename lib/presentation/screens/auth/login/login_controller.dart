@@ -13,10 +13,8 @@ class LoginController extends StateNotifier<LoginState> {
         email: email,
         password: password,
       );
-      print('response: ${response.jsonBody}');
       if (response.statusCode == 200) {
         final data = response.jsonBody['data'];
-        print('message: ${response.jsonBody['message']}');
         await SecureAuthStorage.saveLogin(token: data['token']);
         await SecureAuthStorage.saveUserData(data['user']);
         state = state.copyWith(
