@@ -79,7 +79,7 @@ class _CustomHeaderState extends State<CustomHeader> {
                   isTitleVisible: widget.isTitleVisible,
                   isHomeDropdownVisible: widget.isHomeDropdownVisible,
                   onPopupMenuItemTap: (int index) {
-                    print(index);
+                    debugPrint('$index');
                     if (index == 0) {
                       context.push(RouteName.addDevice);
                     } else if (index == 1) {

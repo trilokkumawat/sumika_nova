@@ -3,6 +3,20 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'locationlist_model.freezed.dart';
 part 'locationlist_model.g.dart';
 
+/// Safely parses [location_list] so null, missing, or invalid values do not throw.
+LocationListRef? _locationListRefFromJson(dynamic value) {
+  if (value == null) return null;
+  if (value is! Map<String, dynamic>) return null;
+  return LocationListRef.fromJson(value);
+}
+
+/// Coerces null or non-string to empty string (for photo_path / show_photo_path).
+String _stringFromJson(dynamic value) {
+  if (value == null) return '';
+  if (value is String) return value;
+  return value.toString();
+}
+
 /// API response for "Location list fetched successfully".
 @freezed
 class LocationListResponse with _$LocationListResponse {
@@ -34,12 +48,15 @@ class LocationItem with _$LocationItem {
     @JsonKey(name: 'home_id') required int homeId,
     @JsonKey(name: 'location_list_id') required int locationListId,
     required String name,
-    @JsonKey(name: 'photo_path') required String photoPath,
+    @JsonKey(name: 'photo_path', fromJson: _stringFromJson)
+    required String photoPath,
     @JsonKey(name: 'is_active') required int isActive,
     @JsonKey(name: 'created_at') required String createdAt,
     @JsonKey(name: 'updated_at') required String updatedAt,
-    @JsonKey(name: 'show_photo_path') required String showPhotoPath,
-    @JsonKey(name: 'location_list') LocationListRef? locationList,
+    @JsonKey(name: 'show_photo_path', fromJson: _stringFromJson)
+    required String showPhotoPath,
+    @JsonKey(name: 'location_list', fromJson: _locationListRefFromJson)
+    LocationListRef? locationList,
   }) = _LocationItem;
 
   factory LocationItem.fromJson(Map<String, dynamic> json) =>

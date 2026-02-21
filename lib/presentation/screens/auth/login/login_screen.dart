@@ -186,22 +186,24 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                     email,
                                     password,
                                   );
-                                  print('data: $data');
-                                  print(
-                                    'loginState.isLoading: ${loginState.message}',
-                                  );
-                                  print('mounted: $mounted');
-                                  print('mounted: $mounted');
+                                  // debugPrint('data: $data');
+                                  // debugPrint(
+                                  //   'loginState.isLoading: ${loginState.message}',
+                                  // );
+                                  // debugPrint('mounted: $mounted');
+                                  // debugPrint('mounted: $mounted');
 
                                   if (!mounted) return;
 
                                   if (loginState.isLoading == false &&
                                       loginState.error == null &&
-                                      mounted) {
+                                      loginState.message !=
+                                          'Invalid credentials') {
                                     SnakBarUtils.showSnakBar(
                                       context,
                                       loginState.message ?? 'Login successful',
                                     );
+
                                     context.go(RouteName.app);
                                   }
                                 },

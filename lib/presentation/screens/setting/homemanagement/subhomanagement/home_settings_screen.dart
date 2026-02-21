@@ -6,11 +6,13 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
+import 'package:sumikanova/core/navigation/route_name.dart';
 import 'package:sumikanova/core/services/api_config.dart';
 import 'package:sumikanova/core/services/api_name.dart';
 import 'package:sumikanova/core/utils/fluttermap.dart';
 import 'package:sumikanova/core/utils/inkwell_effect.dart';
 import 'package:sumikanova/core/utils/reusablemethod.dart';
+import 'package:sumikanova/core/widget/appbutton.dart';
 import 'package:sumikanova/core/widget/customheader.dart';
 import 'package:sumikanova/data/model/homelist/homelist_model.dart';
 import 'package:sumikanova/data/model/locationlist/locationlist_model.dart';
@@ -34,6 +36,7 @@ class _HomeSettingsScreenState extends ConsumerState<HomeSettingsScreen> {
   @override
   void initState() {
     super.initState();
+    debugPrint('widget.home: ${widget.home.id}');
     _displayName = widget.home.name;
     _displayAddress = widget.home.address;
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -230,31 +233,6 @@ class _HomeSettingsScreenState extends ConsumerState<HomeSettingsScreen> {
                     textCapitalization: TextCapitalization.words,
                   ),
                   const SizedBox(height: 16),
-                  if (roomOptions.isNotEmpty)
-                    DropdownButtonFormField<int>(
-                      value: optionIds.contains(selectedLocationListId)
-                          ? selectedLocationListId
-                          : optionIds.first,
-                      decoration: const InputDecoration(
-                        labelText: 'Room Type',
-                        border: OutlineInputBorder(),
-                      ),
-                      items: roomOptions
-                          .where((r) => int.tryParse(r.id) != null)
-                          .map(
-                            (r) => DropdownMenuItem<int>(
-                              value: int.parse(r.id),
-                              child: Text(r.name),
-                            ),
-                          )
-                          .toList(),
-                      onChanged: (v) {
-                        if (v != null) {
-                          setDialogState(() => selectedLocationListId = v);
-                        }
-                      },
-                    ),
-                  const SizedBox(height: 16),
                   DropdownButtonFormField<int>(
                     value: isActive,
                     decoration: const InputDecoration(
@@ -319,11 +297,11 @@ class _HomeSettingsScreenState extends ConsumerState<HomeSettingsScreen> {
         result['is_active'] as String? ?? location.isActive.toString();
     final photoPath = result['photo_path'] as String?;
 
-    print('photoPath: $photoPath');
-    print('location.id: ${location.id}');
-    print('name: $name');
-    print('isActiveStr: $isActiveStr');
-    print('locationListId: $locationListId');
+    debugPrint('photoPath: $photoPath');
+    debugPrint('location.id: ${location.id}');
+    debugPrint('name: $name');
+    debugPrint('isActiveStr: $isActiveStr');
+    debugPrint('locationListId: $locationListId');
 
     final response = await SumikiNovaApi.updateLocationCall.call(
       locationId: location.id.toString(),
@@ -453,7 +431,20 @@ class _HomeSettingsScreenState extends ConsumerState<HomeSettingsScreen> {
                       state.locationsError == null &&
                       state.locationsForCurrentHome.isNotEmpty)
                     _RoomsSection(
+                      home: widget.home,
                       rooms: state.locationsForCurrentHome,
+                      onAddRoom: () async {
+                        await context.push(
+                          RouteName.roomAdd,
+                          extra: <String, dynamic>{
+                            'homeId': widget.home.id.toString(),
+                          },
+                        );
+                        if (!context.mounted) return;
+                        ref
+                            .read(homeManagementProvider.notifier)
+                            .loadLocationsForHome(widget.home.id);
+                      },
                       onEditRoom: _updateRoom,
                       onDeleteRoom: _deleteRoom,
                     ),
@@ -607,7 +598,8 @@ class _RoomEditImageSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final showPhotoPath = location.showPhotoPath;
-    print('showPhotoPath: $showPhotoPath');
+    final imageUrl = location.locationList?.imageUrl ?? '';
+    debugPrint('showPhotoPath: $showPhotoPath');
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -626,13 +618,17 @@ class _RoomEditImageSection extends StatelessWidget {
                 height: 72,
                 child: pickedImagePath != null
                     ? Image.file(File(pickedImagePath!), fit: BoxFit.cover)
-                    : (showPhotoPath.isNotEmpty
-                          ? Image.network(
-                              showPhotoPath,
-                              fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) => _placeholder(),
-                            )
-                          : _placeholder()),
+                    : location.showPhotoPath.isNotEmpty
+                    ? Image.network(
+                        showPhotoPath,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => _placeholder(),
+                      )
+                    : Image.network(
+                        imageUrl,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => _placeholder(),
+                      ),
               ),
             ),
 
@@ -665,12 +661,16 @@ class _RoomEditImageSection extends StatelessWidget {
 /// Section title + list of room tiles.
 class _RoomsSection extends StatelessWidget {
   const _RoomsSection({
+    required this.home,
     required this.rooms,
+    this.onAddRoom,
     this.onEditRoom,
     this.onDeleteRoom,
   });
 
+  final HomeItem home;
   final List<LocationItem> rooms;
+  final Future<void> Function()? onAddRoom;
   final void Function(BuildContext context, LocationItem location)? onEditRoom;
   final void Function(BuildContext context, LocationItem location)?
   onDeleteRoom;
@@ -696,28 +696,40 @@ class _RoomsSection extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
             child: Row(
               children: [
-                Text(
-                  rooms.length > 1 ? 'Rooms' : 'Room',
-                  style: TypographyFont.uih5bold.copyWith(
-                    color: AppColor.black,
+                Expanded(
+                  child: Row(
+                    children: [
+                      Text(
+                        rooms.length > 1 ? 'Rooms' : 'Room',
+                        style: TypographyFont.uih5bold.copyWith(
+                          color: AppColor.black,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColor.secondary,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          '${rooms.length}',
+                          style: TypographyFont.uih7med.copyWith(
+                            color: AppColor.primary,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 2,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColor.secondary,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    '${rooms.length}',
-                    style: TypographyFont.uih7med.copyWith(
-                      color: AppColor.primary,
-                    ),
-                  ),
+                AppButton(
+                  text: "Add Room",
+                  onPressed: onAddRoom == null ? null : () => onAddRoom!(),
+                  width: 100,
+                  height: 32,
                 ),
               ],
             ),
@@ -761,13 +773,16 @@ class _RoomListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final imageUrl = location.locationList?.imageUrl ?? '';
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       child: Row(
         spacing: 16,
         children: [
-          _RoomIcon(imageUrl: location.showPhotoPath),
+          _RoomIcon(
+            imageUrl: location.showPhotoPath.isNotEmpty
+                ? location.showPhotoPath
+                : location.locationList?.imageUrl ?? '',
+          ),
           Expanded(
             child: Text(
               location.name,

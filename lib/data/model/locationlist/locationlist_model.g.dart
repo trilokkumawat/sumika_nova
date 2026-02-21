@@ -40,16 +40,12 @@ _$LocationItemImpl _$$LocationItemImplFromJson(Map<String, dynamic> json) =>
       homeId: (json['home_id'] as num).toInt(),
       locationListId: (json['location_list_id'] as num).toInt(),
       name: json['name'] as String,
-      photoPath: json['photo_path'] as String,
+      photoPath: _stringFromJson(json['photo_path']),
       isActive: (json['is_active'] as num).toInt(),
       createdAt: json['created_at'] as String,
       updatedAt: json['updated_at'] as String,
-      showPhotoPath: json['show_photo_path'] as String,
-      locationList: json['location_list'] == null
-          ? null
-          : LocationListRef.fromJson(
-              json['location_list'] as Map<String, dynamic>,
-            ),
+      showPhotoPath: _stringFromJson(json['show_photo_path']),
+      locationList: _locationListRefFromJson(json['location_list']),
     );
 
 Map<String, dynamic> _$$LocationItemImplToJson(_$LocationItemImpl instance) =>

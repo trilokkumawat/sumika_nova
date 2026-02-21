@@ -13,8 +13,13 @@ import 'package:sumikanova/data/model/room_model_simple.dart';
 class RoomAddScreen extends StatefulWidget {
   const RoomAddScreen({super.key, this.extraData});
 
-  /// Data passed from Create Home (home name, location,).
+  /// Data passed from Create Home (home name, address, ...) or from Home Settings
+  /// (homeId only) for add-locations-only mode.
   final Map<String, dynamic>? extraData;
+
+  /// True when opened from Home Settings to add rooms to an existing home.
+  bool get isAddLocationsOnly =>
+      extraData != null && extraData!['homeId'] != null;
 
   @override
   State<RoomAddScreen> createState() => _RoomAddScreenState();
@@ -83,6 +88,83 @@ class _RoomAddScreenState extends State<RoomAddScreen> {
     }
   }
 
+  /// Save when in add-locations-only mode (from Home Settings): call create-multiple API.
+  Future<void> _saveAddLocationsOnly() async {
+    final homeId = widget.extraData?['homeId']?.toString();
+    if (homeId == null || homeId.isEmpty) {
+      SnakBarUtils.showSnakBar(context, 'Home not found');
+      return;
+    }
+    final userData = await SecureAuthStorage.getUserData();
+    final userId = userData?['id']?.toString();
+    if (userId == null || userId.isEmpty) {
+      SnakBarUtils.showSnakBar(context, 'Please sign in again');
+      return;
+    }
+    final locations = <Map<String, String>>[
+      ..._selectedRecommendRooms.map<Map<String, String>>(
+        (m) => {
+          'name': (m['name'] as String?) ?? '',
+          'is_active': '1',
+          'location_list_id': (m['id'] as String?) ?? '',
+        },
+      ),
+      ..._userAddedRooms.map<Map<String, String>>(
+        (m) => {
+          'name': (m['name'] as String?) ?? '',
+          'is_active': '1',
+          'location_list_id': '0',
+        },
+      ),
+    ];
+    final customRoomName = roomNameController.text.trim();
+    if (customRoomName.isNotEmpty) {
+      locations.add({
+        'name': customRoomName,
+        'is_active': '1',
+        'location_list_id': '0',
+      });
+    }
+    if (locations.isEmpty) {
+      SnakBarUtils.showSnakBar(context, 'Add at least one room');
+      return;
+    }
+    setState(() => _saveLoading = true);
+    try {
+      final response = await SumikiNovaApi.createMultipleLocationsCall.call(
+        homeId: homeId,
+        userId: userId,
+        locations: locations,
+      );
+      debugPrint('response: ${response.jsonBody}');
+      if (!mounted) return;
+      setState(() => _saveLoading = false);
+      if (response.succeeded) {
+        SnakBarUtils.showSnakBar(
+          context,
+          response.jsonBody is Map && response.jsonBody['message'] != null
+              ? response.jsonBody['message'].toString()
+              : 'Rooms added successfully',
+        );
+        context.pop();
+      } else {
+        final msg =
+            response.jsonBody is Map && response.jsonBody['message'] != null
+            ? response.jsonBody['message'].toString()
+            : 'Failed to add rooms. Please try again.';
+        SnakBarUtils.showSnakBar(context, msg);
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() => _saveLoading = false);
+        SnakBarUtils.showSnakBar(
+          context,
+          'Something went wrong. Please try again.',
+        );
+      }
+    }
+  }
+
   /// Build locations list for CreateHomeWithLocationsCall: selected recommend
   /// (with their id) + custom rooms (location_list_id "0") + extraData selectedRooms.
 
@@ -133,12 +215,6 @@ class _RoomAddScreenState extends State<RoomAddScreen> {
         'location_list_id': '0',
       });
     }
-    print(locations.toString());
-    print(customRoomName);
-    print(userId.toString());
-    print(address);
-    print(homeName);
-
     setState(() => _saveLoading = true);
     try {
       final response = await SumikiNovaApi.createHomeWithLocationsCall.call(
@@ -196,7 +272,11 @@ class _RoomAddScreenState extends State<RoomAddScreen> {
               isAllowBack: true,
               title: 'Add Room',
               isSubmit: true,
-              onSubmit: _saveLoading ? null : _saveHomeWithLocations,
+              onSubmit: _saveLoading
+                  ? null
+                  : (widget.isAddLocationsOnly
+                        ? _saveAddLocationsOnly
+                        : _saveHomeWithLocations),
             ),
 
             Expanded(
@@ -377,36 +457,5 @@ class _RoomChip extends StatelessWidget {
       );
     }
     return child;
-  }
-}
-
-class _InfoRow extends StatelessWidget {
-  const _InfoRow({required this.label, required this.value});
-
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: 90,
-          child: Text(
-            label,
-            style: TypographyFont.uih6reg.copyWith(color: AppColor.gray4),
-          ),
-        ),
-        Expanded(
-          child: Text(
-            value,
-            style: TypographyFont.uih6reg.copyWith(color: AppColor.black),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-      ],
-    );
   }
 }

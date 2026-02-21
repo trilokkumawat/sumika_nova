@@ -16,4 +16,5 @@ class ApiName {
   static const String updateHome = 'update-home';
   static const String deleteLocation = 'delete-location';
   static const String updateLocation = 'update-location';
+  static const String createMultipleLocations = 'locations/create-multiple';
 }

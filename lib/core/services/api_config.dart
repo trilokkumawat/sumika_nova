@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'api_name.dart';
@@ -100,6 +101,8 @@ class SumikiNovaApi {
   static final UpdateHomeCall updateHomeCall = UpdateHomeCall();
   static final DeleteLocationCall deleteLocationCall = DeleteLocationCall();
   static final UpdateLocationCall updateLocationCall = UpdateLocationCall();
+  static final CreateMultipleLocationsCall createMultipleLocationsCall =
+      CreateMultipleLocationsCall();
 }
 
 /// Builds headers with optional Bearer token from [SecureAuthStorage].
@@ -451,7 +454,7 @@ class GetUserHomeListCall {
     final baseUrl = SumikiNovaApi.getBaseUrl();
     final headers = await buildApiHeaders();
     final apiUrl = '${baseUrl}${ApiName.getuserhomelist}/$userId';
-    print('apiUrl: $apiUrl');
+    debugPrint('apiUrl: $apiUrl');
     return makeApiCall(
       apiUrl: apiUrl,
       callType: ApiCallType.GET,
@@ -466,7 +469,7 @@ class GetHomeByIdLocationCall {
     final baseUrl = SumikiNovaApi.getBaseUrl();
     final headers = await buildApiHeaders();
     final apiUrl = '${baseUrl}${ApiName.gethomebylocationid}/$homeid';
-    print('apiUrl: $apiUrl');
+    debugPrint('apiUrl: $apiUrl');
     return makeApiCall(
       apiUrl: apiUrl,
       callType: ApiCallType.GET,
@@ -502,7 +505,7 @@ class DeleteCall {
     final baseUrl = SumikiNovaApi.getBaseUrl();
     final headers = await buildApiHeaders();
     final apiUrl = '${baseUrl}${endpoint}/$id';
-    print('apiUrl: $apiUrl');
+    debugPrint('apiUrl: $apiUrl');
     return makeApiCall(
       apiUrl: apiUrl,
       callType: ApiCallType.DELETE,
@@ -543,6 +546,55 @@ class DeleteLocationCall {
       apiUrl: apiUrl,
       callType: ApiCallType.DELETE,
       headers: headers,
+      returnBody: true,
+    );
+  }
+}
+
+/// POST locations/create-multiple — form: home_id, user_id, locations[i][location_list_id], locations[i][name], locations[i][is_active], optional locations[i][photo_path] (file)
+class CreateMultipleLocationsCall {
+  Future<ApiCallResponse> call({
+    required String homeId,
+    required String userId,
+    required List<Map<String, String>> locations,
+  }) async {
+    final baseUrl = SumikiNovaApi.getBaseUrl();
+    final headers = await buildApiHeaders();
+    headers.remove('Content-Type');
+    final formData = FormData();
+    formData.fields.addAll([
+      MapEntry('home_id', homeId),
+      MapEntry('user_id', userId),
+    ]);
+    for (var i = 0; i < locations.length; i++) {
+      final loc = locations[i];
+      formData.fields.addAll([
+        MapEntry(
+          'locations[$i][location_list_id]',
+          loc['location_list_id'] ?? '',
+        ),
+        MapEntry('locations[$i][name]', loc['name'] ?? ''),
+        MapEntry('locations[$i][is_active]', loc['is_active'] ?? '1'),
+      ]);
+      formData.files.add(
+        MapEntry(
+          'locations[$i][photo_path]',
+          (loc['photo_path'] != null && loc['photo_path']!.isNotEmpty)
+              ? await MultipartFile.fromFile(
+                  loc['photo_path']!,
+                  filename: 'room_$i.jpg',
+                )
+              : MultipartFile.fromBytes([], filename: null),
+        ),
+      );
+    }
+    debugPrint('formData fields: ${formData.fields}');
+    debugPrint('formData files: ${formData.files}');
+    return makeApiCall(
+      apiUrl: '${baseUrl}${ApiName.createMultipleLocations}',
+      callType: ApiCallType.POST,
+      headers: headers,
+      body: formData,
       returnBody: true,
     );
   }

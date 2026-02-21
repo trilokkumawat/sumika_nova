@@ -56,121 +56,130 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             isHomeDropdownVisible: true,
           ),
           Expanded(
-            child: Column(
-              spacing: 10,
-              children: [
-                SunsetCard(
-                  temperature: DateHelper().tempratureFormat(20),
-                  dateLabel: DateHelper().formatFullDate(),
-                ),
-                Visibility(
-                  visible: state.locationList.isNotEmpty,
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    scrollDirection: Axis.vertical,
-                    physics: const NeverScrollableScrollPhysics(),
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: state.locationList.length,
-                    itemBuilder: (context, index) {
-                      final location = state.locationList[index];
-                      return InkWell(
-                        onTap: () {
-                          context.push(RouteName.deviceDetails);
-                        },
-                        child: Container(
-                          margin: const EdgeInsets.only(bottom: 10),
-                          padding: const EdgeInsets.only(left: 16, right: 5),
-                          decoration: BoxDecoration(
-                            color: AppColor.white,
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColor.gray3.withValues(alpha: 0.3),
-                                blurRadius: 20,
-                                offset: const Offset(0, 10),
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  spacing: 4,
-                                  children: [
-                                    Image.network(
-                                      location.showPhotoPath,
-                                      width: 32,
-                                      height: 32,
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (_, __, ___) => Icon(
-                                        Icons.door_front_door_rounded,
-                                        color: AppColor.gray4,
-                                        size: 22,
-                                      ),
-                                    ),
-                                    Text(
-                                      location.name,
-                                      style: TextStyle(color: AppColor.black),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              CustomIotType(
-                                icon: Icons.lightbulb_outline,
-                                label: '04',
-                                index: 0,
-                              ),
-                              CustomIotType(
-                                icon: Icons.air,
-                                label: '00',
-                                index: 1,
-                              ),
-                              CustomIotType(
-                                icon: Icons.vertical_split,
-                                label: '00',
-                                index: 2,
-                              ),
-                              CustomIotType(
-                                icon: Icons.ac_unit,
-                                label: '00',
-                                index: 3,
-                              ),
-                              const SizedBox(width: 5),
-                              CustomSwitch(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.06,
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.only(bottom: 20),
+              child: Column(
+                spacing: 10,
+                children: [
+                  SunsetCard(
+                    temperature: DateHelper().tempratureFormat(20),
+                    dateLabel: DateHelper().formatFullDate(),
                   ),
-                ),
-
-                Column(
-                  spacing: 20,
-                  children: [
-                    Image.asset('assets/icons/empty.png'),
-                    Column(
-                      spacing: 10,
-                      children: [
-                        AppButton(
-                          text: 'Add Device',
-                          onPressed: () {
-                            context.push(RouteName.addDevice);
+                  if (state.locationList.isNotEmpty)
+                    ListView.builder(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.vertical,
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: state.locationList.length,
+                      itemBuilder: (context, index) {
+                        final location = state.locationList[index];
+                        final imageUrl = location.showPhotoPath.isNotEmpty
+                            ? location.showPhotoPath
+                            : (location.locationList?.imageUrl ?? '');
+                        return InkWell(
+                          onTap: () {
+                            context.push(RouteName.deviceDetails);
                           },
-                          width: MediaQuery.of(context).size.width * 0.6,
-                        ),
-                      ],
+                          child: Container(
+                            margin: const EdgeInsets.only(bottom: 10),
+                            padding: const EdgeInsets.only(left: 16, right: 5),
+                            decoration: BoxDecoration(
+                              color: AppColor.white,
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColor.gray3.withValues(alpha: 0.3),
+                                  blurRadius: 20,
+                                  offset: const Offset(0, 10),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    spacing: 4,
+                                    children: [
+                                      imageUrl.isEmpty
+                                          ? Icon(
+                                              Icons.door_front_door_rounded,
+                                              color: AppColor.gray4,
+                                              size: 22,
+                                            )
+                                          : Image.network(
+                                              imageUrl,
+                                              width: 32,
+                                              height: 32,
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (_, __, ___) => Icon(
+                                                Icons.door_front_door_rounded,
+                                                color: AppColor.gray4,
+                                                size: 22,
+                                              ),
+                                            ),
+                                      Text(
+                                        location.name,
+                                        style: TextStyle(color: AppColor.black),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                CustomIotType(
+                                  icon: Icons.lightbulb_outline,
+                                  label: '04',
+                                  index: 0,
+                                ),
+                                CustomIotType(
+                                  icon: Icons.air,
+                                  label: '00',
+                                  index: 1,
+                                ),
+                                CustomIotType(
+                                  icon: Icons.vertical_split,
+                                  label: '00',
+                                  index: 2,
+                                ),
+                                CustomIotType(
+                                  icon: Icons.ac_unit,
+                                  label: '00',
+                                  index: 3,
+                                ),
+                                const SizedBox(width: 5),
+                                CustomSwitch(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.06,
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
                     ),
-                  ],
-                ),
-              ],
+                  Column(
+                    spacing: 20,
+                    children: [
+                      Image.asset('assets/icons/empty.png'),
+                      Column(
+                        spacing: 10,
+                        children: [
+                          AppButton(
+                            text: 'Add Device',
+                            onPressed: () {
+                              context.push(RouteName.addDevice);
+                            },
+                            width: MediaQuery.of(context).size.width * 0.6,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ],

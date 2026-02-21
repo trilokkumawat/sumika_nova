@@ -410,7 +410,7 @@ mixin _$LocationItem {
   @JsonKey(name: 'location_list_id')
   int get locationListId => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
-  @JsonKey(name: 'photo_path')
+  @JsonKey(name: 'photo_path', fromJson: _stringFromJson)
   String get photoPath => throw _privateConstructorUsedError;
   @JsonKey(name: 'is_active')
   int get isActive => throw _privateConstructorUsedError;
@@ -418,9 +418,9 @@ mixin _$LocationItem {
   String get createdAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'updated_at')
   String get updatedAt => throw _privateConstructorUsedError;
-  @JsonKey(name: 'show_photo_path')
+  @JsonKey(name: 'show_photo_path', fromJson: _stringFromJson)
   String get showPhotoPath => throw _privateConstructorUsedError;
-  @JsonKey(name: 'location_list')
+  @JsonKey(name: 'location_list', fromJson: _locationListRefFromJson)
   LocationListRef? get locationList => throw _privateConstructorUsedError;
 
   /// Serializes this LocationItem to a JSON map.
@@ -445,12 +445,14 @@ abstract class $LocationItemCopyWith<$Res> {
     @JsonKey(name: 'home_id') int homeId,
     @JsonKey(name: 'location_list_id') int locationListId,
     String name,
-    @JsonKey(name: 'photo_path') String photoPath,
+    @JsonKey(name: 'photo_path', fromJson: _stringFromJson) String photoPath,
     @JsonKey(name: 'is_active') int isActive,
     @JsonKey(name: 'created_at') String createdAt,
     @JsonKey(name: 'updated_at') String updatedAt,
-    @JsonKey(name: 'show_photo_path') String showPhotoPath,
-    @JsonKey(name: 'location_list') LocationListRef? locationList,
+    @JsonKey(name: 'show_photo_path', fromJson: _stringFromJson)
+    String showPhotoPath,
+    @JsonKey(name: 'location_list', fromJson: _locationListRefFromJson)
+    LocationListRef? locationList,
   });
 
   $LocationListRefCopyWith<$Res>? get locationList;
@@ -558,12 +560,14 @@ abstract class _$$LocationItemImplCopyWith<$Res>
     @JsonKey(name: 'home_id') int homeId,
     @JsonKey(name: 'location_list_id') int locationListId,
     String name,
-    @JsonKey(name: 'photo_path') String photoPath,
+    @JsonKey(name: 'photo_path', fromJson: _stringFromJson) String photoPath,
     @JsonKey(name: 'is_active') int isActive,
     @JsonKey(name: 'created_at') String createdAt,
     @JsonKey(name: 'updated_at') String updatedAt,
-    @JsonKey(name: 'show_photo_path') String showPhotoPath,
-    @JsonKey(name: 'location_list') LocationListRef? locationList,
+    @JsonKey(name: 'show_photo_path', fromJson: _stringFromJson)
+    String showPhotoPath,
+    @JsonKey(name: 'location_list', fromJson: _locationListRefFromJson)
+    LocationListRef? locationList,
   });
 
   @override
@@ -650,12 +654,15 @@ class _$LocationItemImpl implements _LocationItem {
     @JsonKey(name: 'home_id') required this.homeId,
     @JsonKey(name: 'location_list_id') required this.locationListId,
     required this.name,
-    @JsonKey(name: 'photo_path') required this.photoPath,
+    @JsonKey(name: 'photo_path', fromJson: _stringFromJson)
+    required this.photoPath,
     @JsonKey(name: 'is_active') required this.isActive,
     @JsonKey(name: 'created_at') required this.createdAt,
     @JsonKey(name: 'updated_at') required this.updatedAt,
-    @JsonKey(name: 'show_photo_path') required this.showPhotoPath,
-    @JsonKey(name: 'location_list') this.locationList,
+    @JsonKey(name: 'show_photo_path', fromJson: _stringFromJson)
+    required this.showPhotoPath,
+    @JsonKey(name: 'location_list', fromJson: _locationListRefFromJson)
+    this.locationList,
   });
 
   factory _$LocationItemImpl.fromJson(Map<String, dynamic> json) =>
@@ -672,7 +679,7 @@ class _$LocationItemImpl implements _LocationItem {
   @override
   final String name;
   @override
-  @JsonKey(name: 'photo_path')
+  @JsonKey(name: 'photo_path', fromJson: _stringFromJson)
   final String photoPath;
   @override
   @JsonKey(name: 'is_active')
@@ -684,10 +691,10 @@ class _$LocationItemImpl implements _LocationItem {
   @JsonKey(name: 'updated_at')
   final String updatedAt;
   @override
-  @JsonKey(name: 'show_photo_path')
+  @JsonKey(name: 'show_photo_path', fromJson: _stringFromJson)
   final String showPhotoPath;
   @override
-  @JsonKey(name: 'location_list')
+  @JsonKey(name: 'location_list', fromJson: _locationListRefFromJson)
   final LocationListRef? locationList;
 
   @override
@@ -755,12 +762,15 @@ abstract class _LocationItem implements LocationItem {
     @JsonKey(name: 'home_id') required final int homeId,
     @JsonKey(name: 'location_list_id') required final int locationListId,
     required final String name,
-    @JsonKey(name: 'photo_path') required final String photoPath,
+    @JsonKey(name: 'photo_path', fromJson: _stringFromJson)
+    required final String photoPath,
     @JsonKey(name: 'is_active') required final int isActive,
     @JsonKey(name: 'created_at') required final String createdAt,
     @JsonKey(name: 'updated_at') required final String updatedAt,
-    @JsonKey(name: 'show_photo_path') required final String showPhotoPath,
-    @JsonKey(name: 'location_list') final LocationListRef? locationList,
+    @JsonKey(name: 'show_photo_path', fromJson: _stringFromJson)
+    required final String showPhotoPath,
+    @JsonKey(name: 'location_list', fromJson: _locationListRefFromJson)
+    final LocationListRef? locationList,
   }) = _$LocationItemImpl;
 
   factory _LocationItem.fromJson(Map<String, dynamic> json) =
@@ -777,7 +787,7 @@ abstract class _LocationItem implements LocationItem {
   @override
   String get name;
   @override
-  @JsonKey(name: 'photo_path')
+  @JsonKey(name: 'photo_path', fromJson: _stringFromJson)
   String get photoPath;
   @override
   @JsonKey(name: 'is_active')
@@ -789,10 +799,10 @@ abstract class _LocationItem implements LocationItem {
   @JsonKey(name: 'updated_at')
   String get updatedAt;
   @override
-  @JsonKey(name: 'show_photo_path')
+  @JsonKey(name: 'show_photo_path', fromJson: _stringFromJson)
   String get showPhotoPath;
   @override
-  @JsonKey(name: 'location_list')
+  @JsonKey(name: 'location_list', fromJson: _locationListRefFromJson)
   LocationListRef? get locationList;
 
   /// Create a copy of LocationItem
