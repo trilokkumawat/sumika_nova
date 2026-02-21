@@ -18,6 +18,9 @@ class CustomHeader extends StatefulWidget {
   final List<Map<String, dynamic>>? homeOptions;
   final int? selectedHomeId;
   final ValueChanged<int?>? onHomeChanged;
+  final Future<void> Function()? onCreateHomeTap;
+  final bool isTitleVisible;
+  final bool isHomeDropdownVisible;
   const CustomHeader({
     super.key,
     this.appBarHeight = 0,
@@ -30,6 +33,9 @@ class CustomHeader extends StatefulWidget {
     this.homeOptions,
     this.selectedHomeId,
     this.onHomeChanged,
+    this.onCreateHomeTap,
+    this.isTitleVisible = true,
+    this.isHomeDropdownVisible = false,
   });
 
   @override
@@ -69,6 +75,9 @@ class _CustomHeaderState extends State<CustomHeader> {
                   homeOptions: widget.homeOptions,
                   selectedHomeId: widget.selectedHomeId,
                   onHomeChanged: widget.onHomeChanged,
+                  onCreateHomeTap: widget.onCreateHomeTap,
+                  isTitleVisible: widget.isTitleVisible,
+                  isHomeDropdownVisible: widget.isHomeDropdownVisible,
                   onPopupMenuItemTap: (int index) {
                     print(index);
                     if (index == 0) {

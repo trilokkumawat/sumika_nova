@@ -12,4 +12,8 @@ class ApiName {
   static const String getuserhomelist = 'user-home-list';
   static const String gethomebylocationid = 'user-location-list';
   static const String editprofile = 'edit-profile';
+  static const String deletehome = 'delete-home';
+  static const String updateHome = 'update-home';
+  static const String deleteLocation = 'delete-location';
+  static const String updateLocation = 'update-location';
 }

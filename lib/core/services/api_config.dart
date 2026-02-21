@@ -96,6 +96,10 @@ class SumikiNovaApi {
   static final GetHomeByIdLocationCall getHomeByIdLocationCall =
       GetHomeByIdLocationCall();
   static final EditProfileCall editProfileCall = EditProfileCall();
+  static final DeleteCall deleteCall = DeleteCall();
+  static final UpdateHomeCall updateHomeCall = UpdateHomeCall();
+  static final DeleteLocationCall deleteLocationCall = DeleteLocationCall();
+  static final UpdateLocationCall updateLocationCall = UpdateLocationCall();
 }
 
 /// Builds headers with optional Bearer token from [SecureAuthStorage].
@@ -484,6 +488,102 @@ class EditProfileCall {
       callType: ApiCallType.POST,
       headers: headers,
       body: {'name': name},
+      returnBody: true,
+    );
+  }
+}
+
+/// POST delete-home — Authorization: Bearer required; home_id
+class DeleteCall {
+  Future<ApiCallResponse> call({
+    required String endpoint,
+    required String id,
+  }) async {
+    final baseUrl = SumikiNovaApi.getBaseUrl();
+    final headers = await buildApiHeaders();
+    final apiUrl = '${baseUrl}${endpoint}/$id';
+    print('apiUrl: $apiUrl');
+    return makeApiCall(
+      apiUrl: apiUrl,
+      callType: ApiCallType.DELETE,
+      headers: headers,
+      returnBody: true,
+    );
+  }
+}
+
+/// PUT update-home/{id} — name, address, is_active
+class UpdateHomeCall {
+  Future<ApiCallResponse> call({
+    required String homeId,
+    required String name,
+    required String address,
+    int isActive = 1,
+  }) async {
+    final baseUrl = SumikiNovaApi.getBaseUrl();
+    final headers = await buildApiHeaders();
+    final apiUrl = '${baseUrl}${ApiName.updateHome}/$homeId';
+    return makeApiCall(
+      apiUrl: apiUrl,
+      callType: ApiCallType.PUT,
+      headers: headers,
+      body: {'name': name, 'address': address, 'is_active': isActive},
+      returnBody: true,
+    );
+  }
+}
+
+/// DELETE delete-location/{id}
+class DeleteLocationCall {
+  Future<ApiCallResponse> call({required String locationId}) async {
+    final baseUrl = SumikiNovaApi.getBaseUrl();
+    final headers = await buildApiHeaders();
+    final apiUrl = '${baseUrl}${ApiName.deleteLocation}/$locationId';
+    return makeApiCall(
+      apiUrl: apiUrl,
+      callType: ApiCallType.DELETE,
+      headers: headers,
+      returnBody: true,
+    );
+  }
+}
+
+/// PUT update-location/{id} — form: name, is_active, location_list_id, optional photo_path (file)
+class UpdateLocationCall {
+  Future<ApiCallResponse> call({
+    required String locationId,
+    required String name,
+    required String isActive,
+    required String locationListId,
+    String? photoFilePath,
+  }) async {
+    final baseUrl = SumikiNovaApi.getBaseUrl();
+    final headers = await buildApiHeaders();
+    headers.remove('Content-Type');
+    final apiUrl = '${baseUrl}${ApiName.updateLocation}/$locationId';
+    final formData = FormData();
+    formData.fields.addAll([
+      MapEntry('name', name),
+      MapEntry('is_active', isActive),
+      MapEntry('location_list_id', locationListId),
+      MapEntry('location_id', locationId),
+    ]);
+    if (photoFilePath != null && photoFilePath.isNotEmpty) {
+      formData.files.add(
+        MapEntry(
+          'photo_path',
+          await MultipartFile.fromFile(
+            photoFilePath,
+            filename: 'room_$locationId.jpg',
+          ),
+        ),
+      );
+    }
+    return makeApiCall(
+      apiUrl: apiUrl,
+      callType: ApiCallType.POST,
+      headers: headers,
+      body: formData,
       returnBody: true,
     );
   }
