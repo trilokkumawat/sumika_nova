@@ -7,7 +7,7 @@ import 'package:sumikanova/core/navigation/route_name.dart';
 import 'package:sumikanova/core/services/api_config.dart';
 import 'package:sumikanova/core/services/secure_auth_storage.dart';
 import 'package:sumikanova/core/utils/reusablemethod.dart';
-import 'package:sumikanova/core/utils/snakbar.dart';
+import 'package:sumikanova/core/utils/snackbar.dart';
 import 'package:sumikanova/core/widget/appbutton.dart';
 import 'package:sumikanova/core/widget/customheader.dart';
 import 'package:sumikanova/core/widget/nicknamecard.dart';
@@ -128,7 +128,7 @@ class _EditNameBottomSheetState extends State<_EditNameBottomSheet> {
   Future<void> _save() async {
     final name = _controller.text.trim();
     if (name.isEmpty) {
-      SnakBarUtils.showSnakBar(context, 'Please enter a name');
+      SnackBarUtils.showSnackBar(context, 'Please enter a name');
       return;
     }
     setState(() => _saving = true);
@@ -136,7 +136,7 @@ class _EditNameBottomSheetState extends State<_EditNameBottomSheet> {
     if (!mounted) return;
     setState(() => _saving = false);
     if (!response.succeeded) {
-      SnakBarUtils.showSnakBar(
+      SnackBarUtils.showSnackBar(
         context,
         response.exceptionMessage.isNotEmpty
             ? response.exceptionMessage
@@ -152,7 +152,7 @@ class _EditNameBottomSheetState extends State<_EditNameBottomSheet> {
     widget.onSaved(name);
     if (!mounted) return;
     Navigator.of(context).pop();
-    SnakBarUtils.showSnakBar(context, 'Name updated successfully');
+    SnackBarUtils.showSnackBar(context, 'Name updated successfully');
   }
 
   @override

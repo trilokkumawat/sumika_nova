@@ -7,7 +7,7 @@ import 'package:sumikanova/core/services/secure_auth_storage.dart';
 import 'package:sumikanova/core/widget/customheader.dart';
 import 'package:sumikanova/core/utils/customtxtformfield.dart';
 import 'package:sumikanova/core/utils/reusablemethod.dart';
-import 'package:sumikanova/core/utils/snakbar.dart';
+import 'package:sumikanova/core/utils/snackbar.dart';
 import 'package:sumikanova/data/model/room_model_simple.dart';
 
 class RoomAddScreen extends StatefulWidget {
@@ -92,13 +92,13 @@ class _RoomAddScreenState extends State<RoomAddScreen> {
   Future<void> _saveAddLocationsOnly() async {
     final homeId = widget.extraData?['homeId']?.toString();
     if (homeId == null || homeId.isEmpty) {
-      SnakBarUtils.showSnakBar(context, 'Home not found');
+      SnackBarUtils.showSnackBar(context, 'Home not found');
       return;
     }
     final userData = await SecureAuthStorage.getUserData();
     final userId = userData?['id']?.toString();
     if (userId == null || userId.isEmpty) {
-      SnakBarUtils.showSnakBar(context, 'Please sign in again');
+      SnackBarUtils.showSnackBar(context, 'Please sign in again');
       return;
     }
     final locations = <Map<String, String>>[
@@ -126,7 +126,7 @@ class _RoomAddScreenState extends State<RoomAddScreen> {
       });
     }
     if (locations.isEmpty) {
-      SnakBarUtils.showSnakBar(context, 'Add at least one room');
+      SnackBarUtils.showSnackBar(context, 'Add at least one room');
       return;
     }
     setState(() => _saveLoading = true);
@@ -140,7 +140,7 @@ class _RoomAddScreenState extends State<RoomAddScreen> {
       if (!mounted) return;
       setState(() => _saveLoading = false);
       if (response.succeeded) {
-        SnakBarUtils.showSnakBar(
+        SnackBarUtils.showSnackBar(
           context,
           response.jsonBody is Map && response.jsonBody['message'] != null
               ? response.jsonBody['message'].toString()
@@ -152,12 +152,12 @@ class _RoomAddScreenState extends State<RoomAddScreen> {
             response.jsonBody is Map && response.jsonBody['message'] != null
             ? response.jsonBody['message'].toString()
             : 'Failed to add rooms. Please try again.';
-        SnakBarUtils.showSnakBar(context, msg);
+        SnackBarUtils.showSnackBar(context, msg);
       }
     } catch (_) {
       if (mounted) {
         setState(() => _saveLoading = false);
-        SnakBarUtils.showSnakBar(
+        SnackBarUtils.showSnackBar(
           context,
           'Something went wrong. Please try again.',
         );
@@ -170,24 +170,24 @@ class _RoomAddScreenState extends State<RoomAddScreen> {
 
   Future<void> _saveHomeWithLocations() async {
     if (widget.extraData == null) {
-      SnakBarUtils.showSnakBar(context, 'Complete Create Home first');
+      SnackBarUtils.showSnackBar(context, 'Complete Create Home first');
       return;
     }
     final homeName = (widget.extraData!['homeName'] as String?)?.trim() ?? '';
     final address = (widget.extraData!['address'] as String?)?.trim() ?? '';
     if (homeName.isEmpty) {
-      SnakBarUtils.showSnakBar(context, 'Home name is required');
+      SnackBarUtils.showSnackBar(context, 'Home name is required');
       return;
     }
     if (address.isEmpty) {
-      SnakBarUtils.showSnakBar(context, 'Address is required');
+      SnackBarUtils.showSnackBar(context, 'Address is required');
       return;
     }
 
     final userData = await SecureAuthStorage.getUserData();
     final userId = userData?['id']?.toString();
     if (userId == null || userId.isEmpty) {
-      SnakBarUtils.showSnakBar(context, 'Please sign in again');
+      SnackBarUtils.showSnackBar(context, 'Please sign in again');
       return;
     }
 
@@ -227,7 +227,7 @@ class _RoomAddScreenState extends State<RoomAddScreen> {
       if (!mounted) return;
       setState(() => _saveLoading = false);
       if (response.succeeded) {
-        SnakBarUtils.showSnakBar(
+        SnackBarUtils.showSnackBar(
           context,
           response.jsonBody is Map && response.jsonBody['message'] != null
               ? response.jsonBody['message'].toString()
@@ -240,12 +240,12 @@ class _RoomAddScreenState extends State<RoomAddScreen> {
             response.jsonBody is Map && response.jsonBody['message'] != null
             ? response.jsonBody['message'].toString()
             : 'Failed to save. Please try again.';
-        SnakBarUtils.showSnakBar(context, msg);
+        SnackBarUtils.showSnackBar(context, msg);
       }
     } catch (_) {
       if (mounted) {
         setState(() => _saveLoading = false);
-        SnakBarUtils.showSnakBar(
+        SnackBarUtils.showSnackBar(
           context,
           'Something went wrong. Please try again.',
         );

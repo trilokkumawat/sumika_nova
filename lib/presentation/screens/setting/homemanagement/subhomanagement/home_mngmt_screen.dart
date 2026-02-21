@@ -7,7 +7,7 @@ import 'package:sumikanova/core/constant/typography_font.dart';
 import 'package:sumikanova/core/navigation/route_name.dart';
 import 'package:sumikanova/core/utils/customtxtformfield.dart';
 import 'package:sumikanova/core/utils/reusablemethod.dart';
-import 'package:sumikanova/core/utils/snakbar.dart';
+import 'package:sumikanova/core/utils/snackbar.dart';
 import 'package:sumikanova/core/widget/appbutton.dart';
 import 'package:sumikanova/core/widget/customheader.dart';
 import 'package:sumikanova/core/widget/devicecard.dart';
@@ -236,14 +236,14 @@ class _HomeManagementScreenState extends ConsumerState<HomeManagementScreen> {
                             onPressed: () async {
                               if (!formKey.currentState!.validate()) return;
                               if (_selectedLocation == null) {
-                                SnakBarUtils.showSnakBar(
+                                SnackBarUtils.showSnackBar(
                                   context,
                                   'Please set location',
                                 );
                                 return;
                               }
                               if (_selectedDevices.isEmpty) {
-                                SnakBarUtils.showSnakBar(
+                                SnackBarUtils.showSnackBar(
                                   context,
                                   'Please select location',
                                 );
@@ -274,7 +274,7 @@ class _HomeManagementScreenState extends ConsumerState<HomeManagementScreen> {
                                 final message = ref
                                     .read(homeManagementProvider)
                                     .message;
-                                SnakBarUtils.showSnakBar(
+                                SnackBarUtils.showSnackBar(
                                   context,
                                   message ?? 'Home created successfully',
                                 );
@@ -291,7 +291,7 @@ class _HomeManagementScreenState extends ConsumerState<HomeManagementScreen> {
                             onPressed: () {
                               if (!formKey.currentState!.validate()) return;
                               if (_selectedLocation == null) {
-                                SnakBarUtils.showSnakBar(
+                                SnackBarUtils.showSnackBar(
                                   context,
                                   'Please set location first',
                                 );

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/navigation/route_name.dart';
-import 'package:sumikanova/core/utils/snakbar.dart';
+import 'package:sumikanova/core/utils/snackbar.dart';
 import 'package:sumikanova/core/widget/customback.dart';
 
 class CustomHeader extends StatefulWidget {
@@ -83,12 +83,12 @@ class _CustomHeaderState extends State<CustomHeader> {
                     if (index == 0) {
                       context.push(RouteName.addDevice);
                     } else if (index == 1) {
-                      SnakBarUtils.showSnakBar(
+                      SnackBarUtils.showSnackBar(
                         context,
                         'Create Scene feature is coming soon',
                       );
                     } else if (index == 2) {
-                      SnakBarUtils.showSnakBar(
+                      SnackBarUtils.showSnackBar(
                         context,
                         'Scan feature is coming soon',
                       );

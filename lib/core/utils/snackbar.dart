@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
 
-class SnakBarUtils {
-  static void showSnakBar(
+class SnackBarUtils {
+  static void showSnackBar(
     BuildContext context,
     String message, {
     Color? bgcolor,

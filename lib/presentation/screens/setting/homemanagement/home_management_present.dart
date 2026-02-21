@@ -164,15 +164,15 @@ class _HomeManagementParentScreenState
                               ),
                             ),
                           ),
-                          ElevatedButton(
-                            onPressed: () async {
-                              final userData =
-                                  await SecureAuthStorage.getUserData();
-                              final userId = userData?['id']?.toString();
-                              debugPrint(userId);
-                            },
-                            child: Text('Create a Home'),
-                          ),
+                          // ElevatedButton(
+                          //   onPressed: () async {
+                          //     final userData =
+                          //         await SecureAuthStorage.getUserData();
+                          //     final userId = userData?['id']?.toString();
+                          //     debugPrint(userId);
+                          //   },
+                          //   child: Text('Create a Home'),
+                          // ),
                         ],
                       ),
                     ),

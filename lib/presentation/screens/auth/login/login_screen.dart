@@ -9,7 +9,7 @@ import 'package:sumikanova/core/constant/typography_font.dart';
 import 'package:sumikanova/core/navigation/route_name.dart';
 import 'package:sumikanova/core/utils/customtxtformfield.dart';
 import 'package:sumikanova/core/utils/reusablemethod.dart';
-import 'package:sumikanova/core/utils/snakbar.dart';
+import 'package:sumikanova/core/utils/snackbar.dart';
 import 'package:sumikanova/core/widget/appbutton.dart';
 import 'package:sumikanova/core/widget/customback.dart';
 import 'package:sumikanova/core/widget/customrichtext.dart';
@@ -51,7 +51,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               now.difference(_lastBackPress!).inSeconds >= 2) {
             _lastBackPress = now;
             if (mounted) {
-              SnakBarUtils.showSnakBar(context, 'Tap again to exit');
+              SnackBarUtils.showSnackBar(context, 'Tap again to exit');
             }
           } else {
             SystemNavigator.pop();
@@ -199,7 +199,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                       loginState.error == null &&
                                       loginState.message !=
                                           'Invalid credentials') {
-                                    SnakBarUtils.showSnakBar(
+                                    SnackBarUtils.showSnackBar(
                                       context,
                                       loginState.message ?? 'Login successful',
                                     );

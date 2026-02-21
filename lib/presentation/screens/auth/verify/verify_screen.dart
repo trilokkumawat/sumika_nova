@@ -7,7 +7,7 @@ import 'package:pinput/pinput.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
 import 'package:sumikanova/core/navigation/route_name.dart';
-import 'package:sumikanova/core/utils/snakbar.dart';
+import 'package:sumikanova/core/utils/snackbar.dart';
 import 'package:sumikanova/core/widget/appbutton.dart';
 import 'package:sumikanova/core/widget/customback.dart';
 import 'package:sumikanova/presentation/screens/auth/provider.dart';
@@ -315,7 +315,7 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
                                       .verifyOtp(email, enteredPin);
                                   if (!mounted) return;
                                   if (success) {
-                                    SnakBarUtils.showSnakBar(
+                                    SnackBarUtils.showSnackBar(
                                       context,
                                       'OTP verified successfully',
                                     );

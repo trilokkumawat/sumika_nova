@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/utils/customtxtformfield.dart';
 import 'package:sumikanova/core/utils/reusablemethod.dart';
-import 'package:sumikanova/core/utils/snakbar.dart';
+import 'package:sumikanova/core/utils/snackbar.dart';
 import 'package:sumikanova/core/widget/appbutton.dart';
 import 'package:sumikanova/core/widget/customheader.dart';
 import 'package:sumikanova/presentation/screens/setting/changepassword/change_password_provider.dart';
@@ -48,13 +48,13 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
     if (state.success) {
       ref.read(changePasswordProvider.notifier).clearSuccess();
       context.pop();
-      SnakBarUtils.showSnakBar(
+      SnackBarUtils.showSnackBar(
         context,
         'Password changed successfully',
         behavior: SnackBarBehavior.floating,
       );
     } else if (state.error != null && state.error!.isNotEmpty) {
-      SnakBarUtils.showSnakBar(
+      SnackBarUtils.showSnackBar(
         context,
         state.error!,
         behavior: SnackBarBehavior.floating,
