@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
 import 'package:sumikanova/core/navigation/route_name.dart';
+import 'package:sumikanova/core/utils/app_logger.dart';
 
 class Onboarding extends StatefulWidget {
   const Onboarding({super.key});
@@ -21,7 +22,7 @@ class _OnboardingState extends State<Onboarding> {
   Timer? _timer;
 
   void _redirect() {
-    debugPrint('done');
+    AppLogger.d('done');
     if (!mounted) return;
     context.go(RouteName.login);
   }

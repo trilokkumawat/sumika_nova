@@ -54,6 +54,7 @@ dependencies:
   freezed_annotation: ^2.4.4
   flutter_dotenv: ^5.2.1
   image_picker: ^1.0.7
+  logger: ^2.6.2
 
 
 dev_dependencies:

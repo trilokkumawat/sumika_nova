@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
@@ -69,7 +71,7 @@ class HomeDropdown extends StatelessWidget {
 
     return Container(
       // width: ,
-      height: 25,
+      height: Platform.isIOS ? 35 : 40,
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
         color: bg,

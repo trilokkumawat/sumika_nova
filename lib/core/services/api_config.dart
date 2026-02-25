@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+import 'package:sumikanova/core/utils/app_logger.dart';
 import 'api_name.dart';
 import 'secure_auth_storage.dart';
 
@@ -454,7 +454,7 @@ class GetUserHomeListCall {
     final baseUrl = SumikiNovaApi.getBaseUrl();
     final headers = await buildApiHeaders();
     final apiUrl = '${baseUrl}${ApiName.getuserhomelist}/$userId';
-    debugPrint('apiUrl: $apiUrl');
+    AppLogger.d('apiUrl: $apiUrl');
     return makeApiCall(
       apiUrl: apiUrl,
       callType: ApiCallType.GET,
@@ -469,7 +469,7 @@ class GetHomeByIdLocationCall {
     final baseUrl = SumikiNovaApi.getBaseUrl();
     final headers = await buildApiHeaders();
     final apiUrl = '${baseUrl}${ApiName.gethomebylocationid}/$homeid';
-    debugPrint('apiUrl: $apiUrl');
+    AppLogger.d('apiUrl: $apiUrl');
     return makeApiCall(
       apiUrl: apiUrl,
       callType: ApiCallType.GET,
@@ -505,7 +505,7 @@ class DeleteCall {
     final baseUrl = SumikiNovaApi.getBaseUrl();
     final headers = await buildApiHeaders();
     final apiUrl = '${baseUrl}${endpoint}/$id';
-    debugPrint('apiUrl: $apiUrl');
+    AppLogger.d('apiUrl: $apiUrl');
     return makeApiCall(
       apiUrl: apiUrl,
       callType: ApiCallType.DELETE,
@@ -588,8 +588,8 @@ class CreateMultipleLocationsCall {
         ),
       );
     }
-    debugPrint('formData fields: ${formData.fields}');
-    debugPrint('formData files: ${formData.files}');
+    AppLogger.d('formData fields: ${formData.fields}');
+    AppLogger.d('formData files: ${formData.files}');
     return makeApiCall(
       apiUrl: '${baseUrl}${ApiName.createMultipleLocations}',
       callType: ApiCallType.POST,

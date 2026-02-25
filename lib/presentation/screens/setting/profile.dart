@@ -60,7 +60,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 spacing: 10,
                 children: [
                   NicknameCard(
-                    displayName: state.userName,
+                    displayName: state.userName?.titleCase() ?? '',
                     onTap: _showEditNicknameBottomSheet,
                   ),
                   ProfileMenuCard(

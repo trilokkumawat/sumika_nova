@@ -6,6 +6,7 @@ import 'package:sumikanova/core/services/api_config.dart';
 import 'package:sumikanova/core/services/secure_auth_storage.dart';
 import 'package:sumikanova/core/widget/customheader.dart';
 import 'package:sumikanova/core/utils/customtxtformfield.dart';
+import 'package:sumikanova/core/utils/app_logger.dart';
 import 'package:sumikanova/core/utils/reusablemethod.dart';
 import 'package:sumikanova/core/utils/snackbar.dart';
 import 'package:sumikanova/data/model/room_model_simple.dart';
@@ -136,7 +137,7 @@ class _RoomAddScreenState extends State<RoomAddScreen> {
         userId: userId,
         locations: locations,
       );
-      debugPrint('response: ${response.jsonBody}');
+      AppLogger.d('response: ${response.jsonBody}');
       if (!mounted) return;
       setState(() => _saveLoading = false);
       if (response.succeeded) {

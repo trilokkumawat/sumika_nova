@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/navigation/route_name.dart';
+import 'package:sumikanova/core/utils/app_logger.dart';
 import 'package:sumikanova/core/utils/snackbar.dart';
 import 'package:sumikanova/core/widget/customback.dart';
 
@@ -79,7 +80,7 @@ class _CustomHeaderState extends State<CustomHeader> {
                   isTitleVisible: widget.isTitleVisible,
                   isHomeDropdownVisible: widget.isHomeDropdownVisible,
                   onPopupMenuItemTap: (int index) {
-                    debugPrint('$index');
+                    AppLogger.d('$index');
                     if (index == 0) {
                       context.push(RouteName.addDevice);
                     } else if (index == 1) {

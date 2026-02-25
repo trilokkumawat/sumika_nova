@@ -11,6 +11,7 @@ import 'package:sumikanova/core/services/api_config.dart';
 import 'package:sumikanova/core/services/api_name.dart';
 import 'package:sumikanova/core/utils/fluttermap.dart';
 import 'package:sumikanova/core/utils/inkwell_effect.dart';
+import 'package:sumikanova/core/utils/app_logger.dart';
 import 'package:sumikanova/core/utils/reusablemethod.dart';
 import 'package:sumikanova/core/widget/appbutton.dart';
 import 'package:sumikanova/core/widget/customheader.dart';
@@ -36,7 +37,7 @@ class _HomeSettingsScreenState extends ConsumerState<HomeSettingsScreen> {
   @override
   void initState() {
     super.initState();
-    debugPrint('widget.home: ${widget.home.id}');
+    AppLogger.d('widget.home: ${widget.home.id}');
     _displayName = widget.home.name;
     _displayAddress = widget.home.address;
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -297,11 +298,11 @@ class _HomeSettingsScreenState extends ConsumerState<HomeSettingsScreen> {
         result['is_active'] as String? ?? location.isActive.toString();
     final photoPath = result['photo_path'] as String?;
 
-    debugPrint('photoPath: $photoPath');
-    debugPrint('location.id: ${location.id}');
-    debugPrint('name: $name');
-    debugPrint('isActiveStr: $isActiveStr');
-    debugPrint('locationListId: $locationListId');
+    AppLogger.d('photoPath: $photoPath');
+    AppLogger.d('location.id: ${location.id}');
+    AppLogger.d('name: $name');
+    AppLogger.d('isActiveStr: $isActiveStr');
+    AppLogger.d('locationListId: $locationListId');
 
     final response = await SumikiNovaApi.updateLocationCall.call(
       locationId: location.id.toString(),
@@ -599,7 +600,7 @@ class _RoomEditImageSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final showPhotoPath = location.showPhotoPath;
     final imageUrl = location.locationList?.imageUrl ?? '';
-    debugPrint('showPhotoPath: $showPhotoPath');
+    AppLogger.d('showPhotoPath: $showPhotoPath');
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
