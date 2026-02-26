@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,10 +9,11 @@ import 'package:sumikanova/core/constant/typography_font.dart';
 import 'package:sumikanova/core/navigation/route_name.dart';
 import 'package:sumikanova/core/utils/customtxtformfield.dart';
 import 'package:sumikanova/core/utils/reusablemethod.dart';
-import 'package:sumikanova/core/utils/snakbar.dart';
+import 'package:sumikanova/core/utils/snackbar.dart';
 import 'package:sumikanova/core/widget/appbutton.dart';
 import 'package:sumikanova/core/widget/customback.dart';
 import 'package:sumikanova/core/widget/customrichtext.dart';
+import 'package:sumikanova/core/widget/errorshow.dart';
 import 'package:sumikanova/presentation/screens/auth/provider.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -48,7 +51,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               now.difference(_lastBackPress!).inSeconds >= 2) {
             _lastBackPress = now;
             if (mounted) {
-              SnakBarUtils.showSnakBar(context, 'Tap again to exit');
+              SnackBarUtils.showSnackBar(context, 'Tap again to exit');
             }
           } else {
             SystemNavigator.pop();
@@ -60,7 +63,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             children: [
               Container(
                 width: double.infinity,
-                height: MediaQuery.sizeOf(context).height / 3.9,
+                height: math.max(220, MediaQuery.sizeOf(context).height / 3.9),
                 decoration: BoxDecoration(color: AppColor.primary),
                 child: Stack(
                   clipBehavior: Clip.antiAlias,
@@ -166,6 +169,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 ),
                               ),
                             ),
+                            if (loginState.error != null)
+                              CustomErrorShow(errorMessage: loginState.error!),
                           ],
                         ),
                         AppButton(
@@ -181,15 +186,24 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                     email,
                                     password,
                                   );
-                                  if (loginState.message != null &&
-                                      !loginState.isLoading &&
-                                      mounted) {
-                                    SnakBarUtils.showSnakBar(
+                                  // debugPrint('data: $data');
+                                  // debugPrint(
+                                  //   'loginState.isLoading: ${loginState.message}',
+                                  // );
+                                  // debugPrint('mounted: $mounted');
+                                  // debugPrint('mounted: $mounted');
+
+                                  if (!mounted) return;
+
+                                  if (loginState.isLoading == false &&
+                                      loginState.error == null &&
+                                      loginState.message !=
+                                          'Invalid credentials') {
+                                    SnackBarUtils.showSnackBar(
                                       context,
-                                      loginState.message ?? '',
-                                      bgcolor: AppColor.green,
-                                      textColor: Colors.white,
+                                      loginState.message ?? 'Login successful',
                                     );
+
                                     context.go(RouteName.app);
                                   }
                                 },

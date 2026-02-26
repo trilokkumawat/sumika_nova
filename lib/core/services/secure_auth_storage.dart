@@ -13,6 +13,7 @@ class SecureAuthStorage {
 
   static const String _keyToken = 'auth_token';
   static const String _keyUserdtl = 'userdtl';
+  static const String _keyHomeIdLocal = 'homeidlocal';
 
   /// Saves login state (call after successful sign in).
   static Future<void> saveLogin({String? token}) async {
@@ -42,9 +43,24 @@ class SecureAuthStorage {
     return _storage.read(key: _keyToken);
   }
 
+  /// Saves selected home id (e.g. from home dropdown). Use null to remove.
+  static Future<void> saveHomeIdLocal(String? homeId) async {
+    if (homeId == null || homeId.isEmpty) {
+      await _storage.delete(key: _keyHomeIdLocal);
+    } else {
+      await _storage.write(key: _keyHomeIdLocal, value: homeId);
+    }
+  }
+
+  /// Reads the stored selected home id. Returns null if not saved.
+  static Future<String?> getHomeIdLocal() async {
+    return _storage.read(key: _keyHomeIdLocal);
+  }
+
   /// Clears all auth data (call on logout).
   static Future<void> clear() async {
     await _storage.delete(key: _keyToken);
     await _storage.delete(key: _keyUserdtl);
+    await _storage.delete(key: _keyHomeIdLocal);
   }
 }

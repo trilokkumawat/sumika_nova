@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
+import 'package:sumikanova/core/services/api_config.dart';
 import 'package:sumikanova/core/utils/custmdropdown2.dart';
 import 'package:sumikanova/core/widget/customheader.dart';
 import 'package:sumikanova/core/widget/devicecard.dart';
+import 'package:sumikanova/core/widget/errorshow.dart';
+import 'package:sumikanova/data/model/device/device_model.dart';
 
 class AddDeviceScreen extends StatefulWidget {
   const AddDeviceScreen({super.key});
@@ -25,12 +28,53 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
   Map<String, dynamic>? selectedRoomId;
   String? selectedDeviceType;
 
-  static const List<Map<String, String>> _deviceTypes = [
-    {'id': 'light', 'label': 'Light 1', 'icon': 'assets/icons/light.png'},
-    {'id': 'fan', 'label': 'Fan', 'icon': 'assets/icons/fan.png'},
-    {'id': 'curtain', 'label': 'Curtain', 'icon': 'assets/icons/curtain.png'},
-    {'id': 'ac', 'label': 'AC', 'icon': 'assets/icons/ac.png'},
-  ];
+  List<DeviceItem> _devices = [];
+  bool _devicesLoading = false;
+  String? _devicesError;
+
+  Future<void> _loadDevices({String? roomId}) async {
+    setState(() {
+      _devicesLoading = true;
+      _devicesError = null;
+      _devices = [];
+    });
+    try {
+      final response = await SumikiNovaApi.getDeviceCall.call();
+      if (response.succeeded && response.jsonBody is Map<String, dynamic>) {
+        final parsed = DeviceListResponse.fromJson(
+          response.jsonBody as Map<String, dynamic>,
+        );
+        if (parsed.success) {
+          if (mounted) {
+            setState(() {
+              _devices = parsed.data;
+              _devicesLoading = false;
+              _devicesError = null;
+            });
+          }
+          return;
+        }
+      }
+      if (mounted) {
+        setState(() {
+          _devicesLoading = false;
+          _devicesError = 'Could not load devices.';
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _devicesLoading = false;
+          _devicesError = 'Something went wrong. Please try again.';
+        });
+      }
+    }
+  }
+
+  initState() {
+    super.initState();
+    _loadDevices();
+  }
 
   @override
   void dispose() {
@@ -84,7 +128,22 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
                               safeSetSate: setState,
                               onChanged: (val) {
                                 field.didChange(val);
-                                setState(() => selectedRoomId = val);
+                                setState(() {
+                                  selectedRoomId = val;
+                                  selectedDeviceType = null;
+                                });
+                                if (val != null) {
+                                  _loadDevices(
+                                    roomId:
+                                        (val['id'] ?? val['location_id'] ?? '')
+                                            .toString(),
+                                  );
+                                } else {
+                                  setState(() {
+                                    _devices = [];
+                                    _devicesError = null;
+                                  });
+                                }
                               },
                             ),
                             if (field.hasError) ...[
@@ -131,27 +190,47 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
                       ),
                     ),
 
+                    if (_devicesError != null)
+                      CustomErrorShow(errorMessage: _devicesError!),
                     LayoutBuilder(
                       builder: (context, constraints) {
                         const spacing = 12.0;
                         const crossAxisCount = 2;
-                        final cardSize =
+                        if (_devicesLoading) {
+                          return const SizedBox(
+                            height: 120,
+                            child: Center(child: CircularProgressIndicator()),
+                          );
+                        }
+                        final cellSize =
                             (constraints.maxWidth - spacing) / crossAxisCount;
-                        return Wrap(
-                          spacing: spacing,
-                          runSpacing: spacing,
-                          children: _deviceTypes.map((device) {
+                        return GridView.builder(
+                          padding: EdgeInsets.zero,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                crossAxisSpacing: 12.0,
+                                mainAxisSpacing: 12.0,
+                                childAspectRatio: 1,
+                              ),
+                          itemCount: _devices.length,
+                          itemBuilder: (context, index) {
+                            final device = _devices[index];
+                            final cardMap = device.toDeviceCardMap();
                             final isSelected =
-                                selectedDeviceType == device['id'];
+                                selectedDeviceType == cardMap['id'];
                             return CustomDeviceCard(
-                              device: device,
-                              cardSize: cardSize,
+                              device: cardMap,
+                              cardwidth: cellSize,
+                              cardheight: cellSize,
                               isSelected: isSelected,
                               onTap: () => setState(
-                                () => selectedDeviceType = device['id'],
+                                () => selectedDeviceType = cardMap['id'],
                               ),
                             );
-                          }).toList(),
+                          },
                         );
                       },
                     ),

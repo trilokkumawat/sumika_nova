@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -46,7 +48,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           children: [
             Container(
               width: double.infinity,
-              height: MediaQuery.sizeOf(context).height / 3.9,
+              height: math.max(220, MediaQuery.sizeOf(context).height / 3.9),
               color: AppColor.primary,
               child: Stack(
                 clipBehavior: Clip.antiAlias,
@@ -114,10 +116,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             controller: nameCtl,
                             prefixIcon: Icons.person_outlined,
                             showPrefixIcon: true,
-                            hintText: 'Username',
-                            labelText: 'Username',
+                            hintText: 'Your Name',
+                            labelText: 'Your Name',
                             validator: (value) {
-                              return validationEmpty(value, 'Enter username');
+                              return validationEmpty(value, 'Enter your name');
                             },
                           ),
                           CustomTxtFormField(
@@ -189,11 +191,16 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                         pwdCtl.text,
                                       );
                                   if (responseData != null && mounted) {
-                                    responseData['email'] = emailCtl.text;
-                                    context.push(
-                                      RouteName.verify,
-                                      extra: responseData,
-                                    );
+                                    final otp = responseData['otp']?.toString();
+                                    if (otp != null) {
+                                      context.push(
+                                        RouteName.verify,
+                                        extra: <String, dynamic>{
+                                          'email': emailCtl.text,
+                                          'otp': otp,
+                                        },
+                                      );
+                                    }
                                   }
                                 }
                               },

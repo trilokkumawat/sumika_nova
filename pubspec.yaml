@@ -47,6 +47,14 @@ dependencies:
   mime_type: ^1.0.1
   dio: ^5.7.0
   flutter_riverpod: ^2.6.1
+  flutter_map: ^8.2.2
+  geolocator: ^13.0.2
+  permission_handler: ^11.3.1
+  latlong2: ^0.9.1
+  freezed_annotation: ^2.4.4
+  flutter_dotenv: ^5.2.1
+  image_picker: ^1.0.7
+  logger: ^2.6.2
 
 
 dev_dependencies:
@@ -60,16 +68,21 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
   flutter_launcher_icons: ^0.14.4
+  build_runner: ^2.4.13
+  freezed: ^2.5.7
+  json_serializable: ^6.8.0
 
 
 flutter_launcher_icons:
   android: true
   ios: true
+  image_path: "assets/icons/logo1024x1024.png"
+  image_path_android: "assets/icons/logo1024x1024.png"
+  image_path_ios: "assets/icons/logo1024x1024.png"
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/icons/logo1024x1024.png"
   web:
     generate: true
-  image_path: 'assets/icons/splash.png'
-  adaptive_icon_background: '#FFFFFF'
-  adaptive_icon_foreground: 'assets/icons/splash.png'
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
@@ -85,6 +98,7 @@ flutter:
   assets:
     - assets/icons/
     - assets/json/
+    - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

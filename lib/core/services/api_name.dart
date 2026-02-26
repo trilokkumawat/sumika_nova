@@ -5,4 +5,16 @@ class ApiName {
   static const String forgetpassword = 'forgot-password';
   static const String resetpassword = 'reset-password';
   static const String changepassword = 'change-password';
+  static const String createHome = 'create_home';
+  static const String createHomeWithLocations = 'create-home-with-locations';
+  static const String getroom = 'location_list';
+  static const String getdevice = 'device_list';
+  static const String getuserhomelist = 'user-home-list';
+  static const String gethomebylocationid = 'user-location-list';
+  static const String editprofile = 'edit-profile';
+  static const String deletehome = 'delete-home';
+  static const String updateHome = 'update-home';
+  static const String deleteLocation = 'delete-location';
+  static const String updateLocation = 'update-location';
+  static const String createMultipleLocations = 'locations/create-multiple';
 }

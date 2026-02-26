@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+import 'package:sumikanova/core/utils/app_logger.dart';
 import 'api_name.dart';
 import 'secure_auth_storage.dart';
 
@@ -58,7 +60,11 @@ class ApiException implements Exception {
 class SumikiNovaApi {
   SumikiNovaApi._();
 
-  static String getBaseUrl() => 'http://5.9.161.137/~logiccar/sumika/api/';
+  static String getBaseUrl() {
+    final base = dotenv.env['BASE_URL']?.trim() ?? '';
+    if (base.isEmpty) return '';
+    return base.endsWith('/') ? base : '$base/';
+  }
 
   static final Dio _dio = Dio(
     BaseOptions(
@@ -82,6 +88,21 @@ class SumikiNovaApi {
   static final ForgotPasswordCall forgotPasswordCall = ForgotPasswordCall();
   static final ResetPasswordCall resetPasswordCall = ResetPasswordCall();
   static final ChangePasswordCall changePasswordCall = ChangePasswordCall();
+  static final CreateHomeCall createHomeCall = CreateHomeCall();
+  static final CreateHomeWithLocationsCall createHomeWithLocationsCall =
+      CreateHomeWithLocationsCall();
+  static final GetRoomCall getRoomCall = GetRoomCall();
+  static final GetDeviceCall getDeviceCall = GetDeviceCall();
+  static final GetUserHomeListCall getUserHomeListCall = GetUserHomeListCall();
+  static final GetHomeByIdLocationCall getHomeByIdLocationCall =
+      GetHomeByIdLocationCall();
+  static final EditProfileCall editProfileCall = EditProfileCall();
+  static final DeleteCall deleteCall = DeleteCall();
+  static final UpdateHomeCall updateHomeCall = UpdateHomeCall();
+  static final DeleteLocationCall deleteLocationCall = DeleteLocationCall();
+  static final UpdateLocationCall updateLocationCall = UpdateLocationCall();
+  static final CreateMultipleLocationsCall createMultipleLocationsCall =
+      CreateMultipleLocationsCall();
 }
 
 /// Builds headers with optional Bearer token from [SecureAuthStorage].
@@ -234,6 +255,34 @@ class RegisterCall {
   }
 }
 
+/// POST BASE_PATH/location_list — Authorization: Bearer required
+class GetRoomCall {
+  Future<ApiCallResponse> call() async {
+    final baseUrl = SumikiNovaApi.getBaseUrl();
+    final headers = await buildApiHeaders();
+    return makeApiCall(
+      apiUrl: '${baseUrl}${ApiName.getroom}',
+      callType: ApiCallType.GET,
+      headers: headers,
+      returnBody: true,
+    );
+  }
+}
+
+class GetDeviceCall {
+  Future<ApiCallResponse> call({String? roomId}) async {
+    final baseUrl = SumikiNovaApi.getBaseUrl();
+    final headers = await buildApiHeaders();
+    return makeApiCall(
+      apiUrl: '${baseUrl}${ApiName.getdevice}',
+      callType: ApiCallType.GET,
+      headers: headers,
+      // params: <String, String>{'room_id': roomId},
+      returnBody: true,
+    );
+  }
+}
+
 /// POST BASE_PATH/login — email, password
 class LoginCall {
   Future<ApiCallResponse> call({
@@ -241,11 +290,7 @@ class LoginCall {
     required String password,
   }) async {
     final baseUrl = SumikiNovaApi.getBaseUrl();
-    print('email: $email');
-    print('password: $password');
     final body = <String, String>{'email': email, 'password': password};
-    print('body: $body');
-    print('baseUrl: $baseUrl');
     return makeApiCall(
       apiUrl: '${baseUrl}${ApiName.signIn}',
       callType: ApiCallType.POST,
@@ -310,6 +355,75 @@ class ResetPasswordCall {
   }
 }
 
+/// POST BASE_PATH/create-home — Authorization: Bearer required; name, address, city, state, zip, country
+class CreateHomeCall {
+  Future<ApiCallResponse> call({
+    required String name,
+    required String userid,
+    required String is_active,
+  }) async {
+    final baseUrl = SumikiNovaApi.getBaseUrl();
+    final headers = await buildApiHeaders();
+    final body = <String, String>{
+      'name': name,
+      'user_id': userid,
+      'is_active': is_active,
+    };
+    return makeApiCall(
+      apiUrl: '${baseUrl}${ApiName.createHome}',
+      callType: ApiCallType.POST,
+      headers: headers,
+      body: body,
+      returnBody: true,
+    );
+  }
+}
+
+/// POST form-data create-home-with-locations — name, address, user_id, is_active, locations[i][name], locations[i][is_active], locations[i][location_list_id]
+class CreateHomeWithLocationsCall {
+  Future<ApiCallResponse> call({
+    required String name,
+    required String address,
+    required String userid,
+    required String isActive,
+    required List<Map<String, String>> locations,
+  }) async {
+    final baseUrl = SumikiNovaApi.getBaseUrl();
+    final headers = await buildApiHeaders();
+    headers.remove('Content-Type');
+    final formData = FormData();
+    formData.fields.addAll([
+      MapEntry('name', name),
+      MapEntry('address', address),
+      MapEntry('user_id', userid),
+      MapEntry('is_active', isActive),
+    ]);
+    for (var i = 0; i < locations.length; i++) {
+      final loc = locations[i];
+      formData.fields.addAll([
+        MapEntry('locations[$i][name]', loc['name'] ?? ''),
+        MapEntry('locations[$i][is_active]', loc['is_active'] ?? '1'),
+        MapEntry(
+          'locations[$i][location_list_id]',
+          loc['location_list_id'] ?? '',
+        ),
+      ]);
+      if (loc['photo_path'] != null && loc['photo_path']!.isNotEmpty) {
+        formData.fields.add(
+          MapEntry('locations[$i][photo_path]', loc['photo_path']!),
+        );
+      }
+    }
+    return makeApiCall(
+      apiUrl: '${baseUrl}${ApiName.createHomeWithLocations}',
+      callType: ApiCallType.POST,
+      headers: headers,
+      body: formData,
+      returnBody: true,
+    );
+  }
+}
+
 /// POST BASE_PATH/change-password — Authorization: Bearer required; current_password, password, password_confirmation
 class ChangePasswordCall {
   Future<ApiCallResponse> call({
@@ -329,6 +443,199 @@ class ChangePasswordCall {
       callType: ApiCallType.POST,
       headers: headers,
       body: body,
+      returnBody: true,
+    );
+  }
+}
+
+/// GET BASE_PATH/user-home-list/{userId} — Authorization: Bearer required
+class GetUserHomeListCall {
+  Future<ApiCallResponse> call({required String userId}) async {
+    final baseUrl = SumikiNovaApi.getBaseUrl();
+    final headers = await buildApiHeaders();
+    final apiUrl = '${baseUrl}${ApiName.getuserhomelist}/$userId';
+    AppLogger.d('apiUrl: $apiUrl');
+    return makeApiCall(
+      apiUrl: apiUrl,
+      callType: ApiCallType.GET,
+      headers: headers,
+      returnBody: true,
+    );
+  }
+}
+
+class GetHomeByIdLocationCall {
+  Future<ApiCallResponse> call({required String homeid}) async {
+    final baseUrl = SumikiNovaApi.getBaseUrl();
+    final headers = await buildApiHeaders();
+    final apiUrl = '${baseUrl}${ApiName.gethomebylocationid}/$homeid';
+    AppLogger.d('apiUrl: $apiUrl');
+    return makeApiCall(
+      apiUrl: apiUrl,
+      callType: ApiCallType.GET,
+      headers: headers,
+      returnBody: true,
+    );
+  }
+}
+
+/// POST edit-profile — Authorization: Bearer required; body: name (key-value).
+/// User is identified by the Bearer token, not by userId in the path.
+class EditProfileCall {
+  Future<ApiCallResponse> call({required String name}) async {
+    final baseUrl = SumikiNovaApi.getBaseUrl();
+    final headers = await buildApiHeaders();
+    final apiUrl = '${baseUrl}${ApiName.editprofile}';
+    return makeApiCall(
+      apiUrl: apiUrl,
+      callType: ApiCallType.POST,
+      headers: headers,
+      body: {'name': name},
+      returnBody: true,
+    );
+  }
+}
+
+/// POST delete-home — Authorization: Bearer required; home_id
+class DeleteCall {
+  Future<ApiCallResponse> call({
+    required String endpoint,
+    required String id,
+  }) async {
+    final baseUrl = SumikiNovaApi.getBaseUrl();
+    final headers = await buildApiHeaders();
+    final apiUrl = '${baseUrl}${endpoint}/$id';
+    AppLogger.d('apiUrl: $apiUrl');
+    return makeApiCall(
+      apiUrl: apiUrl,
+      callType: ApiCallType.DELETE,
+      headers: headers,
+      returnBody: true,
+    );
+  }
+}
+
+/// PUT update-home/{id} — name, address, is_active
+class UpdateHomeCall {
+  Future<ApiCallResponse> call({
+    required String homeId,
+    required String name,
+    required String address,
+    int isActive = 1,
+  }) async {
+    final baseUrl = SumikiNovaApi.getBaseUrl();
+    final headers = await buildApiHeaders();
+    final apiUrl = '${baseUrl}${ApiName.updateHome}/$homeId';
+    return makeApiCall(
+      apiUrl: apiUrl,
+      callType: ApiCallType.PUT,
+      headers: headers,
+      body: {'name': name, 'address': address, 'is_active': isActive},
+      returnBody: true,
+    );
+  }
+}
+
+/// DELETE delete-location/{id}
+class DeleteLocationCall {
+  Future<ApiCallResponse> call({required String locationId}) async {
+    final baseUrl = SumikiNovaApi.getBaseUrl();
+    final headers = await buildApiHeaders();
+    final apiUrl = '${baseUrl}${ApiName.deleteLocation}/$locationId';
+    return makeApiCall(
+      apiUrl: apiUrl,
+      callType: ApiCallType.DELETE,
+      headers: headers,
+      returnBody: true,
+    );
+  }
+}
+
+/// POST locations/create-multiple — form: home_id, user_id, locations[i][location_list_id], locations[i][name], locations[i][is_active], optional locations[i][photo_path] (file)
+class CreateMultipleLocationsCall {
+  Future<ApiCallResponse> call({
+    required String homeId,
+    required String userId,
+    required List<Map<String, String>> locations,
+  }) async {
+    final baseUrl = SumikiNovaApi.getBaseUrl();
+    final headers = await buildApiHeaders();
+    headers.remove('Content-Type');
+    final formData = FormData();
+    formData.fields.addAll([
+      MapEntry('home_id', homeId),
+      MapEntry('user_id', userId),
+    ]);
+    for (var i = 0; i < locations.length; i++) {
+      final loc = locations[i];
+      formData.fields.addAll([
+        MapEntry(
+          'locations[$i][location_list_id]',
+          loc['location_list_id'] ?? '',
+        ),
+        MapEntry('locations[$i][name]', loc['name'] ?? ''),
+        MapEntry('locations[$i][is_active]', loc['is_active'] ?? '1'),
+      ]);
+      formData.files.add(
+        MapEntry(
+          'locations[$i][photo_path]',
+          (loc['photo_path'] != null && loc['photo_path']!.isNotEmpty)
+              ? await MultipartFile.fromFile(
+                  loc['photo_path']!,
+                  filename: 'room_$i.jpg',
+                )
+              : MultipartFile.fromBytes([], filename: null),
+        ),
+      );
+    }
+    AppLogger.d('formData fields: ${formData.fields}');
+    AppLogger.d('formData files: ${formData.files}');
+    return makeApiCall(
+      apiUrl: '${baseUrl}${ApiName.createMultipleLocations}',
+      callType: ApiCallType.POST,
+      headers: headers,
+      body: formData,
+      returnBody: true,
+    );
+  }
+}
+
+/// PUT update-location/{id} — form: name, is_active, location_list_id, optional photo_path (file)
+class UpdateLocationCall {
+  Future<ApiCallResponse> call({
+    required String locationId,
+    required String name,
+    required String isActive,
+    required String locationListId,
+    String? photoFilePath,
+  }) async {
+    final baseUrl = SumikiNovaApi.getBaseUrl();
+    final headers = await buildApiHeaders();
+    headers.remove('Content-Type');
+    final apiUrl = '${baseUrl}${ApiName.updateLocation}/$locationId';
+    final formData = FormData();
+    formData.fields.addAll([
+      MapEntry('name', name),
+      MapEntry('is_active', isActive),
+      MapEntry('location_list_id', locationListId),
+      MapEntry('location_id', locationId),
+    ]);
+    if (photoFilePath != null && photoFilePath.isNotEmpty) {
+      formData.files.add(
+        MapEntry(
+          'photo_path',
+          await MultipartFile.fromFile(
+            photoFilePath,
+            filename: 'room_$locationId.jpg',
+          ),
+        ),
+      );
+    }
+    return makeApiCall(
+      apiUrl: apiUrl,
+      callType: ApiCallType.POST,
+      headers: headers,
+      body: formData,
       returnBody: true,
     );
   }

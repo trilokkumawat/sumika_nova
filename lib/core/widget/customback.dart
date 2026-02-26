@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_popup/flutter_popup.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
+import 'package:sumikanova/core/navigation/route_name.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
+import 'package:sumikanova/core/utils/homedropdown.dart';
 import 'package:sumikanova/core/utils/reusablemethod.dart';
 import 'package:sumikanova/core/widget/custom_divider.dart';
 import 'package:sumikanova/core/widget/popup_menu_item.dart';
@@ -24,7 +28,17 @@ class CustomBack extends StatefulWidget {
     this.isSubmit = false,
     this.onSubmit,
     this.submitIcon,
+    this.homeOptions,
+    this.selectedHomeId,
+    this.onHomeChanged,
+    this.onCreateHomeTap,
+    this.isTitleVisible = true,
+    this.isHomeDropdownVisible = false,
   });
+
+  /// When "Create Home" is tapped (empty list or last dropdown item), this is
+  /// called. If null, defaults to pushing [RouteName.homeManagement].
+  final Future<void> Function()? onCreateHomeTap;
 
   final String title;
   final VoidCallback? onBack;
@@ -40,11 +54,24 @@ class CustomBack extends StatefulWidget {
   final void Function(int index)? onPopupMenuItemTap;
   final bool isSubmit;
   final Icon? submitIcon;
+  final bool isTitleVisible;
+  final bool isHomeDropdownVisible;
+
+  /// When non-null, a pill-shaped home dropdown (150px wide) is shown next to the title.
+  /// Each map should have "id" (int) and "name" (String). Only name is shown in the dropdown.
+  final List<Map<String, dynamic>>? homeOptions;
+  final int? selectedHomeId;
+  final ValueChanged<int?>? onHomeChanged;
   @override
   State<CustomBack> createState() => _CustomBackState();
 }
 
 class _CustomBackState extends State<CustomBack> {
+  int? _localSelectedHomeId;
+
+  int? get _effectiveSelectedHomeId =>
+      widget.selectedHomeId ?? _localSelectedHomeId;
+
   void _onPopupItemTap(int index) {
     if (mounted) {
       Navigator.of(context).pop();
@@ -67,7 +94,11 @@ class _CustomBackState extends State<CustomBack> {
         children: <Widget>[
           if (widget.isAllowBack)
             GestureDetector(
-              onTap: widget.onBack ?? () => context.pop(),
+              onTap:
+                  widget.onBack ??
+                  () async {
+                    context.pop();
+                  },
               child: Container(
                 width: 40,
                 height: 40,
@@ -77,12 +108,60 @@ class _CustomBackState extends State<CustomBack> {
             ),
           if (widget.title.isNotEmpty)
             Expanded(
-              child: Text(
-                widget.title.titleCase(),
-                style: style,
-                overflow: TextOverflow.ellipsis,
+              child: Row(
+                spacing: 10,
+                children: [
+                  if (widget.isTitleVisible == true)
+                    Flexible(
+                      child: Text(
+                        widget.title.titleCase(),
+                        style: style,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  if (widget.homeOptions != null &&
+                      widget.isHomeDropdownVisible == true) ...[
+                    HomeDropdown(
+                      options: [
+                        ...widget.homeOptions!,
+                        {'id': -1, 'name': 'Create Home'},
+                      ],
+                      value: _effectiveSelectedHomeId == -1
+                          ? null
+                          : _effectiveSelectedHomeId,
+                      onChanged: (id) async {
+                        if (id == -1) {
+                          await (widget.onCreateHomeTap ??
+                              () async {
+                                if (context.mounted) {
+                                  await context.push(RouteName.homeManagement);
+                                }
+                              })();
+                          return;
+                        }
+                        setState(() => _localSelectedHomeId = id);
+                        widget.onHomeChanged?.call(id);
+                      },
+                      width: 150,
+                    ),
+                  ],
+                  if (widget.homeOptions == null &&
+                      widget.isHomeDropdownVisible == true) ...[
+                    _CreateHomePill(
+                      onTap: () async {
+                        await (widget.onCreateHomeTap ??
+                            () async {
+                              if (context.mounted) {
+                                await context.push(RouteName.homeManagement);
+                              }
+                            })();
+                      },
+                    ),
+                  ],
+                ],
               ),
             ),
+
           if (widget.isSubmit)
             GestureDetector(
               onTap: widget.onSubmit ?? () {},
@@ -95,6 +174,7 @@ class _CustomBackState extends State<CustomBack> {
                     Icon(Icons.check, color: iconClr, size: 24),
               ),
             ),
+
           if (widget.isPopupmenu)
             CustomPopup(
               position: PopupPosition.bottom,
@@ -135,6 +215,15 @@ class _CustomBackState extends State<CustomBack> {
                       label: 'Scan',
                       onTap: () => _onPopupItemTap(2),
                     ),
+                    CustomDivider(),
+                    CustomPopupMenuItem(
+                      icon: Icons.logout,
+                      label: 'Logout',
+                      onTap: () {
+                        _onPopupItemTap(3);
+                        logout(context);
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -150,6 +239,35 @@ class _CustomBackState extends State<CustomBack> {
               ),
             ),
         ],
+      ),
+    );
+  }
+}
+
+class _CreateHomePill extends StatelessWidget {
+  const _CreateHomePill({required this.onTap});
+
+  final Future<void> Function() onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final bg = AppColor.blue1.withValues(alpha: 0.5);
+    final textStyle = TypographyFont.uih5reg.copyWith(color: AppColor.white);
+    return GestureDetector(
+      onTap: () => onTap(),
+      child: Container(
+        height: Platform.isIOS ? 35 : 40,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        decoration: BoxDecoration(
+          color: bg,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          'Create Home'.titleCase(),
+          style: textStyle,
+          overflow: TextOverflow.ellipsis,
+        ),
       ),
     );
   }

@@ -10,7 +10,7 @@ class CustomModal extends StatelessWidget {
     this.title = 'Password Update Successfully',
     this.message =
         'Password changed successfully, you can login again with new password',
-    this.buttonText = 'Back to Home',
+    this.buttonText = 'Back to Login',
     required this.onPressed,
   });
 

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/navigation/route_name.dart';
 import 'package:sumikanova/core/services/secure_auth_storage.dart';
+import 'package:sumikanova/core/utils/snackbar.dart';
 
 String? validateEmail(String? value, {String? msg}) {
   if (value == null || value.trim().isEmpty) {
@@ -13,20 +15,69 @@ String? validateEmail(String? value, {String? msg}) {
     r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$",
   );
 
-  if (!emailRegex.hasMatch(value.trim())) {
+  final trimmedValue = value.trim();
+
+  if (!emailRegex.hasMatch(trimmedValue)) {
     return 'Enter valid email address';
   }
 
+  // Check for gmail.com or googlemail.com specifically
+  if (!trimmedValue.toLowerCase().contains('@gmail.com')) {
+    return 'Email must be a Gmail address';
+  }
+
+  return null;
+}
+
+String? validateCurrentPassword(String? value) {
+  if (value == null || value.isEmpty) {
+    return "Current password is required";
+  }
   return null;
 }
 
 /// Validate password input
 String? validatePassword(String? value) {
   if (value == null || value.isEmpty) {
-    return 'Enter your password';
+    return "Password is required";
   }
-  if (value.length < 6) {
-    return 'Use at least 6 characters';
+
+  if (value.length < 8) {
+    return "Password must be at least 8 characters";
+  }
+
+  // Block only numbers like 12345678
+  if (RegExp(r'^\d+$').hasMatch(value)) {
+    return "Password cannot be only numbers";
+  }
+
+  // Block common weak numeric passwords
+  List<String> weakPasswords = [
+    "123456",
+    "12345678",
+    "123456789",
+    "00000000",
+    "11111111",
+  ];
+
+  if (weakPasswords.contains(value)) {
+    return "This password is too common";
+  }
+
+  if (!RegExp(r'[A-Z]').hasMatch(value)) {
+    return "Include at least one uppercase letter";
+  }
+
+  if (!RegExp(r'[a-z]').hasMatch(value)) {
+    return "Include at least one lowercase letter";
+  }
+
+  if (!RegExp(r'[0-9]').hasMatch(value)) {
+    return "Include at least one number";
+  }
+
+  if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) {
+    return "Include at least one special character";
   }
 
   return null;
@@ -46,6 +97,13 @@ String? validationEmpty(String? value, message) {
   }
 
   return null;
+}
+
+/// Returns [value] with the first character in uppercase; rest unchanged.
+/// Returns empty string if [value] is null or empty.
+String capitalizeFirst(String? value) {
+  if (value == null || value.isEmpty) return value ?? '';
+  return value[0].toUpperCase() + value.substring(1);
 }
 
 extension SentenceCase on String {
@@ -78,5 +136,10 @@ void logout(BuildContext context) async {
   await SecureAuthStorage.clear();
   if (context.mounted) {
     context.go(RouteName.login);
+    SnackBarUtils.showSnackBar(
+      context,
+      'User logged out successfully',
+      behavior: SnackBarBehavior.floating,
+    );
   }
 }
