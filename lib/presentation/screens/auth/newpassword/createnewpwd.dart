@@ -45,7 +45,7 @@ class _CreateNewPwdScreenState extends ConsumerState<CreateNewPwdScreen> {
             Container(
               width: double.infinity,
               height: math.max(220, MediaQuery.sizeOf(context).height / 3.9),
-              color: AppColor.primary,
+              color: AppColor.black,
               child: Stack(
                 clipBehavior: Clip.antiAlias,
                 children: [
@@ -57,6 +57,7 @@ class _CreateNewPwdScreenState extends ConsumerState<CreateNewPwdScreen> {
                       'assets/icons/bgappbar.png',
                       fit: BoxFit.cover,
                       height: 200,
+                      color: Color(0xFF353535),
                     ),
                   ),
                   Padding(

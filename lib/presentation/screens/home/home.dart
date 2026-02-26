@@ -62,6 +62,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 spacing: 10,
                 children: [
                   SunsetCard(
+                    height: MediaQuery.sizeOf(context).height / 15,
                     temperature: DateHelper().tempratureFormat(20),
                     dateLabel: DateHelper().formatFullDate(),
                   ),

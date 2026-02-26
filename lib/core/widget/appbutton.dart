@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
 import 'package:sumikanova/core/widget/loader.dart';
 
@@ -33,11 +34,7 @@ class AppButton extends StatelessWidget {
       child: DecoratedBox(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(borderRadius),
-          gradient: const LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [_gradientStart, _gradientEnd],
-          ),
+          color: AppColor.black,
         ),
         child: Material(
           color: Colors.transparent,

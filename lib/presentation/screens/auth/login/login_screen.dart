@@ -64,7 +64,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               Container(
                 width: double.infinity,
                 height: math.max(220, MediaQuery.sizeOf(context).height / 3.9),
-                decoration: BoxDecoration(color: AppColor.primary),
+                decoration: BoxDecoration(color: AppColor.black),
                 child: Stack(
                   clipBehavior: Clip.antiAlias,
                   children: [
@@ -76,6 +76,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         'assets/icons/bgappbar.png',
                         fit: BoxFit.cover,
                         height: 200,
+                        color: Color(0xFF353535),
                       ),
                     ),
                     Padding(
@@ -164,7 +165,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 child: Text(
                                   'Forgot Password?',
                                   style: TypographyFont.uih5bold.copyWith(
-                                    color: const Color(0xFF455AF7),
+                                    color: AppColor.black,
                                   ),
                                 ),
                               ),
@@ -186,12 +187,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                     email,
                                     password,
                                   );
-                                  // debugPrint('data: $data');
-                                  // debugPrint(
-                                  //   'loginState.isLoading: ${loginState.message}',
-                                  // );
-                                  // debugPrint('mounted: $mounted');
-                                  // debugPrint('mounted: $mounted');
 
                                   if (!mounted) return;
 
@@ -215,7 +210,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             color: AppColor.gray11,
                           ),
                           actionStyle: TypographyFont.uih5bold.copyWith(
-                            color: AppColor.blue11,
+                            color: AppColor.black,
                           ),
                           onTap: () {
                             context.push(RouteName.register);

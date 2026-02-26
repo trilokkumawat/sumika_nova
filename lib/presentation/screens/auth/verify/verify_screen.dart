@@ -78,6 +78,7 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
                       'assets/icons/bgappbar.png',
                       fit: BoxFit.cover,
                       height: 200,
+                      color: Color(0xFF353535),
                     ),
                   ),
                   Padding(

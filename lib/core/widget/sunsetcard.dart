@@ -10,6 +10,7 @@ class SunsetCard extends StatefulWidget {
     this.weatherCircleAsset = 'assets/icons/weather_circle.png',
     this.sunAsset = 'assets/icons/sun.png',
     this.gradientColors,
+    this.height,
   });
 
   final num temperature;
@@ -17,13 +18,14 @@ class SunsetCard extends StatefulWidget {
   final String weatherCircleAsset;
   final String sunAsset;
   final List<Color>? gradientColors;
+  final double? height;
 
   @override
   State<SunsetCard> createState() => _SunsetCardState();
 }
 
 class _SunsetCardState extends State<SunsetCard> {
-  static const double _cardHeight = 150;
+  double get _cardHeight => widget.height ?? 150;
 
   List<Color> get _gradientColors =>
       widget.gradientColors ??
@@ -55,8 +57,9 @@ class _SunsetCardState extends State<SunsetCard> {
               child: Image.asset(widget.weatherCircleAsset),
             ),
             Positioned(
-              top: MediaQuery.of(context).size.height * 0.05,
-              left: MediaQuery.of(context).size.width * 0.06,
+              top: -5,
+              left: 10,
+              right: 0,
               child: Row(
                 spacing: 8,
                 children: [
@@ -64,9 +67,18 @@ class _SunsetCardState extends State<SunsetCard> {
                     '${widget.temperature.toStringAsFixed(widget.temperature == widget.temperature.round() ? 0 : 1)}°',
                     style: TypographyFont.uih1bold.copyWith(
                       color: AppColor.white,
-                      fontSize: 64,
+                      fontSize: 50,
                     ),
                   ),
+                ],
+              ),
+            ),
+            Positioned(
+              top: 30,
+              left: MediaQuery.of(context).size.width * 0.30,
+              child: Row(
+                spacing: 8,
+                children: [
                   Text(
                     widget.dateLabel,
                     style: TypographyFont.uih4reg.copyWith(
@@ -77,8 +89,8 @@ class _SunsetCardState extends State<SunsetCard> {
               ),
             ),
             Positioned(
-              top: 20,
-              right: 15,
+              top: 5,
+              right: 10,
               child: Icon(Icons.sunny, size: 50, color: AppColor.white),
               //  Image.asset(widget.sunAsset, width: 100, height: 100),
             ),

@@ -34,7 +34,10 @@ class _AppStateState extends State<AppState> {
     return Scaffold(
       body: IndexedStack(index: _currentIndex, children: _screens),
       bottomNavigationBar: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12),
+        padding: EdgeInsets.symmetric(
+          vertical: 10,
+          horizontal: MediaQuery.sizeOf(context).width / 20,
+        ),
         decoration: const BoxDecoration(
           color: AppColor.white,
           boxShadow: <BoxShadow>[
@@ -49,14 +52,16 @@ class _AppStateState extends State<AppState> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: List<Widget>.generate(
             _navItems.length,
-            (int index) => _CustomNavTile(
-              iconPath: _navItems[index].iconPath,
-              label: _navItems[index].label,
-              isSelected: _currentIndex == index,
-              onTap: () {
-                setState(() => _currentIndex = index);
-                if (index == 0) _refreshHome?.call();
-              },
+            (int index) => Expanded(
+              child: _CustomNavTile(
+                iconPath: _navItems[index].iconPath,
+                label: _navItems[index].label,
+                isSelected: _currentIndex == index,
+                onTap: () {
+                  setState(() => _currentIndex = index);
+                  if (index == 0) _refreshHome?.call();
+                },
+              ),
             ),
           ),
         ),
@@ -86,11 +91,16 @@ class _CustomNavTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color color = isSelected ? AppColor.orange : AppColor.black;
+    final Color color = isSelected ? AppColor.white : AppColor.black;
     final TextStyle textStyle = isSelected
         ? TypographyFont.uih7semimed.copyWith(color: color)
         : TypographyFont.uih7med.copyWith(color: color);
-    return Expanded(
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      decoration: BoxDecoration(
+        color: isSelected ? AppColor.bgbuttoncolor : Colors.transparent,
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
@@ -108,10 +118,6 @@ class _CustomNavTile extends StatelessWidget {
                 fit: BoxFit.contain,
                 color: color,
               ),
-              // ColorFiltered(
-              //   colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
-              //   child:
-              // ),
               Text(label, style: textStyle),
             ],
           ),

@@ -49,7 +49,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             Container(
               width: double.infinity,
               height: math.max(220, MediaQuery.sizeOf(context).height / 3.9),
-              color: AppColor.primary,
+              color: AppColor.black,
               child: Stack(
                 clipBehavior: Clip.antiAlias,
                 children: [
@@ -61,6 +61,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       'assets/icons/bgappbar.png',
                       fit: BoxFit.cover,
                       height: 200,
+                      color: Color(0xFF353535),
                     ),
                   ),
                   Padding(

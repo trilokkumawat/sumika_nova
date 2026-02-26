@@ -51,7 +51,7 @@ class _CustomHeaderState extends State<CustomHeader> {
         width: double.infinity,
         height: Platform.isIOS ? 100 : 90,
         child: Container(
-          decoration: BoxDecoration(color: AppColor.primary),
+          decoration: BoxDecoration(color: AppColor.black),
           child: Stack(
             children: [
               Positioned(
@@ -61,6 +61,7 @@ class _CustomHeaderState extends State<CustomHeader> {
                 child: Image.asset(
                   'assets/icons/bgappbar.png',
                   fit: BoxFit.cover,
+                  color: Color(0xFF353535),
                 ),
               ),
               Padding(

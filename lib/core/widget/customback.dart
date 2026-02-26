@@ -81,7 +81,7 @@ class _CustomBackState extends State<CustomBack> {
 
   @override
   Widget build(BuildContext context) {
-    final Color bg = widget.backgroundColor ?? AppColor.blue10;
+    final Color bg = widget.backgroundColor ?? AppColor.bgbuttoncolor;
     final Color iconClr = widget.iconColor ?? AppColor.white;
     final TextStyle style =
         widget.titleStyle ??
