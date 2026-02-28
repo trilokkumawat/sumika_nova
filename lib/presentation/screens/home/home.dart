@@ -77,7 +77,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     temperature: DateHelper().tempratureFormat(
                       state.currentWeatherTemperature,
                     ),
-                    isday: state.currentWeather?.isDay == 0,
+                    isday: state.currentWeather?.isDay == 1,
                     dateLabel: DateHelper().formatFullDate(),
                     isLoading: state.weatherLoading,
                   ),

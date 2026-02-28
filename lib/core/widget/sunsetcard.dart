@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
@@ -46,7 +48,7 @@ class _SunsetCardState extends State<SunsetCard> {
       child: ImageColorFilterGress(
         child: Container(
           width: double.infinity,
-          height: _cardHeight,
+          height: Platform.isIOS ? _cardHeight : _cardHeight + 5,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(9),
             gradient: LinearGradient(
@@ -83,7 +85,7 @@ class _SunsetCardState extends State<SunsetCard> {
                           Text(
                             '${widget.temperature.toStringAsFixed(widget.temperature == widget.temperature.round() ? 0 : 1)}°',
                             style: TypographyFont.uih1bold.copyWith(
-                              color: AppColor.white,
+                              color: AppColor.black,
                               fontSize: 50,
                             ),
                           ),
@@ -99,7 +101,7 @@ class _SunsetCardState extends State<SunsetCard> {
                           Text(
                             widget.dateLabel,
                             style: TypographyFont.uih4reg.copyWith(
-                              color: AppColor.white,
+                              color: AppColor.black,
                             ),
                           ),
                         ],
