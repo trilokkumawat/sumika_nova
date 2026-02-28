@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/navigation/route_name.dart';
 import 'package:sumikanova/core/utils/date_helper.dart';
+import 'package:sumikanova/core/utils/img_colorfilter.dart';
 import 'package:sumikanova/core/widget/custom_iot_type.dart';
 import 'package:sumikanova/core/widget/custom_switch.dart';
 import 'package:sumikanova/core/widget/customheader.dart';
@@ -20,18 +21,28 @@ class HomeScreen extends ConsumerStatefulWidget {
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends ConsumerState<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   @override
   void initState() {
     super.initState();
-    ref.read(homeProvider.notifier).loadHomeList();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final controller = ref.read(homeProvider.notifier);
+      controller.loadHomeList();
+      controller.loadWeather();
+    });
     widget.onRegisterRefresh?.call(() {
       ref.read(homeProvider.notifier).loadHomeList();
+      ref.read(homeProvider.notifier).loadWeather();
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final state = ref.watch(homeProvider);
     final controller = ref.read(homeProvider.notifier);
 
@@ -63,8 +74,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 children: [
                   SunsetCard(
                     height: MediaQuery.sizeOf(context).height / 15,
-                    temperature: DateHelper().tempratureFormat(20),
+                    temperature: DateHelper().tempratureFormat(
+                      state.currentWeatherTemperature,
+                    ),
+                    isday: state.currentWeather?.isDay == 0,
                     dateLabel: DateHelper().formatFullDate(),
+                    isLoading: state.weatherLoading,
                   ),
                   if (state.locationList.isNotEmpty)
                     ListView.builder(
@@ -105,20 +120,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     spacing: 4,
                                     children: [
                                       imageUrl.isEmpty
-                                          ? Icon(
-                                              Icons.door_front_door_rounded,
-                                              color: AppColor.gray4,
-                                              size: 22,
-                                            )
-                                          : Image.network(
-                                              imageUrl,
-                                              width: 32,
-                                              height: 32,
-                                              fit: BoxFit.cover,
-                                              errorBuilder: (_, __, ___) => Icon(
+                                          ? ImageColorFilterGress(
+                                              child: Icon(
                                                 Icons.door_front_door_rounded,
-                                                color: AppColor.gray4,
                                                 size: 22,
+                                              ),
+                                            )
+                                          : ImageColorFilterGress(
+                                              child: Image.network(
+                                                imageUrl,
+                                                width: 32,
+                                                height: 32,
+                                                fit: BoxFit.cover,
+                                                errorBuilder: (_, __, ___) => Icon(
+                                                  Icons.door_front_door_rounded,
+                                                  size: 22,
+                                                ),
                                               ),
                                             ),
                                       Text(
@@ -164,7 +181,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   Column(
                     spacing: 20,
                     children: [
-                      Image.asset('assets/icons/empty.png'),
+                      ImageColorFilterGress(
+                        child: Image.asset('assets/icons/empty.png'),
+                      ),
                       Column(
                         spacing: 10,
                         children: [

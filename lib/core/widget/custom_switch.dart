@@ -34,6 +34,7 @@ class _CustomSwitchState extends State<CustomSwitch> {
   double get _height =>
       widget.height ?? (widget.orientation == Axis.horizontal ? 28.0 : 50.0);
   static const Color _onColor = Color(0xFF17DB94);
+  // static const Color _onColor = Color(0xFFffffff);
 
   late ValueNotifier<bool> _controller;
 
@@ -74,7 +75,7 @@ class _CustomSwitchState extends State<CustomSwitch> {
             width: _width,
             height: _height,
             decoration: BoxDecoration(
-              color: isOn ? _onColor : AppColor.gray7,
+              color: AppColor.black,
               borderRadius: BorderRadius.circular(horizontal ? 6 : 5),
             ),
             child: horizontal ? _buildHorizontal(isOn) : _buildVertical(isOn),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
+import 'package:sumikanova/core/utils/img_colorfilter.dart';
 
 class CustomDeviceCard extends StatelessWidget {
   const CustomDeviceCard({
@@ -22,21 +23,25 @@ class CustomDeviceCard extends StatelessWidget {
     final isNetworkUrl =
         icon.startsWith('http://') || icon.startsWith('https://');
     if (isNetworkUrl) {
-      return Image.network(
+      return ImageColorFilterGress(
+        child: Image.network(
+          icon,
+          width: 40,
+          height: 40,
+          fit: BoxFit.contain,
+          errorBuilder: (_, __, ___) =>
+              Icon(Icons.device_hub, size: 40, color: AppColor.gray6),
+        ),
+      );
+    }
+    return ImageColorFilterGress(
+      child: Image.asset(
         icon,
         width: 40,
         height: 40,
-        fit: BoxFit.contain,
         errorBuilder: (_, __, ___) =>
             Icon(Icons.device_hub, size: 40, color: AppColor.gray6),
-      );
-    }
-    return Image.asset(
-      icon,
-      width: 40,
-      height: 40,
-      errorBuilder: (_, __, ___) =>
-          Icon(Icons.device_hub, size: 40, color: AppColor.gray6),
+      ),
     );
   }
 

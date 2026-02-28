@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
+import 'package:sumikanova/core/utils/img_colorfilter.dart';
 import 'package:sumikanova/presentation/screens/home/home.dart';
 import 'package:sumikanova/presentation/screens/setting/profile.dart';
 
@@ -11,16 +12,11 @@ class AppState extends StatefulWidget {
   State<AppState> createState() => _AppStateState();
 }
 
-class _AppStateState extends State<AppState> {
-  int _currentIndex = 0;
+class _AppStateState extends State<AppState>
+    with SingleTickerProviderStateMixin {
+  late final TabController _tabController;
+  late final List<Widget> _screens;
   VoidCallback? _refreshHome;
-
-  List<Widget> get _screens => <Widget>[
-    HomeScreen(onRegisterRefresh: (cb) => _refreshHome = cb),
-    const SceneScreen(),
-    const ActivityScreen(),
-    const ProfileScreen(),
-  ];
 
   static const List<_NavItem> _navItems = <_NavItem>[
     _NavItem(iconPath: 'assets/icons/home.png', label: 'Home'),
@@ -30,9 +26,37 @@ class _AppStateState extends State<AppState> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: _navItems.length, vsync: this);
+    _tabController.addListener(_onTabChanged);
+    _screens = <Widget>[
+      HomeScreen(onRegisterRefresh: (cb) => _refreshHome = cb),
+      const SceneScreen(),
+      const ActivityScreen(),
+      const ProfileScreen(),
+    ];
+  }
+
+  void _onTabChanged() {
+    if (_tabController.indexIsChanging) return;
+    if (_tabController.index == 0) {
+      _refreshHome?.call();
+    }
+    setState(() {});
+  }
+
+  @override
+  void dispose() {
+    _tabController.removeListener(_onTabChanged);
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(index: _currentIndex, children: _screens),
+      body: TabBarView(controller: _tabController, children: _screens),
       bottomNavigationBar: Container(
         padding: EdgeInsets.symmetric(
           vertical: 10,
@@ -56,9 +80,9 @@ class _AppStateState extends State<AppState> {
               child: _CustomNavTile(
                 iconPath: _navItems[index].iconPath,
                 label: _navItems[index].label,
-                isSelected: _currentIndex == index,
+                isSelected: _tabController.index == index,
                 onTap: () {
-                  setState(() => _currentIndex = index);
+                  _tabController.animateTo(index);
                   if (index == 0) _refreshHome?.call();
                 },
               ),
@@ -111,12 +135,14 @@ class _CustomNavTile extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Image.asset(
-                iconPath,
-                width: 24,
-                height: 24,
-                fit: BoxFit.contain,
-                color: color,
+              ImageColorFilterGress(
+                child: Image.asset(
+                  iconPath,
+                  width: 24,
+                  height: 24,
+                  fit: BoxFit.contain,
+                  color: color,
+                ),
               ),
               Text(label, style: textStyle),
             ],

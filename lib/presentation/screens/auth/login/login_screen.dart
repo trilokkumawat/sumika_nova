@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
 import 'package:sumikanova/core/navigation/route_name.dart';
+import 'package:sumikanova/core/utils/app_logger.dart';
 import 'package:sumikanova/core/utils/customtxtformfield.dart';
 import 'package:sumikanova/core/utils/reusablemethod.dart';
 import 'package:sumikanova/core/utils/snackbar.dart';
@@ -189,10 +190,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                   );
 
                                   if (!mounted) return;
+                                  AppLogger.d('data: ${loginState.error}');
 
                                   if (loginState.isLoading == false &&
                                       loginState.error == null &&
-                                      loginState.message !=
+                                      loginState.error !=
                                           'Invalid credentials') {
                                     SnackBarUtils.showSnackBar(
                                       context,

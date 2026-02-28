@@ -81,7 +81,8 @@ class _CustomBackState extends State<CustomBack> {
 
   @override
   Widget build(BuildContext context) {
-    final Color bg = widget.backgroundColor ?? AppColor.bgbuttoncolor;
+    final Color bg =
+        widget.backgroundColor ?? AppColor.gray6.withValues(alpha: 0.5);
     final Color iconClr = widget.iconColor ?? AppColor.white;
     final TextStyle style =
         widget.titleStyle ??
@@ -251,7 +252,7 @@ class _CreateHomePill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bg = AppColor.blue1.withValues(alpha: 0.5);
+    final bg = AppColor.gray6.withValues(alpha: 0.5);
     final textStyle = TypographyFont.uih5reg.copyWith(color: AppColor.white);
     return GestureDetector(
       onTap: () => onTap(),

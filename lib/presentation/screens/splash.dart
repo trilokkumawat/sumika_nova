@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/navigation/route_name.dart';
 import 'package:sumikanova/core/services/secure_auth_storage.dart';
+import 'package:sumikanova/core/utils/img_colorfilter.dart';
 
 class Splash extends StatefulWidget {
   const Splash({super.key});
@@ -32,6 +34,7 @@ class _SplashState extends State<Splash> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // backgroundColor: AppColor.primary,
       body: Stack(
         children: [
           Positioned(

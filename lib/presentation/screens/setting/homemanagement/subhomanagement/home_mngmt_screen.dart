@@ -83,13 +83,9 @@ class _HomeManagementScreenState extends ConsumerState<HomeManagementScreen> {
                             },
                           ),
                           if (state.error != null)
-                            CustomErrorShow(
-                              errorMessage: state.error!,
-                            ),
+                            CustomErrorShow(errorMessage: state.error!),
                           if (state.roomsError != null)
-                            CustomErrorShow(
-                              errorMessage: state.roomsError!,
-                            ),
+                            CustomErrorShow(errorMessage: state.roomsError!),
                           InkWell(
                             onTap: () async {
                               _selectedAddress = null;

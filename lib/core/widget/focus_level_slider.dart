@@ -89,7 +89,7 @@ class _FocusLevelSliderState extends State<FocusLevelSlider> {
                           width: trackWidth,
                           height: _trackHeight,
                           decoration: BoxDecoration(
-                            color: AppColor.primary500.withOpacity(0.35),
+                            color: AppColor.black.withOpacity(0.35),
                             borderRadius: BorderRadius.circular(
                               _trackHeight / 2,
                             ),
@@ -105,7 +105,7 @@ class _FocusLevelSliderState extends State<FocusLevelSlider> {
                           width: thumbX.clamp(0.0, trackWidth),
                           height: _trackHeight,
                           decoration: BoxDecoration(
-                            color: AppColor.primary500,
+                            color: AppColor.black,
                             borderRadius: BorderRadius.circular(
                               _trackHeight / 2,
                             ),
@@ -121,7 +121,7 @@ class _FocusLevelSliderState extends State<FocusLevelSlider> {
                           width: _startDotSize,
                           height: _startDotSize,
                           decoration: BoxDecoration(
-                            color: AppColor.primary500,
+                            color: AppColor.black,
                             shape: BoxShape.circle,
                             border: Border.all(color: Colors.white, width: 2.5),
                           ),
@@ -137,7 +137,7 @@ class _FocusLevelSliderState extends State<FocusLevelSlider> {
                           height: _glowSize,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: AppColor.primary500.withOpacity(0.25),
+                            color: AppColor.black.withOpacity(0.25),
                           ),
                         ),
                       ),
@@ -151,7 +151,7 @@ class _FocusLevelSliderState extends State<FocusLevelSlider> {
                           height: _thumbSize,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: AppColor.primary500,
+                            color: AppColor.black,
                             border: Border.all(color: Colors.white, width: 3),
                             boxShadow: [
                               BoxShadow(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
+import 'package:sumikanova/core/utils/img_colorfilter.dart';
 import 'package:sumikanova/core/widget/custom_switch.dart';
 import 'package:sumikanova/core/widget/customheader.dart';
 import 'package:sumikanova/core/widget/focus_level_slider.dart';
@@ -97,47 +98,60 @@ class _DeviceDetailsScreenState extends State<DeviceDetailsScreen> {
               child: Column(
                 spacing: 20,
                 children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 10,
+                    ),
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: AppColor.white,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0x40C7C6C6),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Stack(
+                      children: [
+                        Center(
+                          child: ImageColorFilterGress(
+                            child: Image.asset(
+                              'assets/icons/kitchenlarge.png',
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Container(
+                            width: 30,
+                            height: 30,
+                            decoration: BoxDecoration(
+                              color: AppColor.black,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Icon(
+                              Icons.camera_alt_outlined,
+                              color: AppColor.white,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   Row(
                     spacing: 10,
                     children: [
-                      Column(
-                        children: [
-                          Image.asset(
-                            'assets/icons/kitchenlarge.png',
-                            fit: BoxFit.cover,
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 5,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColor.black,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Row(
-                              spacing: 5,
-                              children: [
-                                Icon(
-                                  Icons.camera_alt,
-                                  color: AppColor.white,
-                                  size: 20,
-                                ),
-                                Text(
-                                  'Change',
-                                  style: TypographyFont.uih6reg.copyWith(
-                                    color: AppColor.white,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
                       Expanded(
                         child: Container(
-                          height: 56,
-                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          height: 45,
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
                           decoration: BoxDecoration(
                             color: AppColor.white,
                             borderRadius: BorderRadius.circular(10),

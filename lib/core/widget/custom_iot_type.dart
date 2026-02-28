@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
+import 'package:sumikanova/core/utils/img_colorfilter.dart';
 
 class CustomIotType extends StatelessWidget {
   const CustomIotType({
@@ -39,12 +40,14 @@ class CustomIotType extends StatelessWidget {
         children: [
           Align(
             alignment: Alignment.centerLeft,
-            child: Icon(
-              icon,
-              color: label == '00'
-                  ? AppColor.gray3
-                  : AppColor.black.withValues(alpha: 0.5),
-              size: 25,
+            child: ImageColorFilterGress(
+              child: Icon(
+                icon,
+                color: label == '00'
+                    ? AppColor.gray3
+                    : AppColor.black.withValues(alpha: 0.5),
+                size: 25,
+              ),
             ),
           ),
           Text(label, style: TypographyFont.uih7reg.copyWith(color: txtClr)),

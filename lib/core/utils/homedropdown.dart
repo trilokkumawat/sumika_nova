@@ -62,7 +62,7 @@ class HomeDropdown extends StatelessWidget {
         ? selectedId
         : _idFromMap(validOptions.first);
 
-    final bg = backgroundColor ?? AppColor.blue1.withValues(alpha: 0.5);
+    final bg = backgroundColor ?? AppColor.gray6.withValues(alpha: 0.5);
     final fg = textColor ?? AppColor.white;
     final iconClr = iconColor ?? AppColor.white;
     final menuBg = dropdownColor ?? AppColor.white;

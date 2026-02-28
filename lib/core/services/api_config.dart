@@ -103,6 +103,7 @@ class SumikiNovaApi {
   static final UpdateLocationCall updateLocationCall = UpdateLocationCall();
   static final CreateMultipleLocationsCall createMultipleLocationsCall =
       CreateMultipleLocationsCall();
+  static final GetSunWeatherCall getSunWeatherCall = GetSunWeatherCall();
 }
 
 /// Builds headers with optional Bearer token from [SecureAuthStorage].
@@ -474,6 +475,32 @@ class GetHomeByIdLocationCall {
       apiUrl: apiUrl,
       callType: ApiCallType.GET,
       headers: headers,
+      returnBody: true,
+    );
+  }
+}
+
+class GetSunWeatherCall {
+  /// GET current weather from Open-Meteo (no auth).
+  /// Example: https://api.open-meteo.com/v1/forecast?latitude=23.79&longitude=68.65&current_weather=true&timezone=auto
+  Future<ApiCallResponse> call({
+    required String latitude,
+    required String longitude,
+  }) async {
+    const baseUrl = 'https://api.open-meteo.com/v1/forecast';
+
+    AppLogger.d(
+      'apiUrl: $baseUrl?latitude=$latitude&longitude=$longitude&current_weather=true&timezone=auto',
+    );
+    return makeApiCall(
+      apiUrl: baseUrl,
+      callType: ApiCallType.GET,
+      params: {
+        'latitude': latitude,
+        'longitude': longitude,
+        'current_weather': 'true',
+        'timezone': 'auto',
+      },
       returnBody: true,
     );
   }

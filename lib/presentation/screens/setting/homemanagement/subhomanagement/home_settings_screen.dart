@@ -10,6 +10,7 @@ import 'package:sumikanova/core/navigation/route_name.dart';
 import 'package:sumikanova/core/services/api_config.dart';
 import 'package:sumikanova/core/services/api_name.dart';
 import 'package:sumikanova/core/utils/fluttermap.dart';
+import 'package:sumikanova/core/utils/img_colorfilter.dart';
 import 'package:sumikanova/core/utils/inkwell_effect.dart';
 import 'package:sumikanova/core/utils/app_logger.dart';
 import 'package:sumikanova/core/utils/reusablemethod.dart';
@@ -850,12 +851,14 @@ class _RoomIcon extends StatelessWidget {
     if (imageUrl.isEmpty) return placeholder;
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
-      child: Image.network(
-        imageUrl,
-        width: 44,
-        height: 44,
-        fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => placeholder,
+      child: ImageColorFilterGress(
+        child: Image.network(
+          imageUrl,
+          width: 44,
+          height: 44,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => placeholder,
+        ),
       ),
     );
   }

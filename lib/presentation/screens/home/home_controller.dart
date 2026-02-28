@@ -1,8 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:sumikanova/core/services/api_config.dart';
 import 'package:sumikanova/core/services/secure_auth_storage.dart';
 import 'package:sumikanova/data/model/homelist/homelist_model.dart';
 import 'package:sumikanova/data/model/locationlist/locationlist_model.dart';
+import 'package:sumikanova/data/model/weather/open_meteo_weather_model.dart';
 import 'package:sumikanova/presentation/screens/home/home_state.dart';
 
 /// Controller for the main Home screen. Loads home list by userId, locations by homeId, persists selected home.
@@ -19,8 +21,9 @@ class HomeController extends StateNotifier<HomeScreenState> {
       return;
     }
     state = state.copyWith(headerTitle: userName);
-    final response =
-        await SumikiNovaApi.getUserHomeListCall.call(userId: userId);
+    final response = await SumikiNovaApi.getUserHomeListCall.call(
+      userId: userId,
+    );
     if (!response.succeeded || response.jsonBody == null) return;
     try {
       final parsed = HomeListResponse.fromJson(
@@ -99,5 +102,53 @@ class HomeController extends StateNotifier<HomeScreenState> {
 
   void setSelectedLocationIndex(int index) {
     state = state.copyWith(selectedLocationIndex: index);
+  }
+
+  /// Fetches current weather from Open-Meteo using device lat/long and updates [currentWeatherTemperature].
+  Future<void> loadWeather() async {
+    state = state.copyWith(weatherLoading: true);
+    double? lat;
+    double? lon;
+    try {
+      final permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        final requested = await Geolocator.requestPermission();
+        if (requested == LocationPermission.denied ||
+            requested == LocationPermission.deniedForever) {
+          state = state.copyWith(weatherLoading: false);
+          return;
+        }
+      }
+      final position = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.medium,
+        ),
+      );
+      lat = position.latitude;
+      lon = position.longitude;
+    } catch (_) {
+      state = state.copyWith(weatherLoading: false);
+      return;
+    }
+    final response = await SumikiNovaApi.getSunWeatherCall.call(
+      latitude: lat.toString(),
+      longitude: lon.toString(),
+    );
+    if (!response.succeeded || response.jsonBody == null) {
+      state = state.copyWith(weatherLoading: false);
+      return;
+    }
+    try {
+      final parsed = OpenMeteoWeatherResponse.fromJson(
+        response.jsonBody as Map<String, dynamic>,
+      );
+      state = state.copyWith(
+        currentWeatherTemperature: parsed.currentWeather.temperature,
+        currentWeather: parsed.currentWeather,
+        weatherLoading: false,
+      );
+    } catch (_) {
+      state = state.copyWith(weatherLoading: false);
+    }
   }
 }

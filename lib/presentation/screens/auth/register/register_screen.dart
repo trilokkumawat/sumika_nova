@@ -213,7 +213,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           color: AppColor.gray11,
                         ),
                         actionStyle: TypographyFont.uih5bold.copyWith(
-                          color: AppColor.blue11,
+                          color: AppColor.black,
                         ),
                         onTap: () {
                           context.pop();

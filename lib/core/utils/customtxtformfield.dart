@@ -329,7 +329,7 @@ class _CustomTxtFormFieldState extends State<CustomTxtFormField> {
             decoration: InputDecoration(
               contentPadding:
                   widget.contentPadding ??
-                  const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                  const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
               // label: widget.labelText != null
               //     ? Text(
               //         widget.labelText!,

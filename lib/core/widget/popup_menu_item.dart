@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sumikanova/core/constant/app_color.dart';
 import 'package:sumikanova/core/constant/typography_font.dart';
+import 'package:sumikanova/core/utils/img_colorfilter.dart';
 
 class CustomPopupMenuItem extends StatelessWidget {
   const CustomPopupMenuItem({
@@ -9,8 +10,10 @@ class CustomPopupMenuItem extends StatelessWidget {
     this.icon,
     required this.label,
     required this.onTap,
-  }) : assert(iconPath != null || icon != null,
-            'Either iconPath or icon must be provided');
+  }) : assert(
+         iconPath != null || icon != null,
+         'Either iconPath or icon must be provided',
+       );
 
   final String? iconPath;
   final IconData? icon;
@@ -26,9 +29,16 @@ class CustomPopupMenuItem extends StatelessWidget {
         child: Row(
           children: <Widget>[
             if (icon != null)
-              Icon(icon, size: 20, color: AppColor.black)
+              ImageColorFilterGress(child: Icon(icon, size: 20))
             else
-              Image.asset(iconPath!, width: 20, height: 20, fit: BoxFit.contain),
+              ImageColorFilterGress(
+                child: Image.asset(
+                  iconPath!,
+                  width: 20,
+                  height: 20,
+                  fit: BoxFit.contain,
+                ),
+              ),
             const SizedBox(width: 12),
             Expanded(
               child: Text(

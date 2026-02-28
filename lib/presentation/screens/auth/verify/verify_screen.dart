@@ -66,7 +66,7 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
             Container(
               width: double.infinity,
               height: math.max(220, MediaQuery.sizeOf(context).height / 3.9),
-              color: AppColor.primary,
+              color: AppColor.black,
               child: Stack(
                 clipBehavior: Clip.antiAlias,
                 children: [
@@ -162,7 +162,10 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
                                     return 'Enter verification code';
                                   }
                                   if (pin.length != 6) {
-                                    return 'Enter complete 4-digit code';
+                                    return 'Enter complete 6-digit code';
+                                  }
+                                  if (pin != _serverOtp) {
+                                    return 'OTP does not match. Please try again.';
                                   }
                                   return null;
                                 },
